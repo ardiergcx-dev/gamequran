@@ -29,6 +29,34 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #9ca3af; 
         }
+
+        /* Print Styles for Certificate */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .no-print, .no-print * {
+                display: none !important;
+            }
+            #printable-certificate, #printable-certificate * {
+                visibility: visible;
+            }
+            #printable-certificate {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100vw !important;
+                height: 100vh !important;
+                margin: 0;
+                padding: 2rem !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            @page {
+                size: landscape;
+                margin: 0;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-100 font-sans text-gray-900">
@@ -36,7 +64,7 @@
     <div id="app"></div>
 
     <script>
-        // --- DATA QURAN & LEVEL (Persis seperti versi React) ---
+        // --- DATA QURAN & LEVEL (Persis seperti versi sebelumnya) ---
         const quranData = [
           // --- LEVEL 4: LANJUT (Surah 78 - 85) ---
           { surah: "An-Naba", words: [ 
@@ -462,6 +490,11 @@
         let currentPlayingId = null;
         let justUnlocked = false;
 
+        // Data Piagam
+        let certName = "";
+        let certPhotoDataUrl = null;
+        let certLevelName = "";
+
         const getSavedProgress = () => {
             try { return localStorage.getItem('quranGameProgressV3') || "1-1"; } 
             catch (e) { return "1-1"; }
@@ -476,7 +509,7 @@
             for (const mainLevel of levels) {
                 for (const sub of mainLevel.subLevels) {
                     if (sub.id === id) {
-                        return { mode: sub.surahs === 'Semua' ? 'all' : 'level', data: sub.surahs, title: `${mainLevel.name} - ${sub.name}`, id: sub.id };
+                        return { mode: sub.surahs === 'Semua' ? 'all' : 'level', data: sub.surahs, title: `${mainLevel.name} - ${sub.name}`, id: sub.id, mainLevelName: mainLevel.name };
                     }
                 }
             }
@@ -538,6 +571,7 @@
         window.resetProgressAndState = () => {
             if(window.confirm('Yakin ingin mereset semua progres belajar Anda kembali ke Tahap 1?')) {
                 localStorage.removeItem('quranGameProgressV3');
+                localStorage.removeItem('quranGame_masterPassed');
                 unlockedLevelId = "1-1";
                 renderApp();
             }
@@ -628,6 +662,10 @@
 
                 if (finalPercentage >= 70 && currentPlayingId) {
                     playSound('win');
+                    if (currentPlayingId === '5-boss') {
+                        localStorage.setItem('quranGame_masterPassed', 'true');
+                    }
+                    
                     const currentIndex = progressionOrder.indexOf(currentPlayingId);
                     if (currentIndex >= 0 && currentIndex < progressionOrder.length - 1) {
                         const nextId = progressionOrder[currentIndex + 1];
@@ -657,11 +695,54 @@
             }
         };
 
+        // --- FUNGSI PIAGAM ---
+        window.openCertificate = (levelName) => {
+            certLevelName = levelName;
+            certName = localStorage.getItem('quranGame_certName') || ""; 
+            certPhotoDataUrl = null; 
+            changeGameState('certificate');
+        };
+
+        window.handleCertNameChange = (e) => {
+            certName = e.target.value;
+            localStorage.setItem('quranGame_certName', certName);
+            const displayEl = document.getElementById('cert-name-display');
+            if(displayEl) displayEl.innerText = certName || "[Nama Anak]";
+        };
+
+        window.handlePhotoUpload = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    certPhotoDataUrl = event.target.result;
+                    const imgEl = document.getElementById('cert-photo-display');
+                    const placeholderEl = document.getElementById('cert-photo-placeholder');
+                    if(imgEl && placeholderEl) {
+                        imgEl.src = certPhotoDataUrl;
+                        imgEl.classList.remove('hidden');
+                        placeholderEl.classList.add('hidden');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        window.printCertificate = () => {
+            window.print();
+        };
+
         // --- RENDER HTML LOGIC ---
         function renderMenu() {
+            const masterPassed = localStorage.getItem('quranGame_masterPassed') === 'true';
+
             let levelsHtml = levels.map(level => {
                 let subLevelsHtml = level.subLevels.map(sub => {
                     const isUnlocked = progressionOrder.indexOf(sub.id) <= progressionOrder.indexOf(unlockedLevelId);
+                    
+                    // Cek apakah bos sudah dilewati untuk menampilkan tombol piagam
+                    const isPassed = progressionOrder.indexOf(unlockedLevelId) > progressionOrder.indexOf(sub.id) || (sub.id === '5-boss' && masterPassed);
+
                     let btnClass = isUnlocked
                         ? (sub.isBoss 
                             ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white border-transparent hover:from-amber-500 hover:to-orange-600 shadow-lg transform hover:-translate-y-1 transition-all cursor-pointer" 
@@ -675,12 +756,18 @@
                         ? (sub.isBoss ? `<i data-lucide="star" class="w-6 h-6 ml-2 flex-shrink-0 text-white animate-pulse"></i>` : `<i data-lucide="play" class="w-5 h-5 ml-2 flex-shrink-0"></i>`)
                         : `<i data-lucide="lock" class="w-5 h-5 opacity-50 ml-2 flex-shrink-0"></i>`;
 
+                    let certBtn = "";
+                    if (sub.isBoss && isPassed) {
+                        certBtn = `<button onclick="event.stopPropagation(); openCertificate('${level.name}')" class="text-xs bg-yellow-100 border border-yellow-300 hover:bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full font-black ml-3 shadow-sm transition-all flex items-center gap-1"><i data-lucide="award" class="w-3 h-3"></i> Piagam</button>`;
+                    }
+
                     return `
                         <button ${clickAction} class="flex items-center justify-between p-4 rounded-2xl border-2 w-full text-left ${btnClass}">
                             <div class="flex-1 text-left">
-                                <div class="font-bold text-md flex items-center gap-2 ${titleTextClass}">
-                                    ${sub.isBoss && isUnlocked ? '<i data-lucide="award" class="w-5 h-5 text-yellow-100"></i>' : ''}
+                                <div class="font-bold text-md flex items-center ${titleTextClass}">
+                                    ${sub.isBoss && isUnlocked ? '<i data-lucide="award" class="w-5 h-5 text-yellow-100 mr-2"></i>' : ''}
                                     ${sub.name}
+                                    ${certBtn}
                                 </div>
                                 <div class="text-xs mt-1 ${descTextClass}">
                                     ${sub.desc}
@@ -723,6 +810,9 @@
                                 <button onclick="resetProgressAndState()" class="text-xs text-gray-400 hover:text-red-500 mt-5 underline text-center block w-full transition-colors">
                                     Reset Progres Belajar
                                 </button>
+                            </div>
+                            <div class="text-center text-xs text-gray-400/80 font-bold tracking-wide pb-2">
+                                Dibuat oleh Subhan
                             </div>
                         </div>
                     </div>
@@ -881,6 +971,19 @@
                 `;
             }
 
+            // Tombol Cetak Piagam Jika Lulus Ujian Boss
+            let certificateBtnHtml = "";
+            if (percentage >= 70 && currentPlayingId && String(currentPlayingId).includes('boss')) {
+                const levelData = getLevelDataById(currentPlayingId);
+                const mainLevelName = levelData ? levelData.mainLevelName : "Tahap Akhir";
+                
+                certificateBtnHtml = `
+                    <button onclick="openCertificate('${mainLevelName}')" class="w-full bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-yellow-900 p-5 rounded-2xl font-black tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg text-lg transform hover:-translate-y-1 mb-2 border-2 border-yellow-300">
+                        <i data-lucide="award" class="w-6 h-6"></i> KLAIM PIAGAM
+                    </button>
+                `;
+            }
+
             let nextBtnHtml = "";
             if (percentage >= 70 && isNextUnlocked && nextId) {
                 nextBtnHtml = `
@@ -922,6 +1025,7 @@
                         </div>
 
                         <div class="grid grid-cols-1 gap-4">
+                            ${certificateBtnHtml}
                             ${nextBtnHtml}
 
                             <button onclick="restartCurrentLevel()" class="w-full p-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-md ${restartBtnClass}">
@@ -936,6 +1040,97 @@
             `;
         }
 
+        function renderCertificate() {
+            return `
+                <div class="min-h-screen bg-gray-100 flex flex-col items-center p-4 md:p-8 font-sans text-gray-900 w-full overflow-y-auto">
+                    <!-- Controls (Sembunyi saat diprint) -->
+                    <div class="max-w-3xl w-full bg-white rounded-3xl shadow-xl p-6 mb-8 no-print border border-gray-200">
+                        <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                            <button onclick="changeGameState('menu')" class="p-3 bg-gray-100 rounded-xl hover:bg-gray-200 text-gray-600 transition-colors flex items-center font-bold">
+                                <i data-lucide="arrow-left" class="w-5 h-5 mr-1"></i> Kembali
+                            </button>
+                            <h2 class="font-black uppercase tracking-widest text-lg text-emerald-800 flex items-center gap-2">
+                                <i data-lucide="award" class="w-6 h-6 text-amber-500"></i> Buat Piagam
+                            </h2>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-black tracking-wide text-gray-700 mb-2 uppercase">Nama Anak</label>
+                                <input type="text" oninput="handleCertNameChange(event)" value="${certName}" placeholder="Ketik nama anak..." class="w-full p-4 border-2 border-gray-300 rounded-2xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition-all font-bold text-lg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-black tracking-wide text-gray-700 mb-2 uppercase">Foto Anak <span class="text-gray-400 font-medium normal-case">(Opsional)</span></label>
+                                <input type="file" accept="image/*" onchange="handlePhotoUpload(event)" class="w-full border-2 border-gray-300 rounded-2xl file:mr-4 file:py-4 file:px-6 file:rounded-l-xl file:border-0 file:text-sm file:font-black file:bg-emerald-50 file:text-emerald-800 hover:file:bg-emerald-100 cursor-pointer">
+                            </div>
+                        </div>
+                        
+                        <button onclick="printCertificate()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white p-5 rounded-2xl font-black tracking-widest flex items-center justify-center gap-3 transition-all shadow-lg text-lg transform hover:-translate-y-1">
+                            <i data-lucide="printer" class="w-6 h-6"></i> CETAK / SIMPAN SEBAGAI PDF
+                        </button>
+                    </div>
+
+                    <!-- Area Piagam (Tercetak) -->
+                    <div id="printable-certificate" class="w-full max-w-4xl aspect-[1.414] bg-white border-[16px] border-double border-emerald-800 p-4 md:p-8 flex flex-col items-center justify-center text-center relative overflow-hidden shadow-2xl">
+                        
+                        <!-- Pattern Background Elegan -->
+                        <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #047857 25%, transparent 25%, transparent 75%, #047857 75%, #047857), repeating-linear-gradient(45deg, #047857 25%, #ffffff 25%, #ffffff 75%, #047857 75%, #047857); background-position: 0 0, 20px 20px; background-size: 40px 40px;"></div>
+
+                        <!-- Inner Border -->
+                        <div class="relative z-10 w-full h-full border-4 border-emerald-200 p-6 md:p-10 flex flex-col items-center justify-center bg-white/95">
+                            
+                            <i data-lucide="award" class="w-16 h-16 md:w-20 md:h-20 text-amber-500 mb-4 fill-current drop-shadow-md"></i>
+                            
+                            <h1 class="text-3xl md:text-5xl font-black text-emerald-900 mb-2 md:mb-4 tracking-widest uppercase">Piagam Penghargaan</h1>
+                            
+                            <p class="text-sm md:text-xl text-gray-600 font-bold mb-6 md:mb-8">Diberikan dengan penuh kebanggaan kepada:</p>
+
+                            <!-- Area Foto Anak -->
+                            <div class="w-24 h-32 md:w-32 md:h-40 border-4 border-dashed border-emerald-300 mb-4 md:mb-6 flex items-center justify-center bg-emerald-50 overflow-hidden relative shadow-inner">
+                                <img id="cert-photo-display" src="${certPhotoDataUrl || ''}" class="w-full h-full object-cover ${certPhotoDataUrl ? '' : 'hidden'}" />
+                                <div id="cert-photo-placeholder" class="${certPhotoDataUrl ? 'hidden' : 'flex'} flex-col items-center text-emerald-400">
+                                    <i data-lucide="camera" class="w-8 h-8 md:w-12 md:h-12 mb-1"></i>
+                                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider">Pas Foto</span>
+                                </div>
+                            </div>
+
+                            <!-- Nama Anak -->
+                            <h2 id="cert-name-display" class="text-2xl md:text-4xl font-serif font-bold text-gray-900 mb-4 md:mb-8 border-b-2 border-emerald-800 px-8 pb-2 tracking-wide">${certName || '[Nama Anak]'}</h2>
+
+                            <!-- Deskripsi Kelulusan -->
+                            <p class="text-xs md:text-lg text-gray-700 font-medium max-w-lg md:max-w-2xl leading-relaxed mb-6 md:mb-12">
+                                Atas keberhasilan, dedikasi, dan kerja kerasnya dalam menyelesaikan seluruh evaluasi akhir untuk tahap:<br/>
+                                <strong class="text-emerald-800 text-lg md:text-2xl block mt-2 mb-1">${certLevelName}</strong>
+                                Game Edukasi Tebak Kosakata Al-Quran Juz 30.
+                            </p>
+
+                            <!-- Kolom Tanda Tangan & Nilai -->
+                            <div class="flex justify-between w-full max-w-lg md:max-w-2xl mt-auto pt-6 border-t-2 border-emerald-100">
+                                <div class="text-center w-32 md:w-48">
+                                    <div class="h-12 md:h-16 flex items-end justify-center">
+                                        <div class="w-full border-b border-gray-800"></div>
+                                    </div>
+                                    <p class="text-xs md:text-sm font-bold text-gray-500 mt-2 uppercase tracking-widest">Orang Tua / Guru</p>
+                                </div>
+                                
+                                <div class="text-center w-32 md:w-48">
+                                    <div class="h-12 md:h-16 flex items-end justify-center">
+                                        <div class="font-black text-emerald-800 flex items-center gap-1 md:gap-2 text-lg md:text-2xl">
+                                            <i data-lucide="star" class="w-4 h-4 md:w-6 md:h-6 fill-current text-amber-400"></i>
+                                            LULUS
+                                            <i data-lucide="star" class="w-4 h-4 md:w-6 md:h-6 fill-current text-amber-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs md:text-sm font-bold text-gray-500 mt-2 uppercase tracking-widest">Predikat Kelulusan</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         // Fungsi render utama (mirip render() di React)
         function renderApp() {
             const app = document.getElementById('app');
@@ -943,6 +1138,7 @@
             else if (gameState === 'surahList') app.innerHTML = renderSurahList();
             else if (gameState === 'playing') app.innerHTML = renderPlaying();
             else if (gameState === 'result') app.innerHTML = renderResult();
+            else if (gameState === 'certificate') app.innerHTML = renderCertificate();
 
             // Inisialisasi ulang ikon Lucide setiap kali DOM berubah
             lucide.createIcons();
