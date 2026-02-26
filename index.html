@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Al-Quran Perkata Juz 30</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts (Amiri for Arabic text) -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .font-serif {
+            font-family: 'Amiri', serif;
+        }
+        /* Custom scrollbar for better appearance */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af; 
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-900">
+    <!-- Root Container -->
+    <div id="app"></div>
+
+    <script>
+        // --- DATA QURAN & LEVEL (Persis seperti versi React) ---
+        const quranData = [
+          // --- LEVEL 4: LANJUT (Surah 78 - 85) ---
+          { surah: "An-Naba", words: [ 
+            { ar: "عَمَّ", id: "Tentang apakah" }, { ar: "يَتَسَاءَلُونَ", id: "Mereka saling bertanya" }, { ar: "النَّبَإِ", id: "Berita" }, { ar: "الْعَظِيمِ", id: "Yang besar" }, 
+            { ar: "مُخْتَلِفُونَ", id: "Berselisih" }, { ar: "كَلَّا", id: "Tidak (sekali-kali tidak)" }, { ar: "سَيَعْلَمُونَ", id: "Mereka akan mengetahui" }, 
+            { ar: "الْأَرْضَ", id: "Bumi" }, { ar: "مِهَادًا", id: "Hamparan" }, { ar: "الْجِبَالَ", id: "Gunung-gunung" }, { ar: "أَوْتَادًا", id: "Pasak (tiang)" }, 
+            { ar: "أَزْوَاجًا", id: "Berpasang-pasangan" }, { ar: "نَوْمَكُمْ", id: "Tidurmu" }, { ar: "سُبَاتًا", id: "Istirahat" }, { ar: "اللَّيْلَ", id: "Malam" }, 
+            { ar: "لِبَاسًا", id: "Pakaian" }, { ar: "النَّهَارَ", id: "Siang" }, { ar: "مَعَاشًا", id: "Penghidupan" }, { ar: "سَبْعًا", id: "Tujuh (langit)" }, { ar: "شِدَادًا", id: "Yang kokoh" },
+            { ar: "وَجَعَلْنَا", id: "Dan Kami jadikan" }, { ar: "سِرَاجًا", id: "Pelita (Matahari)" }, { ar: "وَهَّاجًا", id: "Yang sangat terang" }, { ar: "وَأَنْزَلْنَا", id: "Dan Kami turunkan" },
+            { ar: "الْمُعْصِرَاتِ", id: "Awan-awan" }, { ar: "مَاءً", id: "Air" }, { ar: "ثَجَّاجًا", id: "Yang tercurah" }, { ar: "لِنُخْرِجَ", id: "Agar Kami tumbuhkan" },
+            { ar: "حَبًّا", id: "Biji-bijian" }, { ar: "وَنَبَاتًا", id: "Dan tumbuh-tumbuhan" }, { ar: "جَنَّاتٍ", id: "Kebun-kebun" }, { ar: "أَلْفَافًا", id: "Yang lebat" },
+            { ar: "يَوْمَ الْفَصْلِ", id: "Hari keputusan" }, { ar: "مِيقَاتًا", id: "Waktu yang ditetapkan" }, { ar: "يُنْفَخُ", id: "Ditiup" }, { ar: "الصُّورِ", id: "Sangkakala" },
+            { ar: "فَتَأْتُونَ", id: "Maka kamu datang" }, { ar: "أَفْوَاجًا", id: "Berkelompok-kelompok" }, { ar: "فُتِحَتِ", id: "Dibuka" }, { ar: "أَبْوَابًا", id: "Pintu-pintu" },
+            { ar: "سُرَابًا", id: "Fatamorgana" }, { ar: "جَهَنَّمَ", id: "Neraka Jahanam" }, { ar: "مِرْصَادًا", id: "Tempat pengintai" }, { ar: "لِلطَّاغِينَ", id: "Bagi yang melampaui batas" },
+            { ar: "مَآبًا", id: "Tempat kembali" }, { ar: "لَابِثِينَ", id: "Mereka tinggal" }, { ar: "أَحْقَابًا", id: "Berabad-abad" }, { ar: "لَا يَذُوقُونَ", id: "Mereka tidak merasakan" },
+            { ar: "بَرْدًا", id: "Kesejukan" }, { ar: "شَرَابًا", id: "Minuman" }, { ar: "حَمِيمًا", id: "Air yang mendidih" }, { ar: "غَسَّاقًا", id: "Nanah" },
+            { ar: "جَزَاءً", id: "Sebagai balasan" }, { ar: "وِفَاقًا", id: "Yang setimpal" }, { ar: "حِسَابًا", id: "Perhitungan" }, { ar: "لِلْمُتَّقِينَ", id: "Bagi orang bertakwa" },
+            { ar: "مَفَازًا", id: "Kemenangan" }, { ar: "حَدَائِقَ", id: "Kebun-kebun" }, { ar: "أَعْنَابًا", id: "Buah anggur" }, { ar: "كَوَاعِبَ", id: "Gadis-gadis" },
+            { ar: "أَتْرَابًا", id: "Yang sebaya" }, { ar: "كَأْسًا", id: "Gelas" }, { ar: "دِهَاقًا", id: "Yang penuh" }, { ar: "لَغْوًا", id: "Perkataan sia-sia" },
+            { ar: "كِذَّابًا", id: "Dusta" }, { ar: "عَطَاءً", id: "Pemberian" }, { ar: "الرَّحْمَٰنِ", id: "Maha Pemurah" }, { ar: "لَا يَمْلِكُونَ", id: "Mereka tidak memiliki" },
+            { ar: "خِطَابًا", id: "Hak berbicara" }, { ar: "الرُّوحُ", id: "Jibril" }, { ar: "صَفًّا", id: "Bersaf-saf" }, { ar: "الْيَوْمُ الْحَقُّ", id: "Hari yang pasti terjadi" },
+            { ar: "عَذَابًا", id: "Azab" }, { ar: "قَرِيبًا", id: "Yang dekat" }, { ar: "الْمَرْءُ", id: "Manusia" }, { ar: "يَدَاهُ", id: "Kedua tangannya" },
+            { ar: "تُرَابًا", id: "Tanah" }
+          ]},
+          { surah: "An-Nazi'at", words: [ 
+            { ar: "وَالنَّازِعَاتِ", id: "Demi malaikat yang mencabut" }, { ar: "غَرْقًا", id: "Dengan keras" }, { ar: "وَالنَّاشِطَاتِ", id: "Malaikat yang mencabut" }, { ar: "نَشْطًا", id: "Dengan lembut" }, 
+            { ar: "وَالسَّابِحَاتِ", id: "Malaikat yang turun" }, { ar: "سَبْحًا", id: "Dengan cepat" }, { ar: "فَالسَّابِقَاتِ", id: "Malaikat yang mendahului" }, { ar: "سَبْقًا", id: "Dengan kencang" }, 
+            { ar: "فَالْمُدَبِّرَاتِ", id: "Yang mengatur" }, { ar: "أَمْرًا", id: "Urusan" }, { ar: "يَوْمَ", id: "Pada hari" }, { ar: "تَرْجُفُ", id: "Berguncang" }, 
+            { ar: "الرَّاجِفَةُ", id: "Tiupan pertama" }, { ar: "تَتْبَعُهَا", id: "Mengiringinya" }, { ar: "الرَّادِفَةُ", id: "Tiupan kedua" }, { ar: "قُلُوبٌ", id: "Hati" }, 
+            { ar: "يَوْمَئِذٍ", id: "Pada hari itu" }, { ar: "وَاجِفَةٌ", id: "Sangat takut" }, { ar: "أَبْصَارُهَا", id: "Pandangannya" }, { ar: "خَاشِعَةٌ", id: "Tunduk hina" },
+            { ar: "يَقُولُونَ", id: "Mereka berkata" }, { ar: "أَإِنَّا", id: "Apakah sesungguhnya kami" }, { ar: "لَمَرْدُودُونَ", id: "Benar-benar dikembalikan" }, { ar: "الْحَافِرَةِ", id: "Keadaan semula" },
+            { ar: "عِظَامًا", id: "Tulang belulang" }, { ar: "نَخِرَةً", id: "Yang hancur" }, { ar: "كَرَّةٌ", id: "Pengembalian" }, { ar: "خَاسِرَةٌ", id: "Yang merugikan" },
+            { ar: "زَجْرَةٌ", id: "Tiupan (sangkakala)" }, { ar: "وَاحِدَةٌ", id: "Satu kali" }, { ar: "بِالسَّاهِرَةِ", id: "Di permukaan bumi" }, { ar: "هَلْ أَتَاكَ", id: "Sudahkah datang kepadamu" },
+            { ar: "حَدِيثُ", id: "Kisah" }, { ar: "مُوسَىٰ", id: "Musa" }, { ar: "نَادَاهُ", id: "Memanggilnya" }, { ar: "الْمُقَدَّسِ", id: "Yang suci" },
+            { ar: "طُوًى", id: "Thuwa" }, { ar: "اذْهَبْ", id: "Pergilah" }, { ar: "إِلَىٰ فِرْعَوْنَ", id: "Kepada Fir'aun" }, { ar: "طَغَىٰ", id: "Melampaui batas" },
+            { ar: "تَزَكَّىٰ", id: "Menyucikan diri" }, { ar: "وَأَهْدِيَكَ", id: "Dan aku beri petunjuk kepadamu" }, { ar: "فَتَخْشَىٰ", id: "Maka kamu menjadi takut" }, { ar: "الْآيَةَ", id: "Mukjizat" },
+            { ar: "الْكُبْرَىٰ", id: "Yang paling besar" }, { ar: "فَكَذَّبَ", id: "Lalu dia mendustakan" }, { ar: "وَعَصَىٰ", id: "Dan mendurhaka" }, { ar: "أَدْبَرَ", id: "Berpaling" },
+            { ar: "يَسْعَىٰ", id: "Berusaha menantang" }, { ar: "فَحَشَرَ", id: "Lalu dia mengumpulkan" }, { ar: "رَبُّكُمُ", id: "Tuhanmu" }, { ar: "الْأَعْلَى", id: "Yang paling tinggi" },
+            { ar: "فَأَخَذَهُ", id: "Maka Allah mengazabnya" }, { ar: "نَكَالَ", id: "Siksaan" }, { ar: "الْآخِرَةِ", id: "Akhirat" }, { ar: "لَعِبْرَةً", id: "Benar-benar pelajaran" },
+            { ar: "أَشَدُّ", id: "Lebih sulit" }, { ar: "خَلْقًا", id: "Penciptaannya" }, { ar: "بَنَاهَا", id: "Membangunnya" }, { ar: "رَفَعَ", id: "Meninggikan" },
+            { ar: "سَمْكَهَا", id: "Bangunannya" }, { ar: "وَأَغْطَشَ", id: "Dan Dia menjadikan gelap" }, { ar: "لَيْلَهَا", id: "Malamnya" }, { ar: "أَخْرَجَ", id: "Mengeluarkan" },
+            { ar: "ضُحَاهَا", id: "Siangnya (terangnya)" }, { ar: "دَحَاهَا", id: "Menghamparnya" }, { ar: "مَاءَهَا", id: "Airnya" }, { ar: "مَرْعَاهَا", id: "Tumbuh-tumbuhannya" },
+            { ar: "أَرْسَاهَا", id: "Memancangkannya" }, { ar: "مَتَاعًا", id: "Sebagai kesenangan" }, { ar: "لَكُمْ", id: "Untukmu" }, { ar: "الطَّامَّةُ", id: "Bencana" },
+            { ar: "يَتَذَكَّرُ", id: "Teringat" }, { ar: "سَعَىٰ", id: "Telah dikerjakan" }, { ar: "بُرِّزَتِ", id: "Diperlihatkan" }, { ar: "الْجَحِيمُ", id: "Neraka" },
+            { ar: "آثَرَ", id: "Lebih mengutamakan" }, { ar: "الْحَيَاةَ", id: "Kehidupan" }, { ar: "الدُّنْيَا", id: "Dunia" }, { ar: "الْمَأْوَىٰ", id: "Tempat tinggal" },
+            { ar: "خَافَ", id: "Takut" }, { ar: "مَقَامَ", id: "Kebesaran" }, { ar: "نَهَى", id: "Menahan" }, { ar: "الْهَوَىٰ", id: "Hawa nafsu" },
+            { ar: "الْجَنَّةَ", id: "Surga" }, { ar: "السَّاعَةِ", id: "Hari kiamat" }, { ar: "أَيَّانَ", id: "Kapan" }, { ar: "مُرْسَاهَا", id: "Terjadinya" },
+            { ar: "مُنْتَهَاهَا", id: "Kesudahannya" }, { ar: "مُنْذِرُ", id: "Pemberi peringatan" }, { ar: "يَلْبَثُوا", id: "Mereka tinggal" }, { ar: "عَشِيَّةً", id: "Waktu sore" }
+          ]},
+          { surah: "'Abasa", words: [ 
+            { ar: "عَبَسَ", id: "Dia bermuka masam" }, { ar: "وَتَوَلَّىٰ", id: "Dan berpaling" }, { ar: "أَنْ", id: "Karena" }, { ar: "جَاءَهُ", id: "Telah datang kepadanya" }, 
+            { ar: "الْأَعْمَىٰ", id: "Orang buta" }, { ar: "وَمَا", id: "Dan tahukah" }, { ar: "يُدْرِيكَ", id: "Kamu" }, { ar: "لَعَلَّهُ", id: "Barangkali dia" }, 
+            { ar: "يَزَّكَّىٰ", id: "Ingin menyucikan diri" }, { ar: "يَذَّكَّرُ", id: "Mendapat pelajaran" }, { ar: "فَتَنْفَعَهُ", id: "Maka memberi manfaat kepadanya" }, { ar: "الذِّكْرَىٰ", id: "Peringatan itu" }, 
+            { ar: "أَمَّا", id: "Adapun" }, { ar: "مَنِ", id: "Orang yang" }, { ar: "اسْتَغْنَىٰ", id: "Merasa serba cukup" }, { ar: "فَأَنْتَ", id: "Maka kamu" }, 
+            { ar: "لَهُ", id: "Kepadanya" }, { ar: "تَصَدَّىٰ", id: "Melayani" }, { ar: "وَمَا عَلَيْكَ", id: "Padahal tiada (celaan) atasmu" },
+            { ar: "يَسْعَىٰ", id: "Bergegas" }, { ar: "يَخْشَىٰ", id: "Takut" }, { ar: "تَلَهَّىٰ", id: "Mengabaikan" }, { ar: "تَذْكِرَةٌ", id: "Peringatan" },
+            { ar: "شَاءَ", id: "Mengehendaki" }, { ar: "ذَكَرَهُ", id: "Memperhatikannya" }, { ar: "صُحُفٍ", id: "Kitab-kitab" }, { ar: "مُكَرَّمَةٍ", id: "Yang dimuliakan" },
+            { ar: "مَرْفُوعَةٍ", id: "Yang ditinggikan" }, { ar: "مُطَهَّرَةٍ", id: "Yang disucikan" }, { ar: "بِأَيْدِي", id: "Di tangan" }, { ar: "سَفَرَةٍ", id: "Utusan-utusan (malaikat)" },
+            { ar: "كِرَامٍ", id: "Yang mulia" }, { ar: "بَرَرَةٍ", id: "Yang berbakti" }, { ar: "قُتِلَ", id: "Binasalah" }, { ar: "مَا أَكْفَرَهُ", id: "Alangkah amat kafirnya" },
+            { ar: "مِنْ أَيِّ", id: "Dari apakah" }, { ar: "شَيْءٍ", id: "Sesuatu" }, { ar: "خَلَقَهُ", id: "Dia menciptakannya" }, { ar: "نُطْفَةٍ", id: "Setetes mani" },
+            { ar: "فَقَدَّرَهُ", id: "Lalu menentukannya" }, { ar: "السَّبِيلَ", id: "Jalan" }, { ar: "يَسَّرَهُ", id: "Memudahkannya" }, { ar: "أَمَاتَهُ", id: "Mematikannya" },
+            { ar: "فَأَقْبَرَهُ", id: "Lalu memasukkannya ke kubur" }, { ar: "أَنْشَرَهُ", id: "Membangkitkannya" }, { ar: "لَمَّا يَقْضِ", id: "Dia belum melaksanakan" }, { ar: "أَمَرَهُ", id: "Diperintahkan-Nya" },
+            { ar: "فَلْيَنْظُرِ", id: "Maka hendaklah memperhatikan" }, { ar: "طَعَامِهِ", id: "Makanannya" }, { ar: "صَبَبْنَا", id: "Kami mencurahkan" }, { ar: "الْمَاءَ", id: "Air" },
+            { ar: "صَبًّا", id: "Benar-benar tercurah" }, { ar: "شَقَقْنَا", id: "Kami membelah" }, { ar: "الْأَرْضَ", id: "Bumi" }, { ar: "شَقًّا", id: "Benar-benar terbelah" },
+            { ar: "فَأَنْبَتْنَا", id: "Lalu Kami tumbuhkan" }, { ar: "حَبًّا", id: "Biji-bijian" }, { ar: "عِنَبًا", id: "Anggur" }, { ar: "وَقَضْبًا", id: "Dan sayur-sayuran" },
+            { ar: "زَيْتُونًا", id: "Zaitun" }, { ar: "وَنَخْلًا", id: "Dan pohon kurma" }, { ar: "حَدَائِقَ", id: "Kebun-kebun" }, { ar: "غُلْبًا", id: "Yang lebat" },
+            { ar: "وَفَاكِهَةً", id: "Dan buah-buahan" }, { ar: "وَأَبًّا", id: "Dan rerumputan" }, { ar: "مَتَاعًا", id: "Sebagai kesenangan" }, { ar: "لِأَنْعَامِكُمْ", id: "Untuk binatang ternakmu" },
+            { ar: "الصَّاخَّةُ", id: "Suara yang memekakkan" }, { ar: "يَفِرُّ", id: "Lari" }, { ar: "أَخِيهِ", id: "Saudaranya" }, { ar: "أُمِّهِ", id: "Ibunyq" },
+            { ar: "وَأَبِيهِ", id: "Dan bapaknya" }, { ar: "صَاحِبَتِهِ", id: "Istrinya" }, { ar: "وَبَنِيهِ", id: "Dan anak-anaknya" }, { ar: "يُغْنِيهِ", id: "Menyibukkannya" },
+            { ar: "مُسْفِرَةٌ", id: "Berseri-seri" }, { ar: "ضَاحِكَةٌ", id: "Tertawa" }, { ar: "مُسْتَبْشِرَةٌ", id: "Gembira" }, { ar: "غَبَرَةٌ", id: "Debu" },
+            { ar: "تَرْهَقُهَا", id: "Ditutupi" }, { ar: "قَتَرَةٌ", id: "Kegelapan" }, { ar: "الْكَفَرَةُ", id: "Orang-orang kafir" }, { ar: "الْفَجَرَةُ", id: "Yang durhaka" }
+          ]},
+          { surah: "At-Takwir", words: [ 
+            { ar: "إِذَا", id: "Apabila" }, { ar: "الشَّمْسُ", id: "Matahari" }, { ar: "كُوِّرَتْ", id: "Digulung" }, { ar: "النُّجُومُ", id: "Bintang-bintang" }, 
+            { ar: "انْكَدَرَتْ", id: "Berjatuhan" }, { ar: "الْجِبَالُ", id: "Gunung-gunung" }, { ar: "سُيِّرَتْ", id: "Dihancurkan" }, { ar: "الْعِشَارُ", id: "Unta-unta bunting" }, 
+            { ar: "عُطِّلَتْ", id: "Ditinggalkan" }, { ar: "الْوُحُوشُ", id: "Binatang-binatang liar" }, { ar: "حُشِرَتْ", id: "Dikumpulkan" }, { ar: "الْبِحَارُ", id: "Lautan" }, 
+            { ar: "سُجِّرَتْ", id: "Dipanaskan" }, { ar: "النُّفُوسُ", id: "Ruh-ruh" }, { ar: "زُوِّجَتْ", id: "Dipertemukan" }, { ar: "الْمَوْءُودَةُ", id: "Bayi perempuan yang dikubur hidup" }, 
+            { ar: "سُئِلَتْ", id: "Ditanya" }, { ar: "بِأَيِّ", id: "Karena" }, { ar: "ذَنْبٍ", id: "Dosa apa" }, { ar: "قُتِلَتْ", id: "Dia dibunuh" },
+            { ar: "نُشِرَتْ", id: "Dibentangkan" }, { ar: "كُشِطَتْ", id: "Dilenyapkan" }, { ar: "سُعِّرَتْ", id: "Dinyalakan" }, { ar: "أُزْلِفَتْ", id: "Didekatkan" },
+            { ar: "أُقْسِمُ", id: "Aku bersumpah" }, { ar: "بِالْخُنَّسِ", id: "Bintang yang tersembunyi" }, { ar: "الْجَوَارِ", id: "Bintang yang bergerak" }, { ar: "الْكُنَّسِ", id: "Bintang yang terbenam" },
+            { ar: "عَسْعَسَ", id: "Telah gelap" }, { ar: "تَنَفَّسَ", id: "Telah terang" }, { ar: "قَوْلُ", id: "Firman" }, { ar: "رَسُولٍ", id: "Utusan" },
+            { ar: "كَرِيمٍ", id: "Yang mulia" }, { ar: "قُوَّةٍ", id: "Kekuatan" }, { ar: "عِنْدَ", id: "Di sisi" }, { ar: "الْعَرْشِ", id: "Arsy" },
+            { ar: "مَكِينٍ", id: "Yang berkedudukan tinggi" }, { ar: "مُطَاعٍ", id: "Yang ditaati" }, { ar: "أَمِينٍ", id: "Yang dipercaya" }, { ar: "بِمَجْنُونٍ", id: "Orang gila" },
+            { ar: "رَآهُ", id: "Melihatnya" }, { ar: "بِالْأُفُقِ", id: "Di ufuk" }, { ar: "الْمُبِينِ", id: "Yang terang" }, { ar: "بِضَنِينٍ", id: "Orang yang kikir" },
+            { ar: "بِقَوْلِ", id: "Perkataan" }, { ar: "شَيْطَانٍ", id: "Setan" }, { ar: "رَجِيمٍ", id: "Yang terkutuk" }, { ar: "تَذْهَبُونَ", id: "Kamu pergi" }
+          ]},
+          { surah: "Al-Infitar", words: [ 
+            { ar: "إِذَا", id: "Apabila" }, { ar: "السَّمَاءُ", id: "Langit" }, { ar: "انْفَطَرَتْ", id: "Terbelah" }, { ar: "الْكَوَاكِبُ", id: "Bintang-bintang" }, 
+            { ar: "انْتَثَرَتْ", id: "Jatuh berserakan" }, { ar: "الْبحَارُ", id: "Lautan" }, { ar: "فُجِّرَتْ", id: "Dijadikan meluap" }, { ar: "الْقُبُورُ", id: "Kuburan-kuburan" }, 
+            { ar: "بُعْثِرَتْ", id: "Dibongkar" }, { ar: "عَلِمَتْ", id: "Mengetahuilah" }, { ar: "نَفْسٌ", id: "Tiap-tiap jiwa" }, { ar: "قَدَّمَتْ", id: "Telah dikerjakan" }, 
+            { ar: "وَأَخَّرَتْ", id: "Dan ditinggalkan" }, { ar: "يَا أَيُّهَا", id: "Wahai" }, { ar: "الْإِنْسَانُ", id: "Manusia" }, { ar: "مَا", id: "Apakah yang" }, 
+            { ar: "غَرَّكَ", id: "Memperdayakanmu" }, { ar: "بِرَبِّكَ", id: "Terhadap Tuhanmu" }, { ar: "الْكَرِيمِ", id: "Yang Maha Pemurah" }
+          ]},
+          { surah: "Al-Mutaffifin", words: [ 
+            { ar: "وَيْلٌ", id: "Celakalah" }, { ar: "لِلْمُطَفِّفِينَ", id: "Bagi orang yang curang" }, { ar: "الَّذِينَ", id: "Orang-orang yang" }, { ar: "اكْتَالُوا", id: "Menerima takaran" }, 
+            { ar: "عَلَى", id: "Dari" }, { ar: "النَّاسِ", id: "Orang lain" }, { ar: "يَسْتَوْفُونَ", id: "Minta dipenuhi" }, { ar: "وَإِذَا", id: "Dan apabila" }, 
+            { ar: "كَالُوهُمْ", id: "Mereka menakar" }, { ar: "وَزَنُوهُمْ", id: "Menimbang untuk orang" }, { ar: "يُخْسِرُونَ", id: "Mereka mengurangi" }, { ar: "أَلَا", id: "Tidakkah" }, 
+            { ar: "يَظُنُّ", id: "Mengira" }, { ar: "أُولَٰئِكَ", id: "Mereka itu" }, { ar: "مَبْعُوثُونَ", id: "Akan dibangkitkan" }, { ar: "لِيَوْمٍ", id: "Pada hari" }, 
+            { ar: "عَظِيمٍ", id: "Yang besar" },
+            { ar: "كِتَابَ", id: "Kitab/Catatan" }, { ar: "الفُجَّارِ", id: "Orang-orang durhaka" }, { ar: "سِجِّينٍ", id: "Sijjin (Penjara bawah)" }, { ar: "مَرْقُومٌ", id: "Yang tertulis" },
+            { ar: "لِلْمُكَذِّبِينَ", id: "Bagi pendusta" }, { ar: "بِيَوْمِ", id: "Dengan hari" }, { ar: "الدِّينِ", id: "Pembalasan" }, { ar: "مُعْتَدٍ", id: "Yang melampaui batas" },
+            { ar: "أَثِيمٍ", id: "Banyak dosa" }, { ar: "تُتْلَىٰ", id: "Dibacakan" }, { ar: "آيَاتُنَا", id: "Ayat-ayat Kami" }, { ar: "أَسَاطِيرُ", id: "Dongengan" },
+            { ar: "الْأَوَّلِينَ", id: "Orang-orang terdahulu" }, { ar: "رَانَ", id: "Menutupi" }, { ar: "قُلُوبِهِمْ", id: "Hati mereka" }, { ar: "يَكْسِبُونَ", id: "Mereka kerjakan" },
+            { ar: "لَمَحْجُوبُونَ", id: "Benar-benar terhalang" }, { ar: "صَالُو", id: "Masuk" }, { ar: "كُنْتُمْ", id: "Kamu dahulu" }, { ar: "الْأَبْرَارِ", id: "Orang yang berbakti" },
+            { ar: "عِلِّيِّينَ", id: "Illiyyin (Tempat tinggi)" }, { ar: "يَشْهَدُهُ", id: "Disaksikan" }, { ar: "الْمُقَرَّبُونَ", id: "Malaikat yang didekatkan" }, { ar: "الْأَرَائِكِ", id: "Dipan-dipan" },
+            { ar: "يَنْظُرُونَ", id: "Memandang" }, { ar: "تَعْرِفُ", id: "Kamu kenal" }, { ar: "وُجُوهِهِمْ", id: "Wajah mereka" }, { ar: "نَضْرَةَ", id: "Cahaya/Keceriaan" },
+            { ar: "النَّعِيمِ", id: "Kenikmatan" }, { ar: "يُسْقَوْنَ", id: "Diberi minum" }, { ar: "رَحِيقٍ", id: "Minuman murni" }, { ar: "مَخْتُومٍ", id: "Yang dilak" },
+            { ar: "خِتَامُهُ", id: "Laknya" }, { ar: "مِسْكٌ", id: "Kasturi" }, { ar: "فَلْيَتَنَافَسِ", id: "Maka berlomba-lombalah" }, { ar: "الْمُتَنَافِسُونَ", id: "Orang yang berlomba" },
+            { ar: "مِزَاجُهُ", id: "Campurannya" }, { ar: "تَسْنِيمٍ", id: "Mata air Tasnim" }, { ar: "يَشْرَبُ", id: "Minum" }, { ar: "أَجْرَمُوا", id: "Orang yang berdosa" },
+            { ar: "يَضْحَكُونَ", id: "Mentertawakan" }, { ar: "مَرُّوا", id: "Berjalan" }, { ar: "يَتَغَامَزُونَ", id: "Saling mengedipkan mata" }, { ar: "انْقَلَبُوا", id: "Kembali" },
+            { ar: "أَهْلِهِمُ", id: "Keluarga mereka" }, { ar: "فَاكِهِينَ", id: "Bergembira ria" }, { ar: "رَأَوْهُمْ", id: "Melihat mereka" }, { ar: "ضَالُّونَ", id: "Orang yang sesat" },
+            { ar: "حَافِظِينَ", id: "Sebagai pemelihara" }, { ar: "ثُوِّبَ", id: "Diberi balasan" }
+          ]},
+          { surah: "Al-Insyiqaq", words: [ 
+            { ar: "إِذَا", id: "Apabila" }, { ar: "السَّمَاءُ", id: "Langit" }, { ar: "انْشَقَّتْ", id: "Terbelah" }, { ar: "وَأَذِنَتْ", id: "Dan patuh" }, 
+            { ar: "لِرَبِّهَا", id: "Kepada Tuhannya" }, { ar: "وَحُقَّتْ", id: "Dan sudah semestinya" }, { ar: "وَإِذَا", id: "Dan apabila" }, { ar: "الْأَرْضُ", id: "Bumi" }, 
+            { ar: "مُدَّتْ", id: "Diratakan" }, { ar: "وَأَلْقَتْ", id: "Dan memuntahkan" }, { ar: "مَا فِيهَا", id: "Apa yang di dalamnya" }, { ar: "وَتَخَلَّتْ", id: "Dan menjadi kosong" }, 
+            { ar: "يَا أَيُّهَا", id: "Wahai" }, { ar: "الْإِنْسَانُ", id: "Manusia" }, { ar: "إِنَّكَ", id: "Sesungguhnya kamu" }, { ar: "كَادِحٌ", id: "Telah bekerja keras" }, 
+            { ar: "إِلَىٰ", id: "Menuju" }, { ar: "رَبِّكَ", id: "Tuhanmu" }, { ar: "كَدْحًا", id: "Dengan sungguh-sungguh" }, { ar: "فَمُلَاقِيهِ", id: "Maka kamu akan menemui-Nya" }
+          ]},
+          { surah: "Al-Buruj", words: [ 
+            { ar: "وَالسَّمَاءِ", id: "Demi langit" }, { ar: "ذَاتِ", id: "Yang mempunyai" }, { ar: "الْبُرُوجِ", id: "Gugusan bintang" }, { ar: "وَالْيَوْمِ", id: "Dan hari" }, 
+            { ar: "الْمَوْعُودِ", id: "Yang dijanjikan" }, { ar: "وَشَاهِدٍ", id: "Dan yang menyaksikan" }, { ar: "وَمَشْهُودٍ", id: "Dan yang disaksikan" }, { ar: "قُتِلَ", id: "Binasalah" }, 
+            { ar: "أَصْحَابُ", id: "Pembuat" }, { ar: "الْأُخْدُودِ", id: "Parit" }, { ar: "النَّارِ", id: "Api" }, { ar: "ذَاتِ", id: "Yang mempunyai" }, 
+            { ar: "الْوَقُودِ", id: "Kayu bakar" }, { ar: "إِذْ", id: "Ketika" }, { ar: "هُمْ", id: "Mereka" }, { ar: "عَلَيْهَا", id: "Di sekitarnya" }, 
+            { ar: "قُعُودٌ", id: "Duduk" }, { ar: "وَهُمْ", id: "Dan mereka" }, { ar: "شُهُودٌ", id: "Menyaksikan" }
+          ]},
+
+          // --- LEVEL 3: MENENGAH (Surah 86 - 92) ---
+          { surah: "At-Tariq", words: [ 
+            { ar: "وَالسَّمَاءِ", id: "Demi langit" }, { ar: "وَالطَّارِقِ", id: "Dan yang datang malam hari" }, { ar: "وَمَا", id: "Dan tahukah" }, { ar: "أَدْرَاكَ", id: "Kamu" }, 
+            { ar: "مَا", id: "Apakah" }, { ar: "الطَّارِقُ", id: "Yang datang malam hari" }, { ar: "النَّجْمُ", id: "Bintang" }, { ar: "الثَّاقِبُ", id: "Yang cahayanya menembus" }, 
+            { ar: "إِنْ", id: "Tidak ada" }, { ar: "كُلُّ", id: "Setiap" }, { ar: "نَفْسٍ", id: "Jiwa" }, { ar: "لَمَّا", id: "Melainkan" }, 
+            { ar: "عَلَيْهَا", id: "Atasnya" }, { ar: "حَافِظٌ", id: "Ada penjaga" }, { ar: "فَلْيَنْظُرِ", id: "Maka hendaklah memperhatikan" }, { ar: "الْإِنْسَانُ", id: "Manusia" }, 
+            { ar: "مِمَّ", id: "Dari apa" }, { ar: "خُلِقَ", id: "Dia diciptakan" }
+          ]},
+          { surah: "Al-A'la", words: [ 
+            { ar: "سَبِّحِ", id: "Sucikanlah" }, { ar: "اسْمَ", id: "Nama" }, { ar: "رَبِّكَ", id: "Tuhanmu" }, { ar: "الْأَعْلَى", id: "Yang Maha Tinggi" }, 
+            { ar: "الَّذِي", id: "Yang" }, { ar: "خَلَقَ", id: "Menciptakan" }, { ar: "فَسَوَّىٰ", id: "Lalu menyempurnakan" }, { ar: "وَالَّذِي", id: "Dan yang" }, 
+            { ar: "قَدَّرَ", id: "Menentukan ukuran" }, { ar: "فَهَدَىٰ", id: "Lalu memberi petunjuk" }, { ar: "وَالَّذِي", id: "Dan yang" }, { ar: "أَخْرَجَ", id: "Menumbuhkan" }, 
+            { ar: "الْمَرْعَىٰ", id: "Rumput-rumputan" }, { ar: "فَجَعَلَهُ", id: "Lalu menjadikannya" }, { ar: "غُثَاءً", id: "Kering" }, { ar: "أَحْوَىٰ", id: "Kehitam-hitaman" }, 
+            { ar: "سَنُقْرِئُكَ", id: "Kami akan membacakan kepadamu" }, { ar: "فَلَا", id: "Maka janganlah" }, { ar: "تَنْسَىٰ", id: "Kamu lupa" }
+          ]},
+          { surah: "Al-Ghasyiyah", words: [ 
+            { ar: "هَلْ", id: "Sudahkah" }, { ar: "أَتَاكَ", id: "Datang kepadamu" }, { ar: "حَدِيثُ", id: "Berita" }, { ar: "الْغَاشِيَةِ", id: "Hari kiamat" }, 
+            { ar: "وُجُوهٌ", id: "Banyak muka" }, { ar: "يَوْمَئِذٍ", id: "Pada hari itu" }, { ar: "خَاشِعَةٌ", id: "Tunduk terhina" }, { ar: "عَامِلَةٌ", id: "Bekerja keras" }, 
+            { ar: "نَاصِبَةٌ", id: "Kelelahan" }, { ar: "تَصْلَىٰ", id: "Memasuki" }, { ar: "نَارًا", id: "Api" }, { ar: "حَامِيَةً", id: "Yang sangat panas" }, 
+            { ar: "تُسْقَىٰ", id: "Diberi minum" }, { ar: "مِنْ", id: "Dari" }, { ar: "عَيْنٍ", id: "Mata air" }, { ar: "آنِيَةٍ", id: "Yang sangat mendidih" }, 
+            { ar: "لَيْسَ", id: "Tidak ada" }, { ar: "لَهُمْ", id: "Bagi mereka" }, { ar: "طَعَامٌ", id: "Makanan" }, { ar: "إِلَّا", id: "Kecuali" }, { ar: "مِنْ ضَرِيعٍ", id: "Dari pohon berduri" }
+          ]},
+          { surah: "Al-Fajr", words: [ 
+            { ar: "وَالْفَجْرِ", id: "Demi fajar" }, { ar: "وَلَيَالٍ", id: "Dan malam-malam" }, { ar: "عَشْرٍ", id: "Yang sepuluh" }, { ar: "وَالشَّفْعِ", id: "Dan yang genap" }, 
+            { ar: "وَالْوَتْرِ", id: "Dan yang ganjil" }, { ar: "وَاللَّيْلِ", id: "Dan demi malam" }, { ar: "إِذَا", id: "Apabila" }, { ar: "يَسْرِ", id: "Berlalu" }, 
+            { ar: "هَلْ", id: "Adakah" }, { ar: "فِي ذَٰلِكَ", id: "Pada yang demikian itu" }, { ar: "قَسَمٌ", id: "Sumpah" }, { ar: "لِذِي", id: "Bagi orang yang mempunyai" }, 
+            { ar: "حِجْرٍ", id: "Akal" }, { ar: "أَلَمْ تَرَ", id: "Tidakkah kamu perhatikan" }, { ar: "كَيْفَ", id: "Bagaimana" }, { ar: "فَعَلَ", id: "Berbuat" }, 
+            { ar: "رَبُّكَ", id: "Tuhanmu" }, { ar: "بِعَادٍ", id: "Terhadap kaum 'Aad" }, { ar: "إِرَمَ", id: "Penduduk Iram" }, { ar: "ذَاتِ", id: "Yang mempunyai" }, { ar: "الْعِمَادِ", id: "Bangunan yang tinggi" },
+            { ar: "جَابُوا", id: "Memotong" }, { ar: "الصَّخْرَ", id: "Batu besar" }, { ar: "بِالْوَادِ", id: "Di lembah" }, { ar: "فِرْعَوْنَ", id: "Fir'aun" },
+            { ar: "ذِي الْأَوْتَادِ", id: "Mempunyai pasak-pasak" }, { ar: "طَغَوْا", id: "Berbuat sewenang-wenang" }, { ar: "الْبِلَادِ", id: "Negeri-negeri" }, { ar: "فَأَكْثَرُوا", id: "Lalu mereka banyak berbuat" },
+            { ar: "الْفَسَادَ", id: "Kerusakan" }, { ar: "فَصَبَّ", id: "Maka menimpakan" }, { ar: "سَوْطَ", id: "Cemeti / Cambuk" }, { ar: "عَذَابٍ", id: "Azab" },
+            { ar: "لَبِالْمِرْصَادِ", id: "Benar-benar mengawasi" }, { ar: "ابْتَلَاهُ", id: "Mengujinya" }, { ar: "فَأَكْرَمَهُ", id: "Lalu memuliakannya" }, { ar: "وَنَعَّمَهُ", id: "Dan memberinya nikmat" },
+            { ar: "أَكْرَمَنِ", id: "Telah memuliakanku" }, { ar: "فَقَدَرَ", id: "Lalu membatasi" }, { ar: "رِزْقَهُ", id: "Rezekinya" }, { ar: "أَهَانَنِ", id: "Telah menghinaku" },
+            { ar: "لَا تُكْرِمُونَ", id: "Kamu tidak memuliakan" }, { ar: "الْيَتِيمَ", id: "Anak yatim" }, { ar: "تَحَاضُّونَ", id: "Saling mengajak" }, { ar: "طَعَامِ", id: "Memberi makan" },
+            { ar: "الْمِسْكِينِ", id: "Orang miskin" }, { ar: "تَأْكُلُونَ", id: "Kamu memakan" }, { ar: "التُّرَاثَ", id: "Harta warisan" }, { ar: "أَكْلًا", id: "Dengan cara makan" },
+            { ar: "لَمًّا", id: "Mencampuradukkan" }, { ar: "تُحِبُّونَ", id: "Kamu mencintai" }, { ar: "الْمَالَ", id: "Harta" }, { ar: "حُبًّا", id: "Kecintaan" },
+            { ar: "جَمًّا", id: "Yang berlebihan" }, { ar: "دُكَّتِ", id: "Dihancurkan" }, { ar: "دَكًّا", id: "Berturut-turut" }, { ar: "وَجَاءَ", id: "Dan datanglah" },
+            { ar: "صَفًّا", id: "Bersaf-saf" }, { ar: "وَجِيءَ", id: "Dan didatangkan" }, { ar: "يَتَذَكَّرُ", id: "Sadar/Ingat" }, { ar: "أَنَّىٰ", id: "Bagaimana (berguna)" },
+            { ar: "الذِّكْرَىٰ", id: "Kesadaran" }, { ar: "قَدَّمْتُ", id: "Aku berbuat (kebaikan)" }, { ar: "لِحَيَاتِي", id: "Untuk hidupku" }, { ar: "يُعَذِّبُ", id: "Mengazab" },
+            { ar: "يُوثِقُ", id: "Mengikat" }, { ar: "وَثَاقَهُ", id: "Ikatan-Nya" }, { ar: "الْمُطْمَئِنَّةُ", id: "Yang tenang" }, { ar: "ارْجِعِي", id: "Kembalilah" },
+            { ar: "رَاضِيَةً", id: "Dengan rida" }, { ar: "مَرْضِيَّةً", id: "Lagi diridai" }, { ar: "فَادْخُلِي", id: "Maka masuklah" }, { ar: "عِبَادِي", id: "Hamba-hamba-Ku" },
+            { ar: "جَنَّتِي", id: "Surga-Ku" }
+          ]},
+          { surah: "Al-Balad", words: [ 
+            { ar: "لَا أُقْسِمُ", id: "Aku benar-benar bersumpah" }, { ar: "بِهَٰذَا", id: "Dengan ini" }, { ar: "الْبَلَدِ", id: "Kota (Mekah)" }, { ar: "وَأَنْتَ", id: "Dan kamu" }, 
+            { ar: "حِلٌّ", id: "Bertempat tinggal" }, { ar: "وَوَالِدٍ", id: "Dan demi bapak" }, { ar: "وَمَا", id: "Dan apa yang" }, { ar: "وَلَدَ", id: "Dilahirkannya" }, 
+            { ar: "لَقَدْ", id: "Sesungguhnya" }, { ar: "خَلَقْنَا", id: "Kami telah menciptakan" }, { ar: "الْإِنْسَانَ", id: "Manusia" }, { ar: "فِي كَبَدٍ", id: "Dalam susah payah" }, 
+            { ar: "أَيَحْسَبُ", id: "Apakah dia mengira" }, { ar: "أَنْ", id: "Bahwa" }, { ar: "لَنْ يَقْدِرَ", id: "Tidak akan ada yang berkuasa" }, { ar: "عَلَيْهِ", id: "Atasnya" }, 
+            { ar: "أَحَدٌ", id: "Seorangpun" }, { ar: "يَقُولُ", id: "Dia mengatakan" }, { ar: "أَهْلَكْتُ", id: "Aku telah menghabiskan" }, { ar: "مَالًا", id: "Harta" }
+          ]},
+          { surah: "Asy-Syams", words: [ 
+            { ar: "وَالشَّمْسِ", id: "Demi matahari" }, { ar: "وَضُحَاهَا", id: "Dan sinarnya pada pagi hari" }, { ar: "وَالْقَمَرِ", id: "Dan bulan" }, { ar: "إِذَا", id: "Apabila" }, 
+            { ar: "تَلَاهَا", id: "Mengiringinya" }, { ar: "وَالنَّهَارِ", id: "Dan siang" }, { ar: "جَلَّاهَا", id: "Menampakkannya" }, { ar: "وَاللَّيْلِ", id: "Dan malam" }, 
+            { ar: "يَغْشَاهَا", id: "Menutupinya" }, { ar: "وَالسَّمَاءِ", id: "Dan langit" }, { ar: "وَمَا", id: "Serta apa yang" }, { ar: "بَنَاهَا", id: "Membangunnya" }, 
+            { ar: "وَالْأَرْضِ", id: "Dan bumi" }, { ar: "طَحَاهَا", id: "Menghamparnya" }, { ar: "وَنَفْسٍ", id: "Dan jiwa" }, { ar: "سَوَّاهَا", id: "Menyempurnakannya" }, 
+            { ar: "فَأَلْهَمَهَا", id: "Maka Dia mengilhamkan kepadanya" }, { ar: "فُجُورَهَا", id: "Kefasikannya" }, { ar: "وَتَقْوَاهَا", id: "Dan ketakwaannya" }
+          ]},
+          { surah: "Al-Lail", words: [ 
+            { ar: "وَاللَّيْلِ", id: "Demi malam" }, { ar: "إِذَا", id: "Apabila" }, { ar: "يَغْشَىٰ", id: "Menutupi" }, { ar: "وَالنَّهَارِ", id: "Dan siang" }, 
+            { ar: "تَجَلَّىٰ", id: "Terang benderang" }, { ar: "وَمَا", id: "Dan demi penciptaan" }, { ar: "خَلَقَ", id: "Yang Dia ciptakan" }, { ar: "الذَّكَرَ", id: "Laki-laki" }, 
+            { ar: "وَالْأُنْثَىٰ", id: "Dan perempuan" }, { ar: "إِنَّ", id: "Sesungguhnya" }, { ar: "سَعْيَكُمْ", id: "Usahamu" }, { ar: "لَشَتَّىٰ", id: "Benar-benar berbeda" }, 
+            { ar: "فَأَمَّا", id: "Maka adapun" }, { ar: "مَنْ", id: "Orang yang" }, { ar: "أَعْطَىٰ", id: "Memberikan" }, { ar: "وَاتَّقَىٰ", id: "Dan bertakwa" }, 
+            { ar: "وَصَدَّقَ", id: "Dan membenarkan" }, { ar: "بِالْحُسْنَىٰ", id: "Dengan kebaikan" }, { ar: "فَسَنُيَسِّرُهُ", id: "Maka kelak Kami siapkan" }, { ar: "لِلْيُسْرَىٰ", id: "Jalan yang mudah" }
+          ]},
+
+          // --- LEVEL 2: DASAR (Surah 93 - 104) ---
+          { surah: "Ad-Duha", words: [ 
+            { ar: "وَالضُّحَىٰ", id: "Demi waktu dhuha" }, { ar: "وَاللَّيْلِ", id: "Dan demi malam" }, { ar: "إِذَا", id: "Apabila" }, { ar: "سَجَىٰ", id: "Telah sunyi" }, 
+            { ar: "مَا", id: "Tidaklah" }, { ar: "وَدَّعَكَ", id: "Meninggalkanmu" }, { ar: "رَبُّكَ", id: "Tuhanmu" }, { ar: "وَمَا قَلَىٰ", id: "Dan tidak benci" }, 
+            { ar: "وَلَلْآخِرَةُ", id: "Dan sungguh akhirat itu" }, { ar: "خَيْرٌ", id: "Lebih baik" }, { ar: "لَكَ", id: "Bagimu" }, { ar: "مِنَ الْأُولَىٰ", id: "Dari permulaan (dunia)" }, 
+            { ar: "وَلَسَوْفَ", id: "Dan kelak sungguh" }, { ar: "يُعْطِيكَ", id: "Akan memberikan kepadamu" }, { ar: "فَتَرْضَىٰ", id: "Maka kamu menjadi puas" }, { ar: "أَلَمْ يَجِدْكَ", id: "Bukankah Dia mendapatimu" }, 
+            { ar: "يَتِيمًا", id: "Sebagai yatim" }, { ar: "فَآوَىٰ", id: "Lalu Dia melindungi" }, { ar: "وَوَجَدَكَ", id: "Dan Dia mendapatimu" }, { ar: "ضَالًّا", id: "Bingung" }, { ar: "فَهَدَىٰ", id: "Lalu Dia memberi petunjuk" }
+          ]},
+          { surah: "Al-Insyirah", words: [ 
+            { ar: "أَلَمْ", id: "Bukankah" }, { ar: "نَشْرَحْ", id: "Kami telah melapangkan" }, { ar: "لَكَ", id: "Untukmu" }, { ar: "صَدْرَكَ", id: "Dadamu" }, 
+            { ar: "وَوَضَعْنَا", id: "Dan Kami telah menurunkan" }, { ar: "عَنْكَ", id: "Darimu" }, { ar: "وِزْرَكَ", id: "Bebanmu" }, { ar: "الَّذِي", id: "Yang" }, 
+            { ar: "أَنْقَضَ", id: "Memberatkan" }, { ar: "ظَهْرَكَ", id: "Punggungmu" }, { ar: "وَرَفَعْنَا", id: "Dan Kami tinggikan" }, { ar: "ذِكْرَكَ", id: "Sebutan (nama)mu" }, 
+            { ar: "فَإِنَّ", id: "Maka sesungguhnya" }, { ar: "مَعَ", id: "Bersama" }, { ar: "الْعُسْرِ", id: "Kesulitan" }, { ar: "يُسْرًا", id: "Ada kemudahan" }, 
+            { ar: "فَإِذَا", id: "Maka apabila" }, { ar: "فَرَغْتَ", id: "Kamu telah selesai" }, { ar: "فَانْصَبْ", id: "Kerjakanlah dengan sungguh" }, { ar: "وَإِلَىٰ", id: "Dan kepada" }, { ar: "فَارْغَبْ", id: "Berharaplah" }
+          ]},
+          { surah: "At-Tin", words: [ 
+            { ar: "وَالتِّينِ", id: "Demi buah Tin" }, { ar: "وَالزَّيْتُونِ", id: "Dan buah Zaitun" }, { ar: "وَطُورِ", id: "Dan gunung" }, { ar: "سِينِينَ", id: "Sinai" }, 
+            { ar: "وَهَٰذَا", id: "Dan demi ini" }, { ar: "الْبَلَدِ", id: "Kota (Mekah)" }, { ar: "الْأَمِينِ", id: "Yang aman" }, { ar: "لَقَدْ", id: "Sesungguhnya" }, 
+            { ar: "خَلَقْنَا", id: "Kami telah menciptakan" }, { ar: "الْإِنْسَانَ", id: "Manusia" }, { ar: "فِي أَحْسَنِ", id: "Dalam sebaik-baik" }, { ar: "تَقْوِيمٍ", id: "Bentuk" }, 
+            { ar: "ثُمَّ", id: "Kemudian" }, { ar: "رَدَدْنَاهُ", id: "Kami kembalikan dia" }, { ar: "أَسْفَلَ", id: "Serendah-rendah" }, { ar: "سَافِلِينَ", id: "Orang yang hina" }, 
+            { ar: "إِلَّا", id: "Kecuali" }, { ar: "آمَنُوا", id: "Mereka beriman" }, { ar: "الصَّالِحَاتِ", id: "Amal saleh" }, { ar: "أَجْرٌ", id: "Pahala" }
+          ]},
+          { surah: "Al-'Alaq", words: [ 
+            { ar: "اقْرَأْ", id: "Bacalah" }, { ar: "بِاسْمِ", id: "Dengan menyebut nama" }, { ar: "رَبِّكَ", id: "Tuhanmu" }, { ar: "الَّذِي", id: "Yang" }, 
+            { ar: "خَلَقَ", id: "Menciptakan" }, { ar: "الْإِنْسَانَ", id: "Manusia" }, { ar: "مِنْ", id: "Dari" }, { ar: "عَلَقٍ", id: "Segumpal darah" }, 
+            { ar: "الْأَكْرَمُ", id: "Maha Mulia" }, { ar: "عَلَّمَ", id: "Telah mengajar" }, { ar: "بِالْقَلَمِ", id: "Dengan pena" }, { ar: "مَا لَمْ", id: "Apa yang tidak" }, 
+            { ar: "يَعْلَمْ", id: "Dia ketahui" }, { ar: "كَلَّا", id: "Ketahuilah" }, { ar: "إِنَّ", id: "Sesungguhnya" }, { ar: "لَيَطْغَىٰ", id: "Benar-benar melampaui batas" }, 
+            { ar: "أَنْ رَآهُ", id: "Karena dia melihat dirinya" }, { ar: "اسْتَغْنَىٰ", id: "Serba cukup" }, { ar: "الرُّجْعَىٰ", id: "Tempat kembali" }
+          ]},
+          { surah: "Al-Qadr", words: [ 
+            { ar: "إِنَّا", id: "Sesungguhnya Kami" }, { ar: "أَنْزَلْنَاهُ", id: "Telah menurunkannya" }, { ar: "فِي", id: "Pada" }, { ar: "لَيْلَةِ", id: "Malam" }, 
+            { ar: "الْقَدْرِ", id: "Kemuliaan" }, { ar: "وَمَا", id: "Dan tahukah" }, { ar: "أَدْرَاكَ", id: "Kamu" }, { ar: "خَيْرٌ", id: "Lebih baik" }, 
+            { ar: "مِنْ", id: "Dari" }, { ar: "أَلْفِ", id: "Seribu" }, { ar: "شَهْرٍ", id: "Bulan" }, { ar: "تَنَزَّلُ", id: "Turun" }, 
+            { ar: "الْمَلَائِكَةُ", id: "Malaikat-malaikat" }, { ar: "وَالرُّوحُ", id: "Dan Jibril" }, { ar: "بِإِذْنِ", id: "Dengan izin" }, { ar: "كُلِّ", id: "Segala" }, 
+            { ar: "أَمْرٍ", id: "Urusan" }, { ar: "سَلَامٌ", id: "Sejahteralah" }, { ar: "حَتَّىٰ", id: "Sampai" }, { ar: "مَطْلَعِ", id: "Terbit" }, { ar: "الْفَجْرِ", id: "Fajar" }
+          ]},
+          { surah: "Al-Bayyinah", words: [ 
+            { ar: "لَمْ", id: "Tidaklah" }, { ar: "يَكُنِ", id: "Ada" }, { ar: "الَّذِينَ", id: "Orang-orang yang" }, { ar: "كَفَرُوا", id: "Kafir" }, 
+            { ar: "مِنْ", id: "Dari" }, { ar: "أَهْلِ", id: "Ahli" }, { ar: "الْكِتَابِ", id: "Kitab" }, { ar: "وَالْمُشْرِكِينَ", id: "Dan orang musyrik" }, 
+            { ar: "مُنْفَكِّينَ", id: "Meninggalkan (agamanya)" }, { ar: "حَتَّىٰ", id: "Sehingga" }, { ar: "تَأْتِيَهُمُ", id: "Datang kepada mereka" }, { ar: "الْبَيِّنَةُ", id: "Bukti nyata" }, 
+            { ar: "رَسُولٌ", id: "Utusan" }, { ar: "يَتْلُو", id: "Membacakan" }, { ar: "صُحُفًا", id: "Lembaran-lembaran" }, { ar: "مُطَهَّرَةً", id: "Yang disucikan" }, 
+            { ar: "فِيهَا", id: "Di dalamnya" }, { ar: "كُتُبٌ", id: "Kitab-kitab" }, { ar: "قَيِّمَةٌ", id: "Yang lurus" }
+          ]},
+          { surah: "Az-Zalzalah", words: [ 
+            { ar: "إِذَا", id: "Apabila" }, { ar: "زُلْزِلَتِ", id: "Digoncangkan" }, { ar: "الْأَرْضُ", id: "Bumi" }, { ar: "زِلْزَالَهَا", id: "Dengan goncangannya" }, 
+            { ar: "وَأَخْرَجَتِ", id: "Dan mengeluarkan" }, { ar: "أَثْقَالَهَا", id: "Beban-beban beratnya" }, { ar: "وَقَالَ", id: "Dan berkata" }, { ar: "الْإِنْسَانُ", id: "Manusia" }, 
+            { ar: "مَا لَهَا", id: "Apa yang terjadi dengannya" }, { ar: "يَوْمَئِذٍ", id: "Pada hari itu" }, { ar: "تُحَدِّثُ", id: "Menceritakan" }, { ar: "أَخْبَارَهَا", id: "Beritanya" }, 
+            { ar: "بِأَنَّ", id: "Karena sesungguhnya" }, { ar: "رَبَّكَ", id: "Tuhanmu" }, { ar: "أَوْحَىٰ", id: "Telah memerintahkan" }, { ar: "لَهَا", id: "Kepadanya" }, 
+            { ar: "يَصْدُرُ", id: "Keluar" }, { ar: "النَّاسُ", id: "Manusia" }, { ar: "أَشْتَاتًا", id: "Berkelompok-kelompok" }, { ar: "لِيُرَوْا", id: "Untuk diperlihatkan" }, { ar: "أَعْمَالَهُمْ", id: "Balasan amal mereka" }
+          ]},
+          { surah: "Al-'Adiyat", words: [ 
+            { ar: "وَالْعَادِيَاتِ", id: "Demi kuda perang" }, { ar: "ضَبْحًا", id: "Terengah-engah" }, { ar: "فَالْمُورِيَاتِ", id: "Dan kuda yang mencetuskan" }, { ar: "قَدْحًا", id: "Api" }, 
+            { ar: "فَالْمُغِيرَاتِ", id: "Dan kuda yang menyerang" }, { ar: "صُبْحًا", id: "Waktu pagi" }, { ar: "فَأَثَرْنَ", id: "Maka menerbangkan" }, { ar: "بِهِ", id: "Dengannya" }, 
+            { ar: "نَقْعًا", id: "Debu" }, { ar: "فَوَسَطْنَ", id: "Lalu menyerbu ke tengah" }, { ar: "جَمْعًا", id: "Kumpulan musuh" }, { ar: "إِنَّ", id: "Sesungguhnya" }, 
+            { ar: "الْإِنْسَانَ", id: "Manusia" }, { ar: "لِرَبِّهِ", id: "Kepada Tuhannya" }, { ar: "لَكَنُودٌ", id: "Sangat ingkar" }, { ar: "وَإِنَّهُ", id: "Dan sesungguhnya dia" }, 
+            { ar: "شَهِيدٌ", id: "Menyaksikan" }, { ar: "لِحُبِّ", id: "Karena cintanya" }, { ar: "الْخَيْرِ", id: "Pada harta" }, { ar: "لَشَدِيدٌ", id: "Sangat berlebihan" }
+          ]},
+          { surah: "Al-Qari'ah", words: [ 
+            { ar: "الْقَارِعَةُ", id: "Hari Kiamat" }, { ar: "مَا", id: "Apakah" }, { ar: "وَمَا", id: "Dan tahukah" }, { ar: "أَدْرَاكَ", id: "Kamu" }, 
+            { ar: "يَوْمَ", id: "Pada hari" }, { ar: "يَكُونُ", id: "Menjadi" }, { ar: "النَّاسُ", id: "Manusia" }, { ar: "كَالْفَرَاشِ", id: "Seperti laron" }, 
+            { ar: "الْمَبْثُوثِ", id: "Yang bertebaran" }, { ar: "وَتَكُونُ", id: "Dan menjadi" }, { ar: "الْجِبَالُ", id: "Gunung-gunung" }, { ar: "كَالْعِهْنِ", id: "Seperti bulu" }, 
+            { ar: "الْمَنْفُوشِ", id: "Yang dihambur-hamburkan" }, { ar: "فَأَمَّا", id: "Maka adapun" }, { ar: "مَنْ", id: "Orang yang" }, { ar: "ثَقُلَتْ", id: "Berat" }, 
+            { ar: "مَوَازِينُهُ", id: "Timbangan (kebaikannya)" }, { ar: "فَهُوَ", id: "Maka dia" }, { ar: "عِيشَةٍ", id: "Kehidupan" }, { ar: "رَاضِيَةٍ", id: "Yang memuaskan" }, { ar: "خَفَّتْ", id: "Ringan" }
+          ]},
+          { surah: "At-Takatsur", words: [ 
+            { ar: "أَلْهَاكُمُ", id: "Telah melalaikan kamu" }, { ar: "التَّكَاثُرُ", id: "Bermegah-megahan" }, { ar: "حَتَّىٰ", id: "Sampai" }, { ar: "زُرْتُمُ", id: "Kamu masuk" }, 
+            { ar: "الْمَقَابِرَ", id: "Ke dalam kubur" }, { ar: "كَلَّا", id: "Janganlah begitu" }, { ar: "سَوْفَ", id: "Kelak" }, { ar: "تَعْلَمُونَ", id: "Kamu akan mengetahui" }, 
+            { ar: "ثُمَّ", id: "Kemudian" }, { ar: "لَوْ", id: "Seandainya" }, { ar: "عِلْمَ", id: "Dengan ilmu" }, { ar: "الْيَقِينِ", id: "Yang yakin" }, 
+            { ar: "لَتَرَوُنَّ", id: "Niscaya kamu akan melihat" }, { ar: "الْجَحِيمَ", id: "Neraka Jahim" }, { ar: "عَيْنَ", id: "Dengan mata" }, { ar: "لَتُسْأَلُنَّ", id: "Sungguh kamu akan ditanya" }, 
+            { ar: "يَوْمَئِذٍ", id: "Pada hari itu" }, { ar: "عَنِ النَّعِيمِ", id: "Tentang kenikmatan" }
+          ]},
+          { surah: "Al-'Ashr", words: [ 
+            { ar: "وَالْعَصْرِ", id: "Demi masa" }, { ar: "إِنَّ", id: "Sesungguhnya" }, { ar: "الْإِنْسَانَ", id: "Manusia" }, { ar: "لَفِي", id: "Benar-benar dalam" }, 
+            { ar: "خُسْرٍ", id: "Kerugian" }, { ar: "إِلَّا", id: "Kecuali" }, { ar: "الَّذِينَ", id: "Orang-orang yang" }, { ar: "آمَنُوا", id: "Beriman" }, 
+            { ar: "وَعَمِلُوا", id: "Dan mengerjakan" }, { ar: "الصَّالِحَاتِ", id: "Amal saleh" }, { ar: "وَتَوَاصَوْا", id: "Dan saling menasihati" }, { ar: "بِالْحَقِّ", id: "Untuk kebenaran" }, 
+            { ar: "بِالصَّبْرِ", id: "Untuk kesabaran" }
+          ]},
+          { surah: "Al-Humazah", words: [ 
+            { ar: "وَيْلٌ", id: "Celakalah" }, { ar: "لِكُلِّ", id: "Bagi setiap" }, { ar: "هُمَزَةٍ", id: "Pengumpat" }, { ar: "لُمَزَةٍ", id: "Pencela" }, 
+            { ar: "الَّذِي", id: "Yang" }, { ar: "جَمَعَ", id: "Mengumpulkan" }, { ar: "مَالًا", id: "Harta" }, { ar: "وَعَدَّدَهُ", id: "Dan menghitung-hitungnya" }, 
+            { ar: "يَحْسَبُ", id: "Dia mengira" }, { ar: "أَنَّ", id: "Bahwa" }, { ar: "أَخْلَدَهُ", id: "Mengekalkannya" }, { ar: "كَلَّا", id: "Sekali-kali tidak" }, 
+            { ar: "لَيُنْبَذَنَّ", id: "Pasti dia akan dilemparkan" }, { ar: "فِي", id: "Ke dalam" }, { ar: "الْحُطَمَةِ", id: "Huthamah" }, { ar: "وَمَا", id: "Dan tahukah" }, 
+            { ar: "نَارُ", id: "Api" }, { ar: "اللَّهِ", id: "Allah" }, { ar: "الْمُوقَدَةُ", id: "Yang dinyalakan" }
+          ]},
+
+          // --- LEVEL 1: PEMULA (Surah 105 - 114) ---
+          { surah: "Al-Fiil", words: [ 
+            { ar: "أَلَمْ", id: "Tidakkah" }, { ar: "تَرَ", id: "Kamu perhatikan" }, { ar: "كَيْفَ", id: "Bagaimana" }, { ar: "فَعَلَ", id: "Berbuat" }, 
+            { ar: "رَبُّكَ", id: "Tuhanmu" }, { ar: "بِأَصْحَابِ", id: "Terhadap pasukan" }, { ar: "الْفِيلِ", id: "Bergajah" }, { ar: "يَجْعَلْ", id: "Menjadikan" }, 
+            { ar: "كَيْدَهُمْ", id: "Tipu daya mereka" }, { ar: "فِي", id: "Dalam" }, { ar: "تَضْلِيلٍ", id: "Kesesatan" }, { ar: "وَأَرْسَلَ", id: "Dan Dia mengirim" }, 
+            { ar: "عَلَيْهِمْ", id: "Atas mereka" }, { ar: "طَيْرًا", id: "Burung" }, { ar: "أَبَابِيلَ", id: "Berbondong-bondong" }, { ar: "تَرْمِيهِمْ", id: "Melempari mereka" }, 
+            { ar: "بِحِجَارَةٍ", id: "Dengan batu" }, { ar: "مِنْ", id: "Dari" }, { ar: "سِجِّيلٍ", id: "Tanah yang terbakar" }, { ar: "فَجَعَلَهُمْ", id: "Lalu Dia menjadikan mereka" }, 
+            { ar: "كَعَصْفٍ", id: "Seperti daun" }, { ar: "مَأْكُولٍ", id: "Yang dimakan" }
+          ]},
+          { surah: "Quraisy", words: [ 
+            { ar: "لِإِيلَافِ", id: "Karena kebiasaan" }, { ar: "قُرَيْشٍ", id: "Suku Quraisy" }, { ar: "إِيلَافِهِمْ", id: "Yaitu kebiasaan mereka" }, { ar: "رِحْلَةَ", id: "Bepergian" }, 
+            { ar: "الشِّتَاءِ", id: "Musim dingin" }, { ar: "وَالصَّيْفِ", id: "Dan musim panas" }, { ar: "فَلْيَعْبُدُوا", id: "Maka hendaklah mereka menyembah" }, { ar: "رَبَّ", id: "Tuhan" }, 
+            { ar: "هَٰذَا", id: "Ini" }, { ar: "الْبَيْتِ", id: "Rumah (Ka'bah)" }, { ar: "الَّذِي", id: "Yang" }, { ar: "أَطْعَمَهُمْ", id: "Telah memberi mereka makanan" }, 
+            { ar: "مِنْ", id: "Dari" }, { ar: "جُوعٍ", id: "Rasa lapar" }, { ar: "وَآمَنَهُمْ", id: "Dan mengamankan mereka" }, { ar: "خَوْفٍ", id: "Ketakutan" }
+          ]},
+          { surah: "Al-Ma'un", words: [ 
+            { ar: "أَرَأَيْتَ", id: "Tahukah kamu" }, { ar: "الَّذِي", id: "Orang yang" }, { ar: "يُكَذِّبُ", id: "Mendustakan" }, { ar: "بِالدِّينِ", id: "Agama" }, 
+            { ar: "فَذَٰلِكَ", id: "Maka itulah" }, { ar: "يَدُعُّ", id: "Menghardik" }, { ar: "الْيَتِيمَ", id: "Anak yatim" }, { ar: "وَلَا يَحُضُّ", id: "Dan tidak mendorong" }, 
+            { ar: "عَلَىٰ", id: "Atas" }, { ar: "طَعَامِ", id: "Makanan" }, { ar: "الْمِسْكِينِ", id: "Orang miskin" }, { ar: "فَوَيْلٌ", id: "Maka celakalah" }, 
+            { ar: "لِلْمُصَلِّينَ", id: "Orang-orang yang shalat" }, { ar: "الَّذِينَ هُمْ", id: "Yaitu orang-orang yang" }, { ar: "عَنْ", id: "Dari" }, { ar: "صَلَاتِهِمْ", id: "Shalat mereka" }, 
+            { ar: "سَاهُونَ", id: "Lalai" }, { ar: "يُرَاءُونَ", id: "Berbuat riya (pamer)" }, { ar: "وَيَمْنَعُونَ", id: "Dan enggan menolong" }, { ar: "الْمَاعُونَ", id: "Dengan barang berguna" }
+          ]},
+          { surah: "Al-Kautsar", words: [ 
+            { ar: "إِنَّا", id: "Sesungguhnya Kami" }, { ar: "أَعْطَيْنَاكَ", id: "Telah memberikan kepadamu" }, { ar: "الْكَوْثَرَ", id: "Nikmat yang banyak" }, { ar: "فَصَلِّ", id: "Maka dirikanlah shalat" }, 
+            { ar: "لِرَبِّكَ", id: "Karena Tuhanmu" }, { ar: "وَانْحَرْ", id: "Dan berkurbanlah" }, { ar: "إِنَّ", id: "Sesungguhnya" }, { ar: "شَانِئَكَ", id: "Orang yang membencimu" }, 
+            { ar: "هُوَ", id: "Dialah" }, { ar: "الْأَبْتَرُ", id: "Yang terputus" }
+          ]},
+          { surah: "Al-Kafirun", words: [ 
+            { ar: "قُلْ", id: "Katakanlah" }, { ar: "يَا أَيُّهَا", id: "Wahai" }, { ar: "الْكَافِرُونَ", id: "Orang-orang kafir" }, { ar: "لَا أَعْبُدُ", id: "Aku tidak menyembah" }, 
+            { ar: "مَا", id: "Apa yang" }, { ar: "تَعْبُدُونَ", id: "Kamu sembah" }, { ar: "وَلَا أَنْتُمْ", id: "Dan kamu bukan" }, { ar: "عَابِدُونَ", id: "Penyembah" }, 
+            { ar: "وَلَا أَنَا", id: "Dan aku tidak pernah menjadi" }, { ar: "عَبَدْتُمْ", id: "Kamu sembah" }, { ar: "لَكُمْ", id: "Untukmu" }, { ar: "دِينُكُمْ", id: "Agamamu" }, 
+            { ar: "وَلِيَ", id: "Dan untukku" }, { ar: "دِينِ", id: "Agamaku" }
+          ]},
+          { surah: "An-Nasr", words: [ 
+            { ar: "إِذَا", id: "Apabila" }, { ar: "جَاءَ", id: "Telah datang" }, { ar: "نَصْرُ", id: "Pertolongan" }, { ar: "اللَّهِ", id: "Allah" }, 
+            { ar: "وَالْفَتْحُ", id: "Dan kemenangan" }, { ar: "وَرَأَيْتَ", id: "Dan kamu lihat" }, { ar: "النَّاسَ", id: "Manusia" }, { ar: "يَدْخُلُونَ", id: "Masuk" }, 
+            { ar: "فِي", id: "Dalam" }, { ar: "دِينِ", id: "Agama" }, { ar: "أَفْوَاجًا", id: "Berbondong-bondong" }, { ar: "فَسَبِّحْ", id: "Maka bertasbihlah" }, 
+            { ar: "بِحَمْدِ", id: "Dengan memuji" }, { ar: "رَبِّكَ", id: "Tuhanmu" }, { ar: "وَاسْتَغْفِرْهُ", id: "Dan mohon ampunlah kepada-Nya" }, { ar: "إِنَّهُ", id: "Sesungguhnya Dia" }, 
+            { ar: "كَانَ", id: "Adalah" }, { ar: "تَوَّابًا", id: "Maha Penerima taubat" }
+          ]},
+          { surah: "Al-Lahab", words: [ 
+            { ar: "تَبَّتْ", id: "Binasalah" }, { ar: "يَدَا", id: "Kedua tangan" }, { ar: "أَبِي لَهَبٍ", id: "Abu Lahab" }, { ar: "وَتَبَّ", id: "Dan benar-benar binasa" }, 
+            { ar: "مَا", id: "Tidaklah" }, { ar: "أَغْنَىٰ", id: "Berguna" }, { ar: "عَنْهُ", id: "Baginya" }, { ar: "مَالُهُ", id: "Hartanya" }, 
+            { ar: "وَمَا كَسَبَ", id: "Dan apa yang diusahakannya" }, { ar: "سَيَصْلَىٰ", id: "Kelak dia akan masuk" }, { ar: "نَارًا", id: "Ke dalam api" }, { ar: "ذَاتَ", id: "Yang mempunyai" }, 
+            { ar: "لَهَبٍ", id: "Gejolak" }, { ar: "وَامْرَأَتُهُ", id: "Dan (begitu pula) istrinya" }, { ar: "حَمَّالَةَ", id: "Pembawa" }, { ar: "الْحَطَبِ", id: "Kayu bakar" }, 
+            { ar: "فِي", id: "Di" }, { ar: "جِيدِهَا", id: "Lehernya" }, { ar: "حَبْلٌ", id: "Tali" }, { ar: "مِنْ مَسَدٍ", id: "Dari sabut" }
+          ]},
+          { surah: "Al-Ikhlas", words: [ 
+            { ar: "قُلْ", id: "Katakanlah" }, { ar: "هُوَ", id: "Dialah" }, { ar: "اللَّهُ", id: "Allah" }, { ar: "أَحَدٌ", id: "Yang Maha Esa" }, 
+            { ar: "الصَّمَدُ", id: "Tempat meminta" }, { ar: "لَمْ", id: "Tidak" }, { ar: "يَلِدْ", id: "Beranak" }, { ar: "وَلَمْ", id: "Dan tidak" }, 
+            { ar: "يُولَدْ", id: "Diperanakkan" }, { ar: "يَكُنْ", id: "Ada" }, { ar: "لَهُ", id: "Bagi-Nya" }, { ar: "كُفُوًا", id: "Setara" }
+          ]},
+          { surah: "Al-Falaq", words: [ 
+            { ar: "قُلْ", id: "Katakanlah" }, { ar: "أَعُوذُ", id: "Aku berlindung" }, { ar: "بِرَبِّ", id: "Kepada Tuhan" }, { ar: "الْفَلَقِ", id: "Yang menguasai subuh" }, 
+            { ar: "مِنْ", id: "Dari" }, { ar: "شَرِّ", id: "Kejahatan" }, { ar: "مَا", id: "Makhluk yang" }, { ar: "خَلَقَ", id: "Dia ciptakan" }, 
+            { ar: "غَاسِقٍ", id: "Malam yang gelap gulita" }, { ar: "إِذَا", id: "Apabila" }, { ar: "وَقَبَ", id: "Telah masuk" }, { ar: "النَّفَّاثَاتِ", id: "Wanita-wanita penyihir" }, 
+            { ar: "فِي", id: "Pada" }, { ar: "الْعُقَدِ", id: "Buhul-buhul (tali)" }, { ar: "حَاسِدٍ", id: "Orang yang dengki" }, { ar: "حَسَدَ", id: "Dia dengki" }
+          ]},
+          { surah: "An-Nas", words: [ 
+            { ar: "قُلْ", id: "Katakanlah" }, { ar: "أَعُوذُ", id: "Aku berlindung" }, { ar: "بِرَبِّ", id: "Kepada Tuhan" }, { ar: "النَّاسِ", id: "Manusia" }, 
+            { ar: "مَلِكِ", id: "Raja" }, { ar: "إِلَٰهِ", id: "Sembahan" }, { ar: "مِنْ", id: "Dari" }, { ar: "شَرِّ", id: "Kejahatan" }, 
+            { ar: "الْوَسْوَاسِ", id: "Bisikan (setan)" }, { ar: "الْخَنَّاسِ", id: "Yang biasa bersembunyi" }, { ar: "الَّذِي", id: "Yang" }, { ar: "يُوَسْوِسُ", id: "Membisikkan" }, 
+            { ar: "فِي", id: "Ke dalam" }, { ar: "صُدُورِ", id: "Dada" }, { ar: "مِنَ", id: "Dari (golongan)" }, { ar: "الْجِنَّةِ", id: "Jin" }, 
+            { ar: "وَالنَّاسِ", id: "Dan manusia" }
+          ]}
+        ];
+
+        const levels = [
+          {
+            id: 1, name: "Level 1: Pemula",
+            containerStyle: "bg-emerald-50 border-emerald-200", titleStyle: "text-emerald-800", btnUnlockedStyle: "bg-white border-emerald-300 hover:bg-emerald-100 text-emerald-900",
+            subLevels: [
+              { id: "1-1", name: "Tahap 1", desc: "An-Nas & Al-Falaq", surahs: ["An-Nas", "Al-Falaq"] },
+              { id: "1-2", name: "Tahap 2", desc: "Al-Ikhlas & Al-Lahab", surahs: ["Al-Ikhlas", "Al-Lahab"] },
+              { id: "1-3", name: "Tahap 3", desc: "An-Nasr & Al-Kafirun", surahs: ["An-Nasr", "Al-Kafirun"] },
+              { id: "1-4", name: "Tahap 4", desc: "Al-Kautsar & Al-Ma'un", surahs: ["Al-Kautsar", "Al-Ma'un"] },
+              { id: "1-5", name: "Tahap 5", desc: "Quraisy & Al-Fiil", surahs: ["Quraisy", "Al-Fiil"] },
+              { id: "1-boss", name: "Ujian Pemula", desc: "Campuran Al-Fiil s.d An-Nas", surahs: ["Al-Fiil", "Quraisy", "Al-Ma'un", "Al-Kautsar", "Al-Kafirun", "An-Nasr", "Al-Lahab", "Al-Ikhlas", "Al-Falaq", "An-Nas"], isBoss: true }
+            ]
+          },
+          {
+            id: 2, name: "Level 2: Dasar",
+            containerStyle: "bg-blue-50 border-blue-200", titleStyle: "text-blue-800", btnUnlockedStyle: "bg-white border-blue-300 hover:bg-blue-100 text-blue-900",
+            subLevels: [
+              { id: "2-1", name: "Tahap 1", desc: "Al-Humazah & Al-'Ashr", surahs: ["Al-Humazah", "Al-'Ashr"] },
+              { id: "2-2", name: "Tahap 2", desc: "At-Takatsur & Al-Qari'ah", surahs: ["At-Takatsur", "Al-Qari'ah"] },
+              { id: "2-3", name: "Tahap 3", desc: "Al-'Adiyat & Az-Zalzalah", surahs: ["Al-'Adiyat", "Az-Zalzalah"] },
+              { id: "2-4", name: "Tahap 4", desc: "Al-Bayyinah & Al-Qadr", surahs: ["Al-Bayyinah", "Al-Qadr"] },
+              { id: "2-5", name: "Tahap 5", desc: "Al-'Alaq & At-Tin", surahs: ["Al-'Alaq", "At-Tin"] },
+              { id: "2-6", name: "Tahap 6", desc: "Al-Insyirah & Ad-Duha", surahs: ["Al-Insyirah", "Ad-Duha"] },
+              { id: "2-boss", name: "Ujian Dasar", desc: "Campuran Ad-Duha s.d Al-Humazah", surahs: ["Ad-Duha", "Al-Insyirah", "At-Tin", "Al-'Alaq", "Al-Qadr", "Al-Bayyinah", "Az-Zalzalah", "Al-'Adiyat", "Al-Qari'ah", "At-Takatsur", "Al-'Ashr", "Al-Humazah"], isBoss: true }
+            ]
+          },
+          {
+            id: 3, name: "Level 3: Menengah",
+            containerStyle: "bg-purple-50 border-purple-200", titleStyle: "text-purple-800", btnUnlockedStyle: "bg-white border-purple-300 hover:bg-purple-100 text-purple-900",
+            subLevels: [
+              { id: "3-1", name: "Tahap 1", desc: "Al-Lail & Asy-Syams", surahs: ["Al-Lail", "Asy-Syams"] },
+              { id: "3-2", name: "Tahap 2", desc: "Surah Al-Balad", surahs: ["Al-Balad"] },
+              { id: "3-3", name: "Tahap 3", desc: "Surah Al-Fajr", surahs: ["Al-Fajr"] },
+              { id: "3-4", name: "Tahap 4", desc: "Al-Ghasyiyah & Al-A'la", surahs: ["Al-Ghasyiyah", "Al-A'la"] },
+              { id: "3-5", name: "Tahap 5", desc: "At-Tariq & Al-Buruj", surahs: ["At-Tariq", "Al-Buruj"] },
+              { id: "3-boss", name: "Ujian Menengah", desc: "Campuran Al-Buruj s.d Al-Lail", surahs: ["At-Tariq", "Al-A'la", "Al-Ghasyiyah", "Al-Fajr", "Al-Balad", "Asy-Syams", "Al-Lail", "Al-Buruj"], isBoss: true }
+            ]
+          },
+          {
+            id: 4, name: "Level 4: Lanjut",
+            containerStyle: "bg-orange-50 border-orange-200", titleStyle: "text-orange-800", btnUnlockedStyle: "bg-white border-orange-300 hover:bg-orange-100 text-orange-900",
+            subLevels: [
+              { id: "4-1", name: "Tahap 1", desc: "Surah Al-Insyiqaq", surahs: ["Al-Insyiqaq"] },
+              { id: "4-2", name: "Tahap 2", desc: "Surah Al-Mutaffifin", surahs: ["Al-Mutaffifin"] },
+              { id: "4-3", name: "Tahap 3", desc: "Surah Al-Infitar", surahs: ["Al-Infitar"] },
+              { id: "4-4", name: "Tahap 4", desc: "Surah At-Takwir", surahs: ["At-Takwir"] },
+              { id: "4-5", name: "Tahap 5", desc: "Surah 'Abasa", surahs: ["'Abasa"] },
+              { id: "4-6", name: "Tahap 6", desc: "Surah An-Nazi'at", surahs: ["An-Nazi'at"] },
+              { id: "4-7", name: "Tahap 7", desc: "Surah An-Naba", surahs: ["An-Naba"] },
+              { id: "4-boss", name: "Ujian Lanjut", desc: "Campuran An-Naba s.d Al-Insyiqaq", surahs: ["An-Naba", "An-Nazi'at", "'Abasa", "At-Takwir", "Al-Infitar", "Al-Mutaffifin", "Al-Insyiqaq"], isBoss: true }
+            ]
+          },
+          {
+            id: 5, name: "Level 5: Master Juz Amma",
+            containerStyle: "bg-red-50 border-red-200", titleStyle: "text-red-800", btnUnlockedStyle: "bg-white border-red-300 hover:bg-red-100 text-red-900",
+            subLevels: [
+              { id: "5-boss", name: "Ujian Akhir Mahir", desc: "Acak Semua 37 Surah Juz 30", surahs: "Semua", isBoss: true }
+            ]
+          }
+        ];
+
+        const progressionOrder = [
+          "1-1", "1-2", "1-3", "1-4", "1-5", "1-boss",
+          "2-1", "2-2", "2-3", "2-4", "2-5", "2-6", "2-boss",
+          "3-1", "3-2", "3-3", "3-4", "3-5", "3-boss",
+          "4-1", "4-2", "4-3", "4-4", "4-5", "4-6", "4-7", "4-boss",
+          "5-boss"
+        ];
+
+        // --- STATE & FUNGSI BANTUAN ---
+        let gameState = 'menu';
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedAnswer = null;
+        let isCorrect = null;
+        let currentLevelInfo = '';
+        let currentPlayingId = null;
+        let justUnlocked = false;
+
+        const getSavedProgress = () => {
+            try { return localStorage.getItem('quranGameProgressV3') || "1-1"; } 
+            catch (e) { return "1-1"; }
+        };
+        let unlockedLevelId = getSavedProgress();
+
+        const saveProgress = (id) => {
+            try { localStorage.setItem('quranGameProgressV3', id); } catch (e) {}
+        };
+
+        const getLevelDataById = (id) => {
+            for (const mainLevel of levels) {
+                for (const sub of mainLevel.subLevels) {
+                    if (sub.id === id) {
+                        return { mode: sub.surahs === 'Semua' ? 'all' : 'level', data: sub.surahs, title: `${mainLevel.name} - ${sub.name}`, id: sub.id };
+                    }
+                }
+            }
+            return null;
+        };
+
+        const shuffleArray = (array) => {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        };
+
+        const playSound = (type) => {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+
+                const osc = ctx.createOscillator();
+                const gainNode = ctx.createGain();
+
+                if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(880, ctx.currentTime);
+                    gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.3); 
+                    gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                } else if (type === 'win') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, ctx.currentTime);
+                    osc.frequency.setValueAtTime(660, ctx.currentTime + 0.2);
+                    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.4);
+                    gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
+                }
+
+                osc.connect(gainNode);
+                gainNode.connect(ctx.destination);
+                
+                osc.start();
+                osc.stop(ctx.currentTime + 1);
+            } catch (error) {}
+        };
+
+        // --- FUNGSI UTAMA GAME ---
+        window.changeGameState = (newState) => {
+            gameState = newState;
+            renderApp();
+        };
+
+        window.resetProgressAndState = () => {
+            if(window.confirm('Yakin ingin mereset semua progres belajar Anda kembali ke Tahap 1?')) {
+                localStorage.removeItem('quranGameProgressV3');
+                unlockedLevelId = "1-1";
+                renderApp();
+            }
+        };
+
+        window.startLevelById = (id) => {
+            const data = getLevelDataById(id);
+            if(data) window.startGame(data.mode, data.data, data.title, data.id);
+        };
+
+        window.startGame = (mode, data, title, playingLevelId = null) => {
+            let pool = [];
+            currentLevelInfo = title;
+            currentPlayingId = playingLevelId;
+            
+            if (mode === 'level') {
+                data.forEach(surahName => {
+                    const s = quranData.find(x => x.surah === surahName);
+                    if(s) pool.push(...s.words.map(w => ({ ...w, surah: s.surah })));
+                });
+            } else if (mode === 'all') {
+                quranData.forEach(s => pool.push(...s.words.map(w => ({ ...w, surah: s.surah }))));
+            } else if (mode === 'single') {
+                const s = quranData.find(x => x.surah === data);
+                if(s) pool = s.words.map(w => ({ ...w, surah: s.surah }));
+            }
+
+            let maxQuestions = pool.length; 
+            
+            if (playingLevelId && String(playingLevelId).includes('boss')) {
+                maxQuestions = playingLevelId === '5-boss' ? 50 : 30;
+            } else if (mode === 'all' && !playingLevelId) {
+                maxQuestions = 50; 
+            }
+
+            const shuffledPool = shuffleArray(pool).slice(0, maxQuestions);
+            const allMeanings = [];
+            quranData.forEach(s => s.words.forEach(w => allMeanings.push(w.id)));
+
+            questions = shuffledPool.map(q => {
+                let wrongAnswers = allMeanings.filter(m => m !== q.id);
+                wrongAnswers = shuffleArray(wrongAnswers).slice(0, 3);
+                const options = shuffleArray([q.id, ...wrongAnswers]);
+                return { ...q, options };
+            });
+
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedAnswer = null;
+            isCorrect = null;
+            justUnlocked = false;
+            gameState = 'playing';
+            renderApp();
+        };
+
+        window.handleAnswerClick = (optionIndex) => {
+            if (selectedAnswer !== null) return;
+
+            const currentQ = questions[currentQuestionIndex];
+            const answer = currentQ.options[optionIndex];
+            
+            const correct = answer === currentQ.id;
+            selectedAnswer = answer;
+            isCorrect = correct;
+            
+            if (correct) {
+                playSound('correct');
+                score += 10;
+            } else {
+                playSound('wrong');
+            }
+
+            renderApp();
+
+            setTimeout(() => {
+                nextQuestion();
+            }, 1200);
+        };
+
+        const nextQuestion = () => {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                selectedAnswer = null;
+                isCorrect = null;
+            } else {
+                const finalPercentage = (score / (questions.length * 10)) * 100;
+                let newUnlock = false;
+
+                if (finalPercentage >= 70 && currentPlayingId) {
+                    playSound('win');
+                    const currentIndex = progressionOrder.indexOf(currentPlayingId);
+                    if (currentIndex >= 0 && currentIndex < progressionOrder.length - 1) {
+                        const nextId = progressionOrder[currentIndex + 1];
+                        const unlockedIndex = progressionOrder.indexOf(unlockedLevelId);
+
+                        if (progressionOrder.indexOf(nextId) > unlockedIndex) {
+                            unlockedLevelId = nextId;
+                            saveProgress(nextId);
+                            newUnlock = true;
+                        }
+                    }
+                }
+
+                justUnlocked = newUnlock;
+                gameState = 'result';
+            }
+            renderApp();
+        };
+
+        window.restartCurrentLevel = () => {
+            if (currentPlayingId) {
+                window.startLevelById(currentPlayingId);
+            } else {
+                const mode = currentLevelInfo.includes('Surah ') ? 'single' : 'all';
+                const data = currentLevelInfo.replace('Surah ', '');
+                window.startGame(mode, data, currentLevelInfo);
+            }
+        };
+
+        // --- RENDER HTML LOGIC ---
+        function renderMenu() {
+            let levelsHtml = levels.map(level => {
+                let subLevelsHtml = level.subLevels.map(sub => {
+                    const isUnlocked = progressionOrder.indexOf(sub.id) <= progressionOrder.indexOf(unlockedLevelId);
+                    let btnClass = isUnlocked
+                        ? (sub.isBoss 
+                            ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white border-transparent hover:from-amber-500 hover:to-orange-600 shadow-lg transform hover:-translate-y-1 transition-all cursor-pointer" 
+                            : level.btnUnlockedStyle + " shadow-sm hover:shadow-md transform hover:-translate-y-1 transition-all cursor-pointer")
+                        : "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-80";
+                    
+                    const clickAction = isUnlocked ? `onclick="startLevelById('${sub.id}')"` : '';
+                    const titleTextClass = sub.isBoss && isUnlocked ? 'text-white' : '';
+                    const descTextClass = isUnlocked && sub.isBoss ? 'text-orange-100 font-medium' : 'opacity-80';
+                    const iconHtml = isUnlocked 
+                        ? (sub.isBoss ? `<i data-lucide="star" class="w-6 h-6 ml-2 flex-shrink-0 text-white animate-pulse"></i>` : `<i data-lucide="play" class="w-5 h-5 ml-2 flex-shrink-0"></i>`)
+                        : `<i data-lucide="lock" class="w-5 h-5 opacity-50 ml-2 flex-shrink-0"></i>`;
+
+                    return `
+                        <button ${clickAction} class="flex items-center justify-between p-4 rounded-2xl border-2 w-full text-left ${btnClass}">
+                            <div class="flex-1 text-left">
+                                <div class="font-bold text-md flex items-center gap-2 ${titleTextClass}">
+                                    ${sub.isBoss && isUnlocked ? '<i data-lucide="award" class="w-5 h-5 text-yellow-100"></i>' : ''}
+                                    ${sub.name}
+                                </div>
+                                <div class="text-xs mt-1 ${descTextClass}">
+                                    ${sub.desc}
+                                </div>
+                            </div>
+                            ${iconHtml}
+                        </button>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="p-4 rounded-3xl border-2 shadow-sm mb-5 ${level.containerStyle}">
+                        <h3 class="font-black text-xl mb-4 text-center ${level.titleStyle}">${level.name}</h3>
+                        <div class="flex flex-col gap-3">
+                            ${subLevelsHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="min-h-screen bg-gray-100 flex items-center justify-center p-4 font-sans text-gray-900">
+                    <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl border border-gray-100 flex flex-col max-h-[90vh]">
+                        <div class="bg-emerald-600 p-8 text-center text-white relative flex-shrink-0 rounded-t-3xl overflow-hidden shadow-inner">
+                            <div class="absolute opacity-10 -right-8 -top-8"><i data-lucide="star" class="w-48 h-48"></i></div>
+                            <i data-lucide="book-open" class="w-16 h-16 mx-auto mb-4 relative z-10"></i>
+                            <h1 class="text-2xl font-black tracking-wide mb-1 relative z-10 drop-shadow-md">Game Quran</h1>
+                            <p class="text-emerald-100 relative z-10 font-bold tracking-wider text-sm uppercase">Tebak Perkata Juz 30</p>
+                        </div>
+                        <div class="p-4 sm:p-6 overflow-y-auto flex-1 bg-gray-50">
+                            <h2 class="text-lg font-black mb-4 text-center text-gray-800 uppercase tracking-widest flex items-center justify-center gap-2">
+                                <i data-lucide="star" class="w-5 h-5 text-amber-500 fill-current"></i> Peta Belajar <i data-lucide="star" class="w-5 h-5 text-amber-500 fill-current"></i>
+                            </h2>
+                            ${levelsHtml}
+                            <div class="border-t-2 border-dashed border-gray-300 pt-5 pb-5 mt-2">
+                                <button onclick="changeGameState('surahList')" class="w-full flex items-center justify-center gap-2 p-4 rounded-2xl border-2 border-gray-300 bg-white hover:bg-gray-100 hover:border-gray-400 transition-all font-bold text-gray-600 shadow-sm">
+                                    <i data-lucide="list" class="w-5 h-5"></i>
+                                    <span>Latihan Surah Bebas</span>
+                                </button>
+                                <button onclick="resetProgressAndState()" class="text-xs text-gray-400 hover:text-red-500 mt-5 underline text-center block w-full transition-colors">
+                                    Reset Progres Belajar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSurahList() {
+            let surahsHtml = quranData.map(surah => `
+                <button onclick="startGame('single', '${surah.surah}', 'Surah ${surah.surah}')" class="p-3 rounded-xl border-2 border-emerald-100 hover:border-emerald-500 hover:bg-emerald-50 bg-white transition-all font-bold text-xs text-center text-emerald-800 shadow-sm">
+                    ${surah.surah}
+                </button>
+            `).join('');
+
+            return `
+                <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 font-sans">
+                    <div class="max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
+                        <div class="bg-emerald-600 p-4 flex items-center justify-between text-white shadow-md z-10">
+                            <button onclick="changeGameState('menu')" class="p-2 bg-emerald-700 rounded-lg hover:bg-emerald-800 transition-colors">
+                                <i data-lucide="home" class="w-5 h-5"></i>
+                            </button>
+                            <h2 class="font-bold uppercase tracking-widest text-sm">Latihan Bebas</h2>
+                            <div class="w-9"></div>
+                        </div>
+                        <div class="p-4 overflow-y-auto flex-1 bg-gray-50">
+                            <div class="bg-blue-50 border border-blue-200 text-blue-800 text-xs p-3 rounded-xl mb-4 text-center font-medium">
+                                Bermain di mode ini tidak akan mempengaruhi progres Peta Belajar Anda.
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                ${surahsHtml}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPlaying() {
+            const currentQ = questions[currentQuestionIndex];
+            const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
+
+            let optionsHtml = currentQ.options.map((option, idx) => {
+                let btnClass = "p-5 rounded-2xl border-2 text-left font-bold transition-all transform active:scale-95 text-md shadow-sm w-full h-full flex justify-between items-center ";
+                let rightIcon = "";
+                
+                if (selectedAnswer === null) {
+                    btnClass += "border-gray-200 bg-white hover:border-emerald-500 hover:bg-emerald-50 text-gray-700 hover:shadow-md cursor-pointer";
+                } else {
+                    if (option === currentQ.id) {
+                        btnClass += "border-green-500 bg-green-100 text-green-800 ring-4 ring-green-300 shadow-lg z-10 scale-[1.02]"; 
+                        if (selectedAnswer !== null) rightIcon = `<i data-lucide="check-circle" class="w-6 h-6 text-green-600 drop-shadow-md"></i>`;
+                    } else if (option === selectedAnswer) {
+                        btnClass += "border-red-400 bg-red-50 text-red-700 opacity-90";
+                        if (!isCorrect) rightIcon = `<i data-lucide="x-circle" class="w-6 h-6 text-red-500"></i>`;
+                    } else {
+                        btnClass += "border-gray-100 bg-gray-50 text-gray-400 opacity-50";
+                    }
+                }
+
+                const disableAttr = selectedAnswer !== null ? "disabled" : "";
+                return `
+                    <button onclick="handleAnswerClick(${idx})" ${disableAttr} class="${btnClass}">
+                        <span>${option}</span>
+                        ${rightIcon}
+                    </button>
+                `;
+            }).join('');
+
+            let loadingIndicator = "";
+            if (selectedAnswer !== null) {
+                loadingIndicator = `
+                    <div class="flex justify-center animate-pulse">
+                        <span class="text-gray-400 font-bold text-xs md:text-sm tracking-widest bg-white px-6 py-2.5 rounded-full shadow-sm border border-gray-100">
+                            ${currentQuestionIndex < questions.length - 1 ? 'LANJUT OTOMATIS...' : 'MEMPROSES HASIL...'}
+                        </span>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 font-sans text-gray-900 w-full">
+                    <div class="max-w-lg w-full">
+                        <div class="flex justify-between items-center mb-6 px-2">
+                            <button onclick="changeGameState('menu')" class="text-gray-600 hover:text-red-500 flex items-center gap-1 font-bold bg-white px-4 py-2 rounded-full shadow-sm border-2 border-gray-200 transition-colors">
+                                <i data-lucide="home" class="w-4 h-4"></i> Batal
+                            </button>
+                            <div class="bg-emerald-600 px-5 py-2 rounded-full shadow-md font-black text-white border-2 border-emerald-700 flex items-center gap-2">
+                                <i data-lucide="star" class="w-4 h-4 text-amber-300 fill-current"></i>
+                                Skor: ${score}
+                            </div>
+                        </div>
+
+                        <div class="w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner">
+                            <div class="bg-gradient-to-r from-emerald-400 to-emerald-600 h-3 rounded-full transition-all duration-500 shadow-md" style="width: ${progressPercent}%"></div>
+                        </div>
+
+                        <div class="text-center mb-6 text-sm font-semibold text-gray-500 flex flex-col">
+                            <span class="text-emerald-700 bg-emerald-100 border border-emerald-200 inline-block mx-auto px-4 py-1.5 rounded-full mb-1 shadow-sm font-bold">
+                                ${currentLevelInfo}
+                            </span>
+                            <span class="mt-1 uppercase tracking-widest text-xs">Soal ${currentQuestionIndex + 1} dari ${questions.length} • (Surah ${currentQ.surah})</span>
+                        </div>
+
+                        <div class="bg-white rounded-3xl shadow-xl p-8 mb-8 border-b-4 border-emerald-200 text-center min-h-[220px] flex flex-col items-center justify-center relative overflow-hidden">
+                            <p class="text-sm text-gray-400 mb-4 uppercase tracking-widest font-black">Apa arti kata ini?</p>
+                            <h1 class="text-6xl md:text-7xl font-serif text-emerald-900 mb-2 leading-normal drop-shadow-sm" dir="rtl">
+                                ${currentQ.ar}
+                            </h1>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                            ${optionsHtml}
+                        </div>
+
+                        ${loadingIndicator}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderResult() {
+            const maxScore = questions.length * 10;
+            const percentage = (score / maxScore) * 100;
+            
+            const currentIndex = currentPlayingId ? progressionOrder.indexOf(currentPlayingId) : -1;
+            const hasNextLevel = currentIndex >= 0 && currentIndex < progressionOrder.length - 1;
+            const nextId = hasNextLevel ? progressionOrder[currentIndex + 1] : null;
+            const isNextUnlocked = nextId && progressionOrder.indexOf(nextId) <= progressionOrder.indexOf(unlockedLevelId);
+
+            let message = "";
+            if (percentage === 100) message = "SEMPURNA! Luar Biasa! 🎉";
+            else if (percentage >= 70) message = "LULUS! Kerja yang bagus! 🌟";
+            else message = "BELUM LULUS. Yuk, coba lagi! 💪";
+
+            const topBgClass = percentage >= 70 ? (currentLevelInfo.includes('Ujian') ? 'bg-amber-500' : 'bg-emerald-600') : 'bg-red-500';
+            const iconHtml = percentage >= 70 
+                ? `<i data-lucide="award" class="w-14 h-14 ${currentLevelInfo.includes('Ujian') ? 'text-amber-500' : 'text-emerald-500'}"></i>`
+                : `<i data-lucide="rotate-ccw" class="w-14 h-14 text-red-400"></i>`;
+            const textScoreClass = percentage >= 70 ? 'text-emerald-600' : 'text-red-500';
+
+            let justUnlockedHtml = "";
+            if (justUnlocked) {
+                justUnlockedHtml = `
+                    <div class="bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 p-4 rounded-2xl mb-6 font-black animate-pulse border-2 border-amber-300 shadow-sm flex items-center justify-center gap-2">
+                        <i data-lucide="star" class="w-5 h-5 fill-current"></i> TAHAP BARU TERBUKA! <i data-lucide="star" class="w-5 h-5 fill-current"></i>
+                    </div>
+                `;
+            }
+
+            let failedMessageHtml = "";
+            if (percentage < 70 && currentPlayingId) {
+                failedMessageHtml = `
+                    <div class="bg-red-50 text-red-700 p-4 rounded-2xl mb-6 text-sm font-bold border-2 border-red-200">
+                        ⚠️ Skor minimal 70 diperlukan untuk membuka tahap berikutnya.
+                    </div>
+                `;
+            }
+
+            let nextBtnHtml = "";
+            if (percentage >= 70 && isNextUnlocked && nextId) {
+                nextBtnHtml = `
+                    <button onclick="startLevelById('${nextId}')" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-5 rounded-2xl font-black tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg text-lg transform hover:-translate-y-1">
+                        TAHAP BERIKUTNYA <i data-lucide="arrow-right" class="w-6 h-6"></i>
+                    </button>
+                `;
+            }
+
+            const restartBtnClass = (percentage >= 70 && isNextUnlocked && nextId) 
+                ? "bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-200" 
+                : "bg-emerald-600 hover:bg-emerald-700 text-white border-b-4 border-emerald-800";
+
+            return `
+                <div class="min-h-screen bg-gray-100 flex items-center justify-center p-4 font-sans text-gray-900 w-full">
+                    <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 text-center p-8 relative">
+                        
+                        <div class="absolute top-0 left-0 w-full h-32 rounded-b-[50%] -z-0 ${topBgClass}"></div>
+
+                        <div class="relative z-10 bg-white w-28 h-28 mx-auto rounded-full flex items-center justify-center shadow-xl mb-4 border-8 border-white mt-4">
+                            ${iconHtml}
+                        </div>
+
+                        <h1 class="text-3xl font-black mb-1 mt-6 tracking-wide">Sesi Selesai!</h1>
+                        <p class="text-gray-500 text-sm mb-6 bg-gray-100 inline-block px-4 py-1.5 rounded-full font-bold border border-gray-200">${currentLevelInfo}</p>
+                        
+                        <p class="text-xl font-bold mb-6 ${textScoreClass}">
+                            ${message}
+                        </p>
+
+                        ${justUnlockedHtml}
+                        ${failedMessageHtml}
+                        
+                        <div class="bg-gray-50 rounded-3xl p-6 mb-8 border-2 border-gray-100 shadow-inner">
+                            <p class="text-gray-400 font-bold mb-2 uppercase tracking-widest text-xs">Total Skor</p>
+                            <div class="text-7xl font-black drop-shadow-sm ${textScoreClass}">
+                                ${score} <span class="text-2xl text-gray-400 font-bold">/ ${maxScore}</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-4">
+                            ${nextBtnHtml}
+
+                            <button onclick="restartCurrentLevel()" class="w-full p-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-md ${restartBtnClass}">
+                                <i data-lucide="rotate-ccw" class="w-5 h-5"></i> Ulangi Tahap Ini
+                            </button>
+                            <button onclick="changeGameState('menu')" class="w-full bg-white hover:bg-gray-50 text-gray-500 border-2 border-gray-200 p-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all">
+                                <i data-lucide="home" class="w-5 h-5"></i> Kembali ke Peta
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Fungsi render utama (mirip render() di React)
+        function renderApp() {
+            const app = document.getElementById('app');
+            if (gameState === 'menu') app.innerHTML = renderMenu();
+            else if (gameState === 'surahList') app.innerHTML = renderSurahList();
+            else if (gameState === 'playing') app.innerHTML = renderPlaying();
+            else if (gameState === 'result') app.innerHTML = renderResult();
+
+            // Inisialisasi ulang ikon Lucide setiap kali DOM berubah
+            lucide.createIcons();
+        }
+
+        // Inisialisasi awal saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            renderApp();
+        });
+
+    </script>
+</body>
+</html>
