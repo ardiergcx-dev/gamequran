@@ -341,8 +341,8 @@
 
         // =====================================================================
         // ⚠️ KONFIGURASI HOSTING SENDIRI (FIREBASE CLOUD)
-        // Jika Anda menggunakan hosting sendiri (cPanel, Vercel, dll), 
-        // ganti kata 'null' di bawah ini dengan kode konfigurasi Firebase Anda!
+        // Set ke 'null' agar aplikasi bisa berjalan normal di tampilan Preview ini.
+        // HANYA GANTI JIKA ANDA MEMINDAHKAN FILE INI KE HOSTING SENDIRI!
         // =====================================================================
         const myOwnFirebaseConfig = {
   apiKey: "AIzaSyB1O89ELmb0auSawUxiTLxFX-iK1iS3ApU",
@@ -352,6 +352,8 @@
   messagingSenderId: "463701168605",
   appId: "1:463701168605:web:3133a5c8d9e8384a092634",
   measurementId: "G-189L974C1L"
+}; 
+        // =====================================================================
 
         // --- CONSTANTS ---
         const CHART_COLORS = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ef4444', '#14b8a6'];
@@ -451,7 +453,7 @@
         const initFirebase = async () => {
             const configStr = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
             
-            // DETEKSI FILE LOKAL / HOSTING TANPA CONFIG
+            // DETEKSI JIKA TIDAK ADA CONFIG
             if (!configStr && !myOwnFirebaseConfig) {
                 const syncStatusEl = document.getElementById('sync-status');
                 const syncBadge = document.getElementById('sync-badge');
@@ -468,11 +470,9 @@
                 const auth = getAuth(app);
                 state.db = getFirestore(app);
 
-                // ATURAN AUTENTIKASI:
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token && !myOwnFirebaseConfig) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
-                    // Gunakan mode Anonim untuk hosting Anda sendiri
                     await signInAnonymously(auth);
                 }
                 
@@ -495,6 +495,20 @@
             }
         };
 
+        // Helper Fungsi Dokumen Firebase agar sinkron untuk Canvas dan Hosting Pribadi
+        const getSettingsRef = (emailId) => {
+            if (myOwnFirebaseConfig) return doc(state.db, 'settings', emailId);
+            return doc(state.db, 'artifacts', state.appId, 'public', 'data', 'settings', emailId);
+        };
+        const getTxsCollectionRef = () => {
+            if (myOwnFirebaseConfig) return collection(state.db, 'transactions');
+            return collection(state.db, 'artifacts', state.appId, 'public', 'data', 'transactions');
+        };
+        const getTxDocRef = (txId) => {
+            if (myOwnFirebaseConfig) return doc(state.db, 'transactions', txId);
+            return doc(state.db, 'artifacts', state.appId, 'public', 'data', 'transactions', txId);
+        };
+
         let unsubSettings = null, unsubTxs = null;
         
         const attachCloudListeners = () => {
@@ -502,7 +516,7 @@
             const emailId = state.currentUserEmail.replace(/[^a-zA-Z0-9]/g, '_');
 
             // 1. Sinkronisasi Pengaturan (Profil, Bank, Kategori)
-            const settingsRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'settings', emailId);
+            const settingsRef = getSettingsRef(emailId);
             if (unsubSettings) unsubSettings();
             
             unsubSettings = onSnapshot(settingsRef, (docSnap) => {
@@ -522,7 +536,7 @@
             }, (err) => showToast("Error Tarik Setting: " + err.message));
 
             // 2. Sinkronisasi Seluruh Transaksi
-            const txsRef = collection(state.db, 'artifacts', state.appId, 'public', 'data', 'transactions');
+            const txsRef = getTxsCollectionRef();
             if (unsubTxs) unsubTxs();
             
             unsubTxs = onSnapshot(txsRef, (snap) => {
@@ -532,13 +546,18 @@
                 let myTxs = allTxs.filter(t => t.accountEmail === state.currentUserEmail);
                 myTxs.sort((a, b) => b.createdAt - a.createdAt);
                 
+                // Cek apakah data dari cloud benar-benar ditarik masuk
+                if(myTxs.length > 0 && state.transactions.length === 0) {
+                    showToast("Berhasil menarik data dari Cloud!");
+                }
+
                 state.transactions = myTxs;
                 saveLocal('local_transactions', myTxs);
                 renderAll();
             }, (err) => showToast("Error Tarik Transaksi: " + err.message));
         };
 
-        // --- PENYIMPANAN KE CLOUD MENGGUNAKAN JALUR STANDAR (ANTI-BLOKIR) ---
+        // --- PENYIMPANAN KE CLOUD MENGGUNAKAN JALUR STANDAR ---
         const saveSettingsToCloud = async () => {
             saveLocal('local_categories_expense', state.categoriesExpense);
             saveLocal('local_categories_income', state.categoriesIncome);
@@ -547,7 +566,7 @@
 
             if (state.firebaseUser && state.db && state.currentUserEmail) {
                 const emailId = state.currentUserEmail.replace(/[^a-zA-Z0-9]/g, '_');
-                const docRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'settings', emailId);
+                const docRef = getSettingsRef(emailId);
                 
                 const payload = {
                     categoriesExpense: state.categoriesExpense,
@@ -577,7 +596,7 @@
 
             // Pengecekan Jaringan & Detail Toast:
             if (!state.db) {
-                showToast('Tersimpan Lokal (Buka via Web untuk Sinkron Cloud)');
+                showToast('Tersimpan Lokal (Database tidak aktif)');
                 return;
             }
             if (!state.currentUserEmail) {
@@ -590,13 +609,13 @@
             }
 
             // PUSH KE CLOUD!
-            const txRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'transactions', txData.id);
+            const txRef = getTxDocRef(txData.id);
             try { 
                 await setDoc(txRef, txData); 
                 showToast('Berhasil Tersimpan di Cloud!'); // INDIKATOR SUKSES
             } catch(e) { 
                 console.error(e);
-                showToast('Gagal simpan ke Cloud: Server menolak (Silakan muat ulang)'); // INDIKATOR ERROR
+                showToast('Gagal simpan ke Cloud: Aturan Firebase menolak'); // INDIKATOR ERROR
             }
         };
 
@@ -606,7 +625,7 @@
             renderAll();
 
             if (state.firebaseUser && state.db && state.currentUserEmail) {
-                const txRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'transactions', txId);
+                const txRef = getTxDocRef(txId);
                 try { 
                     await deleteDoc(txRef); 
                     showToast('Terhapus dari Cloud!'); 
@@ -873,8 +892,7 @@
             const syncBadge = document.getElementById('sync-badge');
             const syncIcon = document.getElementById('sync-icon');
 
-            if (typeof __firebase_config === 'undefined') {
-                // Tampilan JIKA DI BUKA SEBAGAI FILE LOKAL (BUKAN DARI CANVAS)
+            if (!myOwnFirebaseConfig && typeof __firebase_config === 'undefined') {
                 if (syncStatusEl) syncStatusEl.textContent = 'Mode File Lokal';
                 if (syncBadge) syncBadge.className = 'text-[10px] bg-red-50 text-red-600 px-2.5 py-1 rounded-full flex items-center gap-1 font-bold border border-red-200 transition-colors';
                 if (syncIcon) syncIcon.setAttribute('data-lucide', 'alert-circle');
@@ -925,7 +943,7 @@
                 let isCloudVerified = false;
                 if (state.firebaseUser && state.db) {
                     const emailId = email.replace(/[^a-zA-Z0-9]/g, '_');
-                    const docRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'settings', emailId);
+                    const docRef = getSettingsRef(emailId);
                     try {
                         const snap = await getDoc(docRef);
                         if (snap.exists()) {
@@ -968,10 +986,10 @@
                     }
                 }
 
-                await saveSettingsToCloud(); // Otomatis membuat profile di cloud jika belum ada
+                await saveSettingsToCloud(); 
                 
                 loadLocalData();
-                attachCloudListeners(); // Ini akan otomatis menarik semua transaksi dari HP/PC lama Anda
+                attachCloudListeners(); 
                 
                 btnSubmit.textContent = prevText;
                 btnSubmit.disabled = false;
@@ -1100,7 +1118,7 @@
                 // Hapus satu per satu dari Cloud agar HP dan PC sama-sama bersih
                 if (state.firebaseUser && state.db && state.currentUserEmail) {
                     for (let t of state.transactions) {
-                        const txRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'transactions', t.id);
+                        const txRef = getTxDocRef(t.id);
                         deleteDoc(txRef).catch(e => console.error(e));
                     }
                 }
@@ -1316,5 +1334,3 @@
     </script>
 </body>
 </html>
-
-
