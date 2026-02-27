@@ -2,1294 +2,1329 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Al-Quran Perkata Juz 30</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Keuangan Minimalis</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- html2canvas untuk fitur unduh gambar -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- Google Fonts (Amiri for Arabic text) -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        .font-serif {
-            font-family: 'Amiri', serif;
-        }
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #d1d5db; 
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #9ca3af; 
-        }
 
-        /* Print Styles for Certificate */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            .no-print, .no-print * {
-                display: none !important;
-            }
-            #printable-certificate, #printable-certificate * {
-                visibility: visible;
-            }
-            #printable-certificate {
-                position: fixed;
-                left: 0;
-                top: 0;
-                width: 100vw !important;
-                height: 100vh !important;
-                margin: 0;
-                padding: 2rem !important;
-                box-shadow: none !important;
-                border: none !important;
-            }
-            @page {
-                size: portrait;
-                margin: 0;
-            }
-        }
+    <!-- Custom Styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+        .animate-fade-in-up { animation: fadeInUp 0.4s ease-out; }
+        .animate-fade-in-down { animation: fadeInDown 0.4s ease-out; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .tab-btn.active { color: #4f46e5; background-color: #e0e7ff; font-weight: 700; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+        .tab-btn { color: #9ca3af; transition: all 0.2s ease-in-out; }
+        
+        .modal { display: none !important; }
+        .modal.show { display: flex !important; animation: fadeIn 0.2s ease-out; }
     </style>
 </head>
-<body class="bg-gray-100 font-sans text-gray-900">
-    <!-- Root Container -->
-    <div id="app"></div>
+<body class="min-h-screen flex justify-center text-gray-800 antialiased">
 
-    <script>
-        // --- DATA QURAN & LEVEL ---
-        const quranData = [
-          // --- LEVEL 4: LANJUT (Surah 78 - 85) ---
-          { surah: "An-Naba", words: [ 
-            { ar: "عَمَّ", id: "Tentang apakah" }, { ar: "يَتَسَاءَلُونَ", id: "Mereka saling bertanya" }, { ar: "النَّبَإِ", id: "Berita" }, { ar: "الْعَظِيمِ", id: "Yang besar" }, 
-            { ar: "مُخْتَلِفُونَ", id: "Berselisih" }, { ar: "كَلَّا", id: "Tidak (sekali-kali tidak)" }, { ar: "سَيَعْلَمُونَ", id: "Mereka akan mengetahui" }, 
-            { ar: "الْأَرْضَ", id: "Bumi" }, { ar: "مِهَادًا", id: "Hamparan (tempat tinggal)" }, { ar: "الْجِبَالَ", id: "Gunung-gunung" }, { ar: "أَوْتَادًا", id: "Pasak (tiang)" }, 
-            { ar: "أَزْوَاجًا", id: "Berpasang-pasangan" }, { ar: "نَوْمَكُمْ", id: "Tidurmu" }, { ar: "سُبَاتًا", id: "Istirahat (waktu tenang)" }, { ar: "اللَّيْلَ", id: "Malam" }, 
-            { ar: "لِبَاسًا", id: "Pakaian (penutup)" }, { ar: "النَّهَارَ", id: "Siang" }, { ar: "مَعَاشًا", id: "Penghidupan (mencari rezeki)" }, { ar: "سَبْعًا", id: "Tujuh (langit)" }, { ar: "شِدَادًا", id: "Yang kokoh" },
-            { ar: "وَجَعَلْنَا", id: "Dan Kami jadikan" }, { ar: "سِرَاجًا", id: "Pelita (Matahari)" }, { ar: "وَهَّاجًا", id: "Yang sangat terang" }, { ar: "وَأَنْزَلْنَا", id: "Dan Kami turunkan" },
-            { ar: "الْمُعْصِرَاتِ", id: "Awan-awan (mendung)" }, { ar: "مَاءً", id: "Air" }, { ar: "ثَجَّاجًا", id: "Yang tercurah (deras)" }, { ar: "لِنُخْرِجَ", id: "Agar Kami tumbuhkan" },
-            { ar: "حَبًّا", id: "Biji-bijian" }, { ar: "وَنَبَاتًا", id: "Dan tumbuh-tumbuhan" }, { ar: "جَنَّاتٍ", id: "Kebun-kebun" }, { ar: "أَلْفَافًا", id: "Yang lebat" },
-            { ar: "يَوْمَ الْفَصْلِ", id: "Hari keputusan (Kiamat)" }, { ar: "مِيقَاتًا", id: "Waktu yang ditetapkan" }, { ar: "يُنْفَخُ", id: "Ditiup" }, { ar: "الصُّورِ", id: "Sangkakala (terompet)" },
-            { ar: "فَتَأْتُونَ", id: "Maka kamu datang" }, { ar: "أَفْوَاجًا", id: "Berkelompok-kelompok" }, { ar: "فُتِحَتِ", id: "Dibuka" }, { ar: "أَبْوَابًا", id: "Pintu-pintu" },
-            { ar: "سُرَابًا", id: "Fatamorgana (bayangan palsu)" }, { ar: "جَهَنَّمَ", id: "Neraka Jahanam" }, { ar: "مِرْصَادًا", id: "Tempat pengintai" }, { ar: "لِلطَّاغِينَ", id: "Bagi yang melampaui batas" },
-            { ar: "مَآبًا", id: "Tempat kembali" }, { ar: "لَابِثِينَ", id: "Mereka tinggal" }, { ar: "أَحْقَابًا", id: "Berabad-abad (waktu lama)" }, { ar: "لَا يَذُوقُونَ", id: "Mereka tidak merasakan" },
-            { ar: "بَرْدًا", id: "Kesejukan" }, { ar: "شَرَابًا", id: "Minuman" }, { ar: "حَمِيمًا", id: "Air yang mendidih" }, { ar: "غَسَّاقًا", id: "Nanah" },
-            { ar: "جَزَاءً", id: "Sebagai balasan" }, { ar: "وِفَاقًا", id: "Yang setimpal" }, { ar: "حِسَابًا", id: "Perhitungan (amal)" }, { ar: "لِلْمُتَّقِينَ", id: "Bagi orang bertakwa" },
-            { ar: "مَفَازًا", id: "Kemenangan (surga)" }, { ar: "حَدَائِقَ", id: "Kebun-kebun" }, { ar: "أَعْنَابًا", id: "Buah anggur" }, { ar: "كَوَاعِبَ", id: "Gadis-gadis" },
-            { ar: "أَتْرَابًا", id: "Yang sebaya" }, { ar: "كَأْسًا", id: "Gelas" }, { ar: "دِهَاقًا", id: "Yang penuh (minuman)" }, { ar: "لَغْوًا", id: "Perkataan sia-sia" },
-            { ar: "كِذَّابًا", id: "Dusta" }, { ar: "عَطَاءً", id: "Pemberian" }, { ar: "الرَّحْمَٰنِ", id: "Maha Pemurah" }, { ar: "لَا يَمْلِكُونَ", id: "Mereka tidak memiliki" },
-            { ar: "خِطَابًا", id: "Hak berbicara" }, { ar: "الرُّوحُ", id: "Jibril" }, { ar: "صَفًّا", id: "Bersaf-saf" }, { ar: "الْيَوْمُ الْحَقُّ", id: "Hari yang pasti terjadi" },
-            { ar: "عَذَابًا", id: "Azab (siksaan)" }, { ar: "قَرِيبًا", id: "Yang dekat" }, { ar: "الْمَرْءُ", id: "Manusia" }, { ar: "يَدَاهُ", id: "Kedua tangannya" },
-            { ar: "تُرَابًا", id: "Tanah" }
-          ]},
-          { surah: "An-Nazi'at", words: [ 
-            { ar: "وَالنَّازِعَاتِ", id: "Demi malaikat yang mencabut" }, { ar: "غَرْقًا", id: "Dengan keras (menyelam)" }, { ar: "وَالنَّاشِطَاتِ", id: "Malaikat yang mencabut" }, { ar: "نَشْطًا", id: "Dengan lembut (menarik)" }, 
-            { ar: "وَالسَّابِحَاتِ", id: "Malaikat yang turun" }, { ar: "سَبْحًا", id: "Dengan cepat (berenang)" }, { ar: "فَالسَّابِقَاتِ", id: "Malaikat yang mendahului" }, { ar: "سَبْقًا", id: "Dengan kencang" }, 
-            { ar: "فَالْمُدَبِّرَاتِ", id: "Yang mengatur" }, { ar: "أَمْرًا", id: "Urusan" }, { ar: "يَوْمَ", id: "Pada hari" }, { ar: "تَرْجُفُ", id: "Berguncang" }, 
-            { ar: "الرَّاجِفَةُ", id: "Tiupan pertama (sangkakala)" }, { ar: "تَتْبَعُهَا", id: "Mengiringinya" }, { ar: "الرَّادِفَةُ", id: "Tiupan kedua (sangkakala)" }, { ar: "قُلُوبٌ", id: "Hati" }, 
-            { ar: "يَوْمَئِذٍ", id: "Pada hari itu" }, { ar: "وَاجِفَةٌ", id: "Sangat takut" }, { ar: "أَبْصَارُهَا", id: "Pandangannya" }, { ar: "خَاشِعَةٌ", id: "Tunduk hina" },
-            { ar: "يَقُولُونَ", id: "Mereka berkata" }, { ar: "أَإِنَّا", id: "Apakah sesungguhnya kami" }, { ar: "لَمَرْدُودُونَ", id: "Benar-benar dikembalikan" }, { ar: "الْحَافِرَةِ", id: "Keadaan semula (hidup)" },
-            { ar: "عِظَامًا", id: "Tulang belulang" }, { ar: "نَخِرَةً", id: "Yang hancur" }, { ar: "كَرَّةٌ", id: "Pengembalian" }, { ar: "خَاسِرَةٌ", id: "Yang merugikan" },
-            { ar: "زَجْرَةٌ", id: "Tiupan (sangkakala)" }, { ar: "وَاحِدَةٌ", id: "Satu kali" }, { ar: "بِالسَّاهِرَةِ", id: "Di permukaan bumi" }, { ar: "هَلْ أَتَاكَ", id: "Sudahkah datang kepadamu" },
-            { ar: "حَدِيثُ", id: "Kisah" }, { ar: "مُوسَىٰ", id: "Musa" }, { ar: "نَادَاهُ", id: "Memanggilnya" }, { ar: "الْمُقَدَّسِ", id: "Yang suci" },
-            { ar: "طُوًى", id: "Thuwa (nama lembah)" }, { ar: "اذْهَبْ", id: "Pergilah" }, { ar: "إِلَىٰ", id: "Kepada / Menuju" }, { ar: "فِرْعَوْنَ", id: "Fir'aun" }, { ar: "طَغَىٰ", id: "Melampaui batas" },
-            { ar: "تَزَكَّىٰ", id: "Menyucikan diri" }, { ar: "وَأَهْدِيَكَ", id: "Dan aku beri petunjuk kepadamu" }, { ar: "فَتَخْشَىٰ", id: "Maka kamu menjadi takut" }, { ar: "الْآيَةَ", id: "Mukjizat (tanda kebesaran)" },
-            { ar: "الْكُبْرَىٰ", id: "Yang paling besar" }, { ar: "فَكَذَّبَ", id: "Lalu dia mendustakan" }, { ar: "وَعَصَىٰ", id: "Dan mendurhaka" }, { ar: "أَدْبَرَ", id: "Berpaling" },
-            { ar: "يَسْعَىٰ", id: "Berusaha menantang" }, { ar: "فَحَشَرَ", id: "Lalu dia mengumpulkan" }, { ar: "رَبُّكُمُ", id: "Tuhanmu" }, { ar: "الْأَعْلَى", id: "Yang paling tinggi" },
-            { ar: "فَأَخَذَهُ", id: "Maka Allah mengazabnya" }, { ar: "نَكَالَ", id: "Siksaan (hukuman)" }, { ar: "الْآخِرَةِ", id: "Akhirat" }, { ar: "لَعِبْرَةً", id: "Benar-benar pelajaran" },
-            { ar: "أَشَدُّ", id: "Lebih sulit" }, { ar: "خَلْقًا", id: "Penciptaannya" }, { ar: "بَنَاهَا", id: "Membangunnya" }, { ar: "رَفَعَ", id: "Meninggikan" },
-            { ar: "سَمْكَهَا", id: "Bangunannya" }, { ar: "وَأَغْطَشَ", id: "Dan Dia menjadikan gelap" }, { ar: "لَيْلَهَا", id: "Malamnya" }, { ar: "أَخْرَجَ", id: "Mengeluarkan" },
-            { ar: "ضُحَاهَا", id: "Siangnya (terangnya)" }, { ar: "دَحَاهَا", id: "Menghamparnya" }, { ar: "مَاءَهَا", id: "Airnya" }, { ar: "مَرْعَاهَا", id: "Tumbuh-tumbuhannya" },
-            { ar: "أَرْسَاهَا", id: "Memancangkannya" }, { ar: "مَتَاعًا", id: "Sebagai kesenangan" }, { ar: "لَكُمْ", id: "Untukmu" }, { ar: "الطَّامَّةُ", id: "Bencana (Kiamat)" },
-            { ar: "يَتَذَكَّرُ", id: "Teringat" }, { ar: "سَعَىٰ", id: "Telah dikerjakan" }, { ar: "بُرِّزَتِ", id: "Diperlihatkan" }, { ar: "الْجَحِيمُ", id: "Neraka" },
-            { ar: "آثَرَ", id: "Lebih mengutamakan" }, { ar: "الْحَيَاةَ", id: "Kehidupan" }, { ar: "الدُّنْيَا", id: "Dunia" }, { ar: "الْمَأْوَىٰ", id: "Tempat tinggal" },
-            { ar: "خَافَ", id: "Takut" }, { ar: "مَقَامَ", id: "Kebesaran" }, { ar: "نَهَى", id: "Menahan" }, { ar: "الْهَوَىٰ", id: "Hawa nafsu" },
-            { ar: "الْجَنَّةَ", id: "Surga" }, { ar: "السَّاعَةِ", id: "Hari kiamat" }, { ar: "أَيَّانَ", id: "Kapan" }, { ar: "مُرْسَاهَا", id: "Terjadinya" },
-            { ar: "مُنْتَهَاهَا", id: "Kesudahannya" }, { ar: "مُنْذِرُ", id: "Pemberi peringatan" }, { ar: "يَلْبَثُوا", id: "Mereka tinggal" }, { ar: "عَشِيَّةً", id: "Waktu sore" }
-          ]},
-          { surah: "'Abasa", words: [ 
-            { ar: "عَبَسَ", id: "Dia bermuka masam" }, { ar: "وَتَوَلَّىٰ", id: "Dan berpaling" }, { ar: "أَنْ", id: "Karena" }, { ar: "جَاءَهُ", id: "Telah datang kepadanya" }, 
-            { ar: "الْأَعْمَىٰ", id: "Orang buta" }, { ar: "وَمَا", id: "Dan apa yang" }, { ar: "يُدْرِيكَ", id: "Pemberitahumu (tahukah kamu)" }, { ar: "لَعَلَّهُ", id: "Barangkali dia" }, 
-            { ar: "يَزَّكَّىٰ", id: "Ingin menyucikan diri" }, { ar: "يَذَّكَّرُ", id: "Mendapat pelajaran" }, { ar: "فَتَنْفَعَهُ", id: "Maka memberi manfaat kepadanya" }, { ar: "الذِّكْرَىٰ", id: "Peringatan itu" }, 
-            { ar: "أَمَّا", id: "Adapun" }, { ar: "مَنِ", id: "Orang yang" }, { ar: "اسْتَغْنَىٰ", id: "Merasa serba cukup" }, { ar: "فَأَنْتَ", id: "Maka kamu" }, 
-            { ar: "لَهُ", id: "Kepadanya" }, { ar: "تَصَدَّىٰ", id: "Melayani (memperhatikan)" }, { ar: "وَمَا عَلَيْكَ", id: "Padahal tiada (celaan) atasmu" },
-            { ar: "يَسْعَىٰ", id: "Bergegas" }, { ar: "يَخْشَىٰ", id: "Takut" }, { ar: "تَلَهَّىٰ", id: "Mengabaikan" }, { ar: "تَذْكِرَةٌ", id: "Peringatan" },
-            { ar: "شَاءَ", id: "Mengehendaki" }, { ar: "ذَكَرَهُ", id: "Memperhatikannya" }, { ar: "فِي", id: "Di dalam" }, { ar: "صُحُفٍ", id: "Kitab-kitab" }, { ar: "مُكَرَّمَةٍ", id: "Yang dimuliakan" },
-            { ar: "مَرْفُوعَةٍ", id: "Yang ditinggikan" }, { ar: "مُطَهَّرَةٍ", id: "Yang disucikan" }, { ar: "بِأَيْدِي", id: "Di tangan" }, { ar: "سَفَرَةٍ", id: "Utusan-utusan (malaikat)" },
-            { ar: "كِرَامٍ", id: "Yang mulia" }, { ar: "بَرَرَةٍ", id: "Yang berbakti (taat)" }, { ar: "قُتِلَ", id: "Binasalah" }, { ar: "مَا أَكْفَرَهُ", id: "Alangkah amat kafirnya" },
-            { ar: "مِنْ أَيِّ", id: "Dari apakah" }, { ar: "شَيْءٍ", id: "Sesuatu" }, { ar: "خَلَقَهُ", id: "Dia menciptakannya" }, { ar: "نُطْفَةٍ", id: "Setetes mani" },
-            { ar: "فَقَدَّرَهُ", id: "Lalu menentukannya" }, { ar: "السَّبِيلَ", id: "Jalan" }, { ar: "يَسَّرَهُ", id: "Memudahkannya" }, { ar: "أَمَاتَهُ", id: "Mematikannya" },
-            { ar: "فَأَقْبَرَهُ", id: "Lalu memasukkannya ke kubur" }, { ar: "أَنْشَرَهُ", id: "Membangkitkannya" }, { ar: "لَمَّا يَقْضِ", id: "Dia belum melaksanakan" }, { ar: "أَمَرَهُ", id: "Diperintahkan-Nya" },
-            { ar: "فَلْيَنْظُرِ", id: "Maka hendaklah memperhatikan" }, { ar: "طَعَامِهِ", id: "Makanannya" }, { ar: "صَبَبْنَا", id: "Kami mencurahkan" }, { ar: "الْمَاءَ", id: "Air" },
-            { ar: "صَبًّا", id: "Benar-benar tercurah" }, { ar: "شَقَقْنَا", id: "Kami membelah" }, { ar: "الْأَرْضَ", id: "Bumi" }, { ar: "شَقًّا", id: "Benar-benar terbelah" },
-            { ar: "فَأَنْبَتْنَا", id: "Lalu Kami tumbuhkan" }, { ar: "حَبًّا", id: "Biji-bijian" }, { ar: "عِنَبًا", id: "Anggur" }, { ar: "وَقَضْبًا", id: "Dan sayur-sayuran" },
-            { ar: "زَيْتُونًا", id: "Zaitun" }, { ar: "وَنَخْلًا", id: "Dan pohon kurma" }, { ar: "حَدَائِقَ", id: "Kebun-kebun" }, { ar: "غُلْبًا", id: "Yang lebat" },
-            { ar: "وَفَاكِهَةً", id: "Dan buah-buahan" }, { ar: "وَأَبًّا", id: "Dan rerumputan" }, { ar: "مَتَاعًا", id: "Sebagai kesenangan" }, { ar: "لِأَنْعَامِكُمْ", id: "Untuk binatang ternakmu" },
-            { ar: "الصَّاخَّةُ", id: "Suara yang memekakkan" }, { ar: "يَفِرُّ", id: "Lari" }, { ar: "أَخِيهِ", id: "Saudaranya" }, { ar: "أُمِّهِ", id: "Ibunyq" },
-            { ar: "وَأَبِيهِ", id: "Dan bapaknya" }, { ar: "صَاحِبَتِهِ", id: "Istrinya" }, { ar: "وَبَنِيهِ", id: "Dan anak-anaknya" }, { ar: "يُغْنِيهِ", id: "Menyibukkannya" },
-            { ar: "مُسْفِرَةٌ", id: "Berseri-seri" }, { ar: "ضَاحِكَةٌ", id: "Tertawa" }, { ar: "مُسْتَبْشِرَةٌ", id: "Gembira" }, { ar: "غَبَرَةٌ", id: "Debu" },
-            { ar: "تَرْهَقُهَا", id: "Ditutupi" }, { ar: "قَتَرَةٌ", id: "Kegelapan" }, { ar: "الْكَفَرَةُ", id: "Orang-orang kafir" }, { ar: "الْفَجَرَةُ", id: "Yang durhaka" }
-          ]},
-          { surah: "At-Takwir", words: [ 
-            { ar: "إِذَا", id: "Apabila" }, { ar: "الشَّمْسُ", id: "Matahari" }, { ar: "كُوِّرَتْ", id: "Digulung (menjadi gelap)" }, { ar: "النُّجُومُ", id: "Bintang-bintang" }, 
-            { ar: "انْكَدَرَتْ", id: "Berjatuhan (hilang cahaya)" }, { ar: "الْجِبَالُ", id: "Gunung-gunung" }, { ar: "سُيِّرَتْ", id: "Dihancurkan" }, { ar: "الْعِشَارُ", id: "Unta-unta bunting" }, 
-            { ar: "عُطِّلَتْ", id: "Ditinggalkan" }, { ar: "الْوُحُوشُ", id: "Binatang-binatang liar" }, { ar: "حُشِرَتْ", id: "Dikumpulkan" }, { ar: "الْبِحَارُ", id: "Lautan" }, 
-            { ar: "سُجِّرَتْ", id: "Dipanaskan (menjadi api)" }, { ar: "النُّفُوسُ", id: "Ruh-ruh" }, { ar: "زُوِّجَتْ", id: "Dipertemukan" }, { ar: "الْمَوْءُودَةُ", id: "Bayi perempuan yang dikubur hidup" }, 
-            { ar: "سُئِلَتْ", id: "Ditanya" }, { ar: "بِأَيِّ", id: "Karena apa" }, { ar: "ذَنْبٍ", id: "Dosa" }, { ar: "قُتِلَتْ", id: "Dia dibunuh" },
-            { ar: "نُشِرَتْ", id: "Dibentangkan (untuk dihisab)" }, { ar: "كُشِطَتْ", id: "Dilenyapkan (dibuka wujudnya)" }, { ar: "سُعِّرَتْ", id: "Dinyalakan" }, { ar: "أُزْلِفَتْ", id: "Didekatkan" },
-            { ar: "أُقْسِمُ", id: "Aku bersumpah" }, { ar: "بِالْخُنَّسِ", id: "Bintang yang tersembunyi" }, { ar: "الْجَوَارِ", id: "Bintang yang bergerak" }, { ar: "الْكُنَّسِ", id: "Bintang yang terbenam" },
-            { ar: "عَسْعَسَ", id: "Telah gelap" }, { ar: "تَنَفَّسَ", id: "Telah terang" }, { ar: "قَوْلُ", id: "Firman" }, { ar: "رَسُولٍ", id: "Utusan" },
-            { ar: "كَرِيمٍ", id: "Yang mulia" }, { ar: "قُوَّةٍ", id: "Kekuatan" }, { ar: "عِنْدَ", id: "Di sisi" }, { ar: "الْعَرْشِ", id: "Arsy" },
-            { ar: "مَكِينٍ", id: "Yang berkedudukan tinggi" }, { ar: "مُطَاعٍ", id: "Yang ditaati" }, { ar: "أَمِينٍ", id: "Yang dipercaya" }, { ar: "بِمَجْنُونٍ", id: "Orang gila" },
-            { ar: "رَآهُ", id: "Melihatnya" }, { ar: "بِالْأُفُقِ", id: "Di ufuk" }, { ar: "الْمُبِينِ", id: "Yang terang" }, { ar: "بِضَنِينٍ", id: "Orang yang kikir" },
-            { ar: "بِقَوْلِ", id: "Perkataan" }, { ar: "شَيْطَانٍ", id: "Setan" }, { ar: "رَجِيمٍ", id: "Yang terkutuk" }, { ar: "تَذْهَبُونَ", id: "Kamu pergi" }
-          ]},
-          { surah: "Al-Infitar", words: [ 
-            { ar: "إِذَا", id: "Apabila" }, { ar: "السَّمَاءُ", id: "Langit" }, { ar: "انْفَطَرَتْ", id: "Terbelah (pecah)" }, { ar: "الْكَوَاكِبُ", id: "Bintang-bintang" }, 
-            { ar: "انْتَثَرَتْ", id: "Jatuh berserakan" }, { ar: "الْبحَارُ", id: "Lautan" }, { ar: "فُجِّرَتْ", id: "Dijadikan meluap" }, { ar: "الْقُبُورُ", id: "Kuburan-kuburan" }, 
-            { ar: "بُعْثِرَتْ", id: "Dibongkar (dikeluarkan isinya)" }, { ar: "عَلِمَتْ", id: "Mengetahuilah" }, { ar: "نَفْسٌ", id: "Tiap-tiap jiwa" }, { ar: "قَدَّمَتْ", id: "Telah dikerjakan" }, 
-            { ar: "وَأَخَّرَتْ", id: "Dan ditinggalkan" }, { ar: "يَا أَيُّهَا", id: "Wahai" }, { ar: "الْإِنْسَانُ", id: "Manusia" }, { ar: "مَا", id: "Apakah yang" }, { ar: "غَرَّكَ", id: "Memperdayakanmu" }, 
-            { ar: "بِرَبِّكَ", id: "Terhadap Tuhanmu" }, { ar: "الْكَرِيمِ", id: "Yang Maha Pemurah" }
-          ]},
-          { surah: "Al-Mutaffifin", words: [ 
-            { ar: "وَيْلٌ", id: "Celakalah" }, { ar: "لِلْمُطَفِّفِينَ", id: "Bagi orang yang curang" }, { ar: "الَّذِينَ", id: "Orang-orang yang" }, { ar: "اكْتَالُوا", id: "Menerima takaran" }, 
-            { ar: "عَلَى", id: "Atas / Terhadap" }, { ar: "النَّاسِ", id: "Orang lain/Manusia" }, { ar: "يَسْتَوْفُونَ", id: "Minta dipenuhi" }, { ar: "وَإِذَا", id: "Dan apabila" }, 
-            { ar: "كَالُوهُمْ", id: "Mereka menakar" }, { ar: "وَزَنُوهُمْ", id: "Menimbang untuk orang" }, { ar: "يُخْسِرُونَ", id: "Mereka mengurangi" }, { ar: "أَلَا", id: "Tidakkah" }, 
-            { ar: "يَظُنُّ", id: "Mengira" }, { ar: "أُولَٰئِكَ", id: "Mereka itu" }, { ar: "مَبْعُوثُونَ", id: "Akan dibangkitkan" }, { ar: "لِيَوْمٍ", id: "Pada hari" }, { ar: "عَظِيمٍ", id: "Yang besar" }, 
-            { ar: "كِتَابَ", id: "Kitab (catatan amal)" }, { ar: "الفُجَّارِ", id: "Orang-orang durhaka" }, { ar: "سِجِّينٍ", id: "Sijjin (buku keburukan)" }, { ar: "مَرْقُومٌ", id: "Yang tertulis (jelas)" },
-            { ar: "لِلْمُكَذِّبِينَ", id: "Bagi pendusta" }, { ar: "بِيَوْمِ", id: "Dengan hari" }, { ar: "الدِّينِ", id: "Pembalasan/Agama" }, { ar: "مُعْتَدٍ", id: "Yang melampaui batas" },
-            { ar: "أَثِيمٍ", id: "Banyak dosa" }, { ar: "تُتْلَىٰ", id: "Dibacakan" }, { ar: "آيَاتُنَا", id: "Ayat-ayat Kami" }, { ar: "أَسَاطِيرُ", id: "Dongengan" },
-            { ar: "الْأَوَّلِينَ", id: "Orang-orang terdahulu" }, { ar: "رَانَ", id: "Menutupi" }, { ar: "قُلُوبِهِمْ", id: "Hati mereka" }, { ar: "يَكْسِبُونَ", id: "Mereka kerjakan" },
-            { ar: "لَمَحْجُوبُونَ", id: "Benar-benar terhalang" }, { ar: "صَالُو", id: "Masuk" }, { ar: "كُنْتُمْ", id: "Kamu dahulu" }, { ar: "الْأَبْرَارِ", id: "Orang yang berbakti" },
-            { ar: "عِلِّيِّينَ", id: "Illiyyin (tempat tinggi/buku kebaikan)" }, { ar: "يَشْهَدُهُ", id: "Disaksikan" }, { ar: "الْمُقَرَّبُونَ", id: "Malaikat yang didekatkan" }, { ar: "الْأَرَائِكِ", id: "Dipan-dipan" },
-            { ar: "يَنْظُرُونَ", id: "Memandang" }, { ar: "تَعْرِفُ", id: "Kamu kenal" }, { ar: "وُجُوهِهِمْ", id: "Wajah mereka" }, { ar: "نَضْرَةَ", id: "Cahaya keceriaan" },
-            { ar: "النَّعِيمِ", id: "Kenikmatan" }, { ar: "يُسْقَوْنَ", id: "Diberi minum" }, { ar: "رَحِيقٍ", id: "Minuman murni (surga)" }, { ar: "مَخْتُومٍ", id: "Yang dilak" },
-            { ar: "خِتَامُهُ", id: "Laknya" }, { ar: "مِسْكٌ", id: "Kasturi" }, { ar: "فَلْيَتَنَافَسِ", id: "Maka berlomba-lombalah" }, { ar: "الْمُتَنَافِسُونَ", id: "Orang yang berlomba" },
-            { ar: "مِزَاجُهُ", id: "Campurannya" }, { ar: "تَسْنِيمٍ", id: "Mata air Tasnim" }, { ar: "يَشْرَبُ", id: "Minum" }, { ar: "أَجْرَمُوا", id: "Orang yang berdosa" },
-            { ar: "يَضْحَكُونَ", id: "Mentertawakan" }, { ar: "مَرُّوا", id: "Berjalan" }, { ar: "يَتَغَامَزُونَ", id: "Saling mengedipkan mata" }, { ar: "انْقَلَبُوا", id: "Kembali" },
-            { ar: "أَهْلِهِمُ", id: "Keluarga mereka" }, { ar: "فَاكِهِينَ", id: "Bergembira ria" }, { ar: "رَأَوْهُمْ", id: "Melihat mereka" }, { ar: "ضَالُّونَ", id: "Orang yang sesat" },
-            { ar: "حَافِظِينَ", id: "Sebagai pemelihara" }, { ar: "ثُوِّبَ", id: "Diberi balasan" }
-          ]},
-          { surah: "Al-Insyiqaq", words: [ 
-            { ar: "إِذَا", id: "Apabila" }, { ar: "السَّمَاءُ", id: "Langit" }, { ar: "انْشَقَّتْ", id: "Terbelah" }, { ar: "وَأَذِنَتْ", id: "Dan patuh (mendengar perintah)" }, 
-            { ar: "لِرَبِّهَا", id: "Kepada Tuhannya" }, { ar: "وَحُقَّتْ", id: "Dan sudah semestinya" }, { ar: "وَإِذَا", id: "Dan apabila" }, { ar: "الْأَرْضُ", id: "Bumi" }, 
-            { ar: "مُدَّتْ", id: "Diratakan" }, { ar: "وَأَلْقَتْ", id: "Dan memuntahkan" }, { ar: "مَا فِيهَا", id: "Apa yang ada di dalamnya" }, { ar: "وَتَخَلَّتْ", id: "Dan menjadi kosong" }, 
-            { ar: "يَا أَيُّهَا", id: "Wahai" }, { ar: "الْإِنْسَانُ", id: "Manusia" }, { ar: "إِنَّكَ", id: "Sesungguhnya kamu" }, { ar: "كَادِحٌ", id: "Telah bekerja keras" }, 
-            { ar: "إِلَىٰ", id: "Menuju / Kepada" }, { ar: "رَبِّكَ", id: "Tuhanmu" }, { ar: "كَدْحًا", id: "Dengan sungguh-sungguh" }, { ar: "فَمُلَاقِيهِ", id: "Maka kamu akan menemui-Nya" }
-          ]},
-          { surah: "Al-Buruj", words: [ 
-            { ar: "وَالسَّمَاءِ", id: "Demi langit" }, { ar: "ذَاتِ", id: "Yang mempunyai" }, { ar: "الْبُرُوجِ", id: "Gugusan bintang" }, { ar: "وَالْيَوْمِ", id: "Dan hari" }, 
-            { ar: "الْمَوْعُودِ", id: "Yang dijanjikan" }, { ar: "وَشَاهِدٍ", id: "Dan yang menyaksikan" }, { ar: "وَمَشْهُودٍ", id: "Dan yang disaksikan" }, { ar: "قُتِلَ", id: "Binasalah (terkutuklah)" }, 
-            { ar: "أَصْحَابُ", id: "Pembuat" }, { ar: "الْأُخْدُودِ", id: "Parit (lubang api)" }, { ar: "النَّارِ", id: "Api" }, { ar: "الْوَقُودِ", id: "Kayu bakar" }, 
-            { ar: "إِذْ", id: "Ketika" }, { ar: "هُمْ", id: "Mereka" }, { ar: "عَلَيْهَا", id: "Di sekitarnya" }, 
-            { ar: "قُعُودٌ", id: "Duduk" }, { ar: "وَهُمْ", id: "Dan mereka" }, { ar: "شُهُودٌ", id: "Menyaksikan (kekejaman)" }
-          ]},
+    <!-- MAIN APP CONTAINER -->
+    <div class="w-full max-w-md bg-white shadow-2xl relative flex flex-col h-[100dvh] sm:h-[90vh] sm:rounded-3xl sm:mt-5 overflow-hidden border-gray-200 sm:border">
 
-          // --- LEVEL 3: MENENGAH (Surah 86 - 92) ---
-          { surah: "At-Tariq", words: [ 
-            { ar: "وَالسَّمَاءِ", id: "Demi langit" }, { ar: "وَالطَّارِقِ", id: "Dan yang datang malam hari" }, { ar: "وَمَا", id: "Dan tahukah" }, { ar: "أَدْرَاكَ", id: "Kamu" }, 
-            { ar: "مَا", id: "Apakah" }, { ar: "الطَّارِقُ", id: "Yang datang malam hari (bintang)" }, { ar: "النَّجْمُ", id: "Bintang" }, { ar: "الثَّاقِبُ", id: "Yang cahayanya menembus" }, 
-            { ar: "إِنْ", id: "Tidak ada" }, { ar: "كُلُّ", id: "Setiap" }, { ar: "نَفْسٍ", id: "Jiwa" }, { ar: "لَمَّا", id: "Melainkan" }, 
-            { ar: "عَلَيْهَا", id: "Atasnya" }, { ar: "حَافِظٌ", id: "Ada penjaga (malaikat)" }, { ar: "فَلْيَنْظُرِ", id: "Maka hendaklah memperhatikan" }, { ar: "الْإِنْسَانُ", id: "Manusia" }, 
-            { ar: "مِمَّ", id: "Dari apa" }, { ar: "خُلِقَ", id: "Dia diciptakan" }
-          ]},
-          { surah: "Al-A'la", words: [ 
-            { ar: "سَبِّحِ", id: "Sucikanlah" }, { ar: "اسْمَ", id: "Nama" }, { ar: "رَبِّكَ", id: "Tuhanmu" }, { ar: "الْأَعْلَى", id: "Yang Maha Tinggi" }, 
-            { ar: "الَّذِي", id: "Yang" }, { ar: "خَلَقَ", id: "Menciptakan" }, { ar: "فَسَوَّىٰ", id: "Lalu menyempurnakan" }, { ar: "وَالَّذِي", id: "Dan yang" }, 
-            { ar: "قَدَّرَ", id: "Menentukan ukuran (ketetapan)" }, { ar: "فَهَدَىٰ", id: "Lalu memberi petunjuk" }, { ar: "أَخْرَجَ", id: "Menumbuhkan" }, 
-            { ar: "الْمَرْعَىٰ", id: "Rumput-rumputan" }, { ar: "فَجَعَلَهُ", id: "Lalu menjadikannya" }, { ar: "غُثَاءً", id: "Kering (sampah/jerami)" }, { ar: "أَحْوَىٰ", id: "Kehitam-hitaman" }, 
-            { ar: "سَنُقْرِئُكَ", id: "Kami akan membacakan kepadamu" }, { ar: "فَلَا", id: "Maka janganlah" }, { ar: "تَنْسَىٰ", id: "Kamu lupa" }
-          ]},
-          { surah: "Al-Ghasyiyah", words: [ 
-            { ar: "هَلْ", id: "Sudahkah" }, { ar: "أَتَاكَ", id: "Datang kepadamu" }, { ar: "حَدِيثُ", id: "Berita" }, { ar: "الْغَاشِيَةِ", id: "Hari kiamat (bencana)" }, 
-            { ar: "وُجُوهٌ", id: "Banyak muka" }, { ar: "يَوْمَئِذٍ", id: "Pada hari itu" }, { ar: "خَاشِعَةٌ", id: "Tunduk terhina" }, { ar: "عَامِلَةٌ", id: "Bekerja keras" }, 
-            { ar: "نَاصِبَةٌ", id: "Kelelahan" }, { ar: "تَصْلَىٰ", id: "Memasuki" }, { ar: "نَارًا", id: "Api" }, { ar: "حَامِيَةً", id: "Yang sangat panas" }, 
-            { ar: "تُسْقَىٰ", id: "Diberi minum" }, { ar: "مِنْ", id: "Dari" }, { ar: "عَيْنٍ", id: "Mata air" }, { ar: "آنِيَةٍ", id: "Yang sangat mendidih" }, 
-            { ar: "لَيْسَ", id: "Tidak ada" }, { ar: "لَهُمْ", id: "Bagi mereka" }, { ar: "طَعَامٌ", id: "Makanan" }, { ar: "إِلَّا", id: "Kecuali" }, { ar: "مِنْ ضَرِيعٍ", id: "Dari pohon berduri" }
-          ]},
-          { surah: "Al-Fajr", words: [ 
-            { ar: "وَالْفَجْرِ", id: "Demi fajar" }, { ar: "وَلَيَالٍ", id: "Dan malam-malam" }, { ar: "عَشْرٍ", id: "Yang sepuluh" }, { ar: "وَالشَّفْعِ", id: "Dan yang genap" }, 
-            { ar: "وَالْوَتْرِ", id: "Dan yang ganjil" }, { ar: "وَاللَّيْلِ", id: "Dan demi malam" }, { ar: "إِذَا", id: "Apabila" }, { ar: "يَسْرِ", id: "Berlalu" }, 
-            { ar: "هَلْ", id: "Adakah" }, { ar: "فِي ذَٰلِكَ", id: "Pada yang demikian itu" }, { ar: "قَسَمٌ", id: "Sumpah" }, { ar: "لِذِي", id: "Bagi yang mempunyai" }, { ar: "حِجْرٍ", id: "Akal (pikiran sehat)" }, 
-            { ar: "أَلَمْ تَرَ", id: "Tidakkah kamu perhatikan" }, { ar: "كَيْفَ", id: "Bagaimana" }, { ar: "فَعَلَ", id: "Berbuat" }, 
-            { ar: "رَبُّكَ", id: "Tuhanmu" }, { ar: "بِعَادٍ", id: "Terhadap kaum 'Aad" }, { ar: "إِرَمَ", id: "Penduduk Iram" }, { ar: "ذَاتِ", id: "Yang mempunyai" }, { ar: "الْعِمَادِ", id: "Bangunan tinggi" },
-            { ar: "جَابُوا", id: "Memotong (memahat)" }, { ar: "الصَّخْرَ", id: "Batu besar" }, { ar: "بِالْوَادِ", id: "Di lembah" }, { ar: "فِرْعَوْنَ", id: "Fir'aun" },
-            { ar: "ذِي الْأَوْتَادِ", id: "Mempunyai pasak-pasak" }, { ar: "طَغَوْا", id: "Berbuat sewenang-wenang" }, { ar: "الْبِلَادِ", id: "Negeri-negeri" }, { ar: "فَأَكْثَرُوا", id: "Lalu mereka banyak berbuat" },
-            { ar: "الْفَسَادَ", id: "Kerusakan" }, { ar: "فَصَبَّ", id: "Maka menimpakan" }, { ar: "سَوْطَ", id: "Cemeti / Cambuk (azab)" }, { ar: "عَذَابٍ", id: "Azab" },
-            { ar: "لَبِالْمِرْصَادِ", id: "Benar-benar mengawasi" }, { ar: "ابْتَلَاهُ", id: "Mengujinya" }, { ar: "فَأَكْرَمَهُ", id: "Lalu memuliakannya" }, { ar: "وَنَعَّمَهُ", id: "Dan memberinya nikmat" },
-            { ar: "أَكْرَمَنِ", id: "Telah memuliakanku" }, { ar: "فَقَدَرَ", id: "Lalu membatasi" }, { ar: "رِزْقَهُ", id: "Rezekinya" }, { ar: "أَهَانَنِ", id: "Telah menghinaku" },
-            { ar: "لَا تُكْرِمُونَ", id: "Kamu tidak memuliakan" }, { ar: "الْيَتِيمَ", id: "Anak yatim" }, { ar: "تَحَاضُّونَ", id: "Saling mengajak" }, { ar: "طَعَامِ", id: "Memberi makan" },
-            { ar: "الْمِسْكِينِ", id: "Orang miskin" }, { ar: "تَأْكُلُونَ", id: "Kamu memakan" }, { ar: "التُّرَاثَ", id: "Harta warisan" }, { ar: "أَكْلًا", id: "Dengan cara makan" },
-            { ar: "لَمًّا", id: "Mencampuradukkan (halal haram)" }, { ar: "تُحِبُّونَ", id: "Kamu mencintai" }, { ar: "الْمَالَ", id: "Harta" }, { ar: "حُبًّا", id: "Kecintaan" },
-            { ar: "جَمًّا", id: "Yang berlebihan (sangat banyak)" }, { ar: "دُكَّتِ", id: "Dihancurkan" }, { ar: "دَكًّا", id: "Berturut-turut" }, { ar: "وَجَاءَ", id: "Dan datanglah" },
-            { ar: "صَفًّا", id: "Bersaf-saf" }, { ar: "وَجِيءَ", id: "Dan didatangkan" }, { ar: "يَتَذَكَّرُ", id: "Sadar/Ingat" }, { ar: "أَنَّىٰ", id: "Bagaimana (berguna)" },
-            { ar: "الذِّكْرَىٰ", id: "Kesadaran" }, { ar: "قَدَّمْتُ", id: "Aku berbuat (kebaikan)" }, { ar: "لِحَيَاتِي", id: "Untuk hidupku" }, { ar: "يُعَذِّبُ", id: "Mengazab" },
-            { ar: "يُوثِقُ", id: "Mengikat" }, { ar: "وَثَاقَهُ", id: "Ikatan-Nya" }, { ar: "الْمُطْمَئِنَّةُ", id: "Yang tenang" }, { ar: "ارْجِعِي", id: "Kembalilah" },
-            { ar: "رَاضِيَةً", id: "Dengan rida" }, { ar: "مَرْضِيَّةً", id: "Lagi diridai" }, { ar: "فَادْخُلِي", id: "Maka masuklah" }, { ar: "عِبَادِي", id: "Hamba-hamba-Ku" },
-            { ar: "جَنَّتِي", id: "Surga-Ku" }
-          ]},
-          { surah: "Al-Balad", words: [ 
-            { ar: "لَا أُقْسِمُ", id: "Aku benar-benar bersumpah" }, { ar: "بِهَٰذَا", id: "Dengan ini" }, { ar: "الْبَلَدِ", id: "Kota (Mekah)" }, { ar: "وَأَنْتَ", id: "Dan kamu" }, 
-            { ar: "حِلٌّ", id: "Bertempat tinggal" }, { ar: "وَوَالِدٍ", id: "Dan demi bapak" }, { ar: "وَمَا", id: "Dan apa yang" }, { ar: "وَلَدَ", id: "Dilahirkannya" }, 
-            { ar: "لَقَدْ", id: "Sesungguhnya" }, { ar: "خَلَقْنَا", id: "Kami telah menciptakan" }, { ar: "الْإِنْسَانَ", id: "Manusia" }, { ar: "فِي كَبَدٍ", id: "Dalam susah payah (cobaan)" }, 
-            { ar: "أَيَحْسَبُ", id: "Apakah dia mengira" }, { ar: "أَنْ لَنْ", id: "Bahwa tidak akan" }, { ar: "يَقْدِرَ", id: "Mampu / Berkuasa" }, { ar: "عَلَيْهِ", id: "Atasnya" }, 
-            { ar: "أَحَدٌ", id: "Seorangpun" }, { ar: "يَقُولُ", id: "Dia mengatakan" }, { ar: "أَهْلَكْتُ", id: "Aku telah menghabiskan" }, { ar: "مَالًا", id: "Harta" }
-          ]},
-          { surah: "Asy-Syams", words: [ 
-            { ar: "وَالشَّمْسِ", id: "Demi matahari" }, { ar: "وَضُحَاهَا", id: "Dan sinarnya pada pagi hari" }, { ar: "وَالْقَمَرِ", id: "Dan bulan" }, { ar: "إِذَا", id: "Apabila" }, 
-            { ar: "تَلَاهَا", id: "Mengiringinya" }, { ar: "وَالنَّهَارِ", id: "Dan siang" }, { ar: "جَلَّاهَا", id: "Menampakkannya" }, { ar: "وَاللَّيْلِ", id: "Dan malam" }, 
-            { ar: "يَغْشَاهَا", id: "Menutupinya" }, { ar: "وَالسَّمَاءِ", id: "Dan langit" }, { ar: "وَمَا", id: "Dan (demi) apa yang" }, { ar: "بَنَاهَا", id: "Membangunnya" }, 
-            { ar: "وَالْأَرْضِ", id: "Dan bumi" }, { ar: "طَحَاهَا", id: "Menghamparnya" }, { ar: "وَنَفْسٍ", id: "Dan jiwa" }, { ar: "سَوَّاهَا", id: "Menyempurnakannya" }, 
-            { ar: "فَأَلْهَمَهَا", id: "Maka Dia mengilhamkan kepadanya" }, { ar: "فُجُورَهَا", id: "Kefasikannya (kejahatan)" }, { ar: "وَتَقْوَاهَا", id: "Dan ketakwaannya" }
-          ]},
-          { surah: "Al-Lail", words: [ 
-            { ar: "وَاللَّيْلِ", id: "Demi malam" }, { ar: "إِذَا", id: "Apabila" }, { ar: "يَغْشَىٰ", id: "Menutupi" }, { ar: "وَالنَّهَارِ", id: "Dan siang" }, 
-            { ar: "تَجَلَّىٰ", id: "Terang benderang" }, { ar: "وَمَا", id: "Dan demi apa yang" }, { ar: "خَلَقَ", id: "Dia ciptakan" }, { ar: "الذَّكَرَ", id: "Laki-laki" }, 
-            { ar: "وَالْأُنْثَىٰ", id: "Dan perempuan" }, { ar: "إِنَّ", id: "Sesungguhnya" }, { ar: "سَعْيَكُمْ", id: "Usahamu" }, { ar: "لَشَتَّىٰ", id: "Benar-benar berbeda" }, 
-            { ar: "فَأَمَّا", id: "Maka adapun" }, { ar: "مَنْ", id: "Orang yang" }, { ar: "أَعْطَىٰ", id: "Memberikan" }, { ar: "وَاتَّقَىٰ", id: "Dan bertakwa" }, 
-            { ar: "وَصَدَّقَ", id: "Dan membenarkan" }, { ar: "بِالْحُسْنَىٰ", id: "Dengan kebaikan" }, { ar: "فَسَنُيَسِّرُهُ", id: "Maka kelak Kami siapkan" }, { ar: "لِلْيُسْرَىٰ", id: "Jalan yang mudah" }
-          ]},
+        <!-- TOAST NOTIFICATION -->
+        <div id="toast" class="hidden absolute top-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-[10px] font-bold px-4 py-2 rounded-full shadow-lg z-50 uppercase tracking-widest text-center min-w-[200px] animate-fade-in-down">
+            Pesan Notifikasi
+        </div>
 
-          // --- LEVEL 2: DASAR (Surah 93 - 104) ---
-          { surah: "Ad-Duha", words: [ 
-            { ar: "وَالضُّحَىٰ", id: "Demi waktu dhuha" }, { ar: "وَاللَّيْلِ", id: "Dan demi malam" }, { ar: "إِذَا", id: "Apabila" }, { ar: "سَجَىٰ", id: "Telah sunyi" }, 
-            { ar: "مَا", id: "Tidaklah" }, { ar: "وَدَّعَكَ", id: "Meninggalkanmu" }, { ar: "رَبُّكَ", id: "Tuhanmu" }, { ar: "وَمَا", id: "Dan tidak" }, { ar: "قَلَىٰ", id: "Benci" }, 
-            { ar: "وَلَلْآخِرَةُ", id: "Dan sungguh akhirat itu" }, { ar: "خَيْرٌ", id: "Lebih baik" }, { ar: "لَكَ", id: "Bagimu" }, { ar: "مِنَ الْأُولَىٰ", id: "Dari permulaan (dunia)" }, 
-            { ar: "وَلَسَوْفَ", id: "Dan kelak sungguh" }, { ar: "يُعْطِيكَ", id: "Akan memberikan kepadamu" }, { ar: "فَتَرْضَىٰ", id: "Maka kamu menjadi puas" }, { ar: "أَلَمْ يَجِدْكَ", id: "Bukankah Dia mendapatimu" }, 
-            { ar: "يَتِيمًا", id: "Sebagai yatim" }, { ar: "فَآوَىٰ", id: "Lalu Dia melindungi (memberi tempat)" }, { ar: "وَوَجَدَكَ", id: "Dan Dia mendapatimu" }, { ar: "ضَالًّا", id: "Bingung" }, { ar: "فَهَدَىٰ", id: "Lalu Dia memberi petunjuk" }
-          ]},
-          { surah: "Al-Insyirah", words: [ 
-            { ar: "أَلَمْ", id: "Bukankah" }, { ar: "نَشْرَحْ", id: "Kami telah melapangkan" }, { ar: "لَكَ", id: "Untukmu" }, { ar: "صَدْرَكَ", id: "Dadamu" }, 
-            { ar: "وَوَضَعْنَا", id: "Dan Kami telah menurunkan" }, { ar: "عَنْكَ", id: "Darimu" }, { ar: "وِزْرَكَ", id: "Bebanmu" }, { ar: "الَّذِي", id: "Yang" }, 
-            { ar: "أَنْقَضَ", id: "Memberatkan (menekan)" }, { ar: "ظَهْرَكَ", id: "Punggungmu" }, { ar: "وَرَفَعْنَا", id: "Dan Kami tinggikan" }, { ar: "ذِكْرَكَ", id: "Sebutan (nama)mu" }, 
-            { ar: "فَإِنَّ", id: "Maka sesungguhnya" }, { ar: "مَعَ", id: "Bersama" }, { ar: "الْعُسْرِ", id: "Kesulitan" }, { ar: "يُسْرًا", id: "Ada kemudahan" }, 
-            { ar: "فَإِذَا", id: "Maka apabila" }, { ar: "فَرَغْتَ", id: "Kamu telah selesai" }, { ar: "فَانْصَبْ", id: "Kerjakanlah dengan sungguh" }, { ar: "وَإِلَىٰ", id: "Dan kepada" }, { ar: "رَبِّكَ", id: "Tuhanmu" }, { ar: "فَارْغَبْ", id: "Berharaplah" }
-          ]},
-          { surah: "At-Tin", words: [ 
-            { ar: "وَالتِّينِ", id: "Demi buah Tin" }, { ar: "وَالزَّيْتُونِ", id: "Dan buah Zaitun" }, { ar: "وَطُورِ", id: "Dan gunung" }, { ar: "سِينِينَ", id: "Sinai" }, 
-            { ar: "وَهَٰذَا", id: "Dan demi ini" }, { ar: "الْبَلَدِ", id: "Kota (Mekah)" }, { ar: "الْأَمِينِ", id: "Yang aman" }, { ar: "لَقَدْ", id: "Sesungguhnya" }, 
-            { ar: "خَلَقْنَا", id: "Kami telah menciptakan" }, { ar: "الْإِنْسَانَ", id: "Manusia" }, { ar: "فِي", id: "Di dalam" }, { ar: "أَحْسَنِ", id: "Sebaik-baik" }, { ar: "تَقْوِيمٍ", id: "Bentuk (postur)" }, 
-            { ar: "ثُمَّ", id: "Kemudian" }, { ar: "رَدَدْنَاهُ", id: "Kami kembalikan dia" }, { ar: "أَسْفَلَ", id: "Serendah-rendah" }, { ar: "سَافِلِينَ", id: "Orang yang hina" }, 
-            { ar: "إِلَّا", id: "Kecuali" }, { ar: "آمَنُوا", id: "Mereka beriman" }, { ar: "الصَّالِحَاتِ", id: "Amal saleh" }, { ar: "أَجْرٌ", id: "Pahala" }
-          ]},
-          { surah: "Al-'Alaq", words: [ 
-            { ar: "اقْرَأْ", id: "Bacalah" }, { ar: "بِاسْمِ", id: "Dengan menyebut nama" }, { ar: "رَبِّكَ", id: "Tuhanmu" }, { ar: "الَّذِي", id: "Yang" }, 
-            { ar: "خَلَقَ", id: "Menciptakan" }, { ar: "الْإِنْسَانَ", id: "Manusia" }, { ar: "مِنْ", id: "Dari" }, { ar: "عَلَقٍ", id: "Segumpal darah" }, 
-            { ar: "الْأَكْرَمُ", id: "Maha Mulia" }, { ar: "عَلَّمَ", id: "Telah mengajar" }, { ar: "بِالْقَلَمِ", id: "Dengan pena" }, { ar: "مَا لَمْ", id: "Apa yang tidak" }, { ar: "يَعْلَمْ", id: "Dia ketahui" }, 
-            { ar: "كَلَّا", id: "Ketahuilah" }, { ar: "إِنَّ", id: "Sesungguhnya" }, { ar: "لَيَطْغَىٰ", id: "Benar-benar melampaui batas (sombong)" }, 
-            { ar: "أَنْ رَآهُ", id: "Karena dia melihat dirinya" }, { ar: "اسْتَغْنَىٰ", id: "Serba cukup" }, { ar: "الرُّجْعَىٰ", id: "Tempat kembali (kepada Tuhan)" }
-          ]},
-          { surah: "Al-Qadr", words: [ 
-            { ar: "إِنَّا", id: "Sesungguhnya Kami" }, { ar: "أَنْزَلْنَاهُ", id: "Telah menurunkannya" }, { ar: "فِي", id: "Pada" }, { ar: "لَيْلَةِ", id: "Malam" }, 
-            { ar: "الْقَدْرِ", id: "Kemuliaan" }, { ar: "وَمَا", id: "Dan tahukah" }, { ar: "أَدْرَاكَ", id: "Kamu" }, { ar: "خَيْرٌ", id: "Lebih baik" }, 
-            { ar: "مِنْ", id: "Dari" }, { ar: "أَلْفِ", id: "Seribu" }, { ar: "شَهْرٍ", id: "Bulan" }, { ar: "تَنَزَّلُ", id: "Turun" }, 
-            { ar: "الْمَلَائِكَةُ", id: "Malaikat-malaikat" }, { ar: "وَالرُّوحُ", id: "Dan Jibril (Ruhul Qudus)" }, { ar: "بِإِذْنِ", id: "Dengan izin" }, { ar: "رَبِّهِمْ", id: "Tuhan mereka" }, 
-            { ar: "مِنْ", id: "Dari" }, { ar: "كُلِّ", id: "Setiap / Segala" }, { ar: "أَمْرٍ", id: "Urusan" }, { ar: "سَلَامٌ", id: "Sejahteralah" }, { ar: "حَتَّىٰ", id: "Sampai" }, { ar: "مَطْلَعِ", id: "Terbit" }, { ar: "الْفَجْرِ", id: "Fajar" }
-          ]},
-          { surah: "Al-Bayyinah", words: [ 
-            { ar: "لَمْ", id: "Tidaklah" }, { ar: "يَكُنِ", id: "Ada" }, { ar: "الَّذِينَ", id: "Orang-orang yang" }, { ar: "كَفَرُوا", id: "Kafir" }, 
-            { ar: "مِنْ", id: "Dari" }, { ar: "أَهْلِ", id: "Golongan / Ahli" }, { ar: "الْكِتَابِ", id: "Kitab" }, { ar: "وَالْمُشْرِكِينَ", id: "Dan orang musyrik" }, 
-            { ar: "مُنْفَكِّينَ", id: "Meninggalkan (kepercayaan lamanya)" }, { ar: "حَتَّىٰ", id: "Sehingga" }, { ar: "تَأْتِيَهُمُ", id: "Datang kepada mereka" }, { ar: "الْبَيِّنَةُ", id: "Bukti nyata" }, 
-            { ar: "رَسُولٌ", id: "Utusan" }, { ar: "يَتْلُو", id: "Membacakan" }, { ar: "صُحُفًا", id: "Lembaran-lembaran" }, { ar: "مُطَهَّرَةً", id: "Yang disucikan" }, 
-            { ar: "فِيهَا", id: "Di dalamnya" }, { ar: "كُتُبٌ", id: "Kitab-kitab" }, { ar: "قَيِّمَةٌ", id: "Yang lurus (benar)" }
-          ]},
-          { surah: "Az-Zalzalah", words: [ 
-            { ar: "إِذَا", id: "Apabila" }, { ar: "زُلْزِلَتِ", id: "Digoncangkan" }, { ar: "الْأَرْضُ", id: "Bumi" }, { ar: "زِلْزَالَهَا", id: "Dengan goncangannya" }, 
-            { ar: "وَأَخْرَجَتِ", id: "Dan mengeluarkan" }, { ar: "أَثْقَالَهَا", id: "Beban-beban beratnya (isi bumi)" }, { ar: "وَقَالَ", id: "Dan berkata" }, { ar: "الْإِنْسَانُ", id: "Manusia" }, 
-            { ar: "مَا لَهَا", id: "Apa yang terjadi padanya" }, { ar: "يَوْمَئِذٍ", id: "Pada hari itu" }, { ar: "تُحَدِّثُ", id: "Menceritakan" }, { ar: "أَخْبَارَهَا", id: "Beritanya" }, 
-            { ar: "بِأَنَّ", id: "Karena sesungguhnya" }, { ar: "رَبَّكَ", id: "Tuhanmu" }, { ar: "أَوْحَىٰ", id: "Telah memerintahkan" }, { ar: "لَهَا", id: "Kepadanya" }, 
-            { ar: "يَصْدُرُ", id: "Keluar (bangkit dari kubur)" }, { ar: "النَّاسُ", id: "Manusia" }, { ar: "أَشْتَاتًا", id: "Berkelompok-kelompok" }, { ar: "لِيُرَوْا", id: "Untuk diperlihatkan" }, { ar: "أَعْمَالَهُمْ", id: "Balasan amal mereka" }
-          ]},
-          { surah: "Al-'Adiyat", words: [ 
-            { ar: "وَالْعَادِيَاتِ", id: "Demi kuda perang" }, { ar: "ضَبْحًا", id: "Terengah-engah (suara napas)" }, { ar: "فَالْمُورِيَاتِ", id: "Dan kuda yang mencetuskan" }, { ar: "قَدْحًا", id: "Api" }, 
-            { ar: "فَالْمُغِيرَاتِ", id: "Dan kuda yang menyerang" }, { ar: "صُبْحًا", id: "Waktu pagi" }, { ar: "فَأَثَرْنَ", id: "Maka menerbangkan" }, { ar: "بِهِ", id: "Dengannya" }, 
-            { ar: "نَقْعًا", id: "Debu (yang berterbangan)" }, { ar: "فَوَسَطْنَ", id: "Lalu menyerbu ke tengah" }, { ar: "جَمْعًا", id: "Kumpulan musuh" }, { ar: "إِنَّ", id: "Sesungguhnya" }, 
-            { ar: "الْإِنْسَانَ", id: "Manusia" }, { ar: "لِرَبِّهِ", id: "Kepada Tuhannya" }, { ar: "لَكَنُودٌ", id: "Sangat ingkar" }, 
-            { ar: "وَإِنَّهُ", id: "Dan sesungguhnya dia" }, { ar: "شَهِيدٌ", id: "Menyaksikan" }, { ar: "لِحُبِّ", id: "Karena cintanya" }, { ar: "الْخَيْرِ", id: "Pada harta" }, { ar: "لَشَدِيدٌ", id: "Sangat berlebihan" }
-          ]},
-          { surah: "Al-Qari'ah", words: [ 
-            { ar: "الْقَارِعَةُ", id: "Hari Kiamat" }, { ar: "مَا", id: "Apakah" }, { ar: "وَمَا", id: "Dan apa yang" }, { ar: "أَدْرَاكَ", id: "Tahukah kamu" }, 
-            { ar: "يَوْمَ", id: "Pada hari" }, { ar: "يَكُونُ", id: "Menjadi" }, { ar: "النَّاسُ", id: "Manusia" }, { ar: "كَالْفَرَاشِ", id: "Seperti laron" }, { ar: "الْمَبْثُوثِ", id: "Yang bertebaran" }, 
-            { ar: "وَتَكُونُ", id: "Dan menjadi" }, { ar: "الْجِبَالُ", id: "Gunung-gunung" }, { ar: "كَالْعِهْنِ", id: "Seperti bulu" }, { ar: "الْمَنْفُوشِ", id: "Yang berhamburan" }, 
-            { ar: "فَأَمَّا", id: "Maka adapun" }, { ar: "مَنْ", id: "Orang yang" }, { ar: "ثَقُلَتْ", id: "Berat" }, 
-            { ar: "مَوَازِينُهُ", id: "Timbangan (kebaikannya)" }, { ar: "فَهُوَ", id: "Maka dia" }, { ar: "عِيشَةٍ", id: "Kehidupan" }, { ar: "رَاضِيَةٍ", id: "Yang memuaskan" }, { ar: "خَفَّتْ", id: "Ringan" }
-          ]},
-          { surah: "At-Takatsur", words: [ 
-            { ar: "أَلْهَاكُمُ", id: "Telah melalaikan kamu" }, { ar: "التَّكَاثُرُ", id: "Bermegah-megahan" }, { ar: "حَتَّىٰ", id: "Sampai" }, { ar: "زُرْتُمُ", id: "Kamu masuk" }, 
-            { ar: "الْمَقَابِرَ", id: "Ke dalam kubur" }, { ar: "كَلَّا", id: "Janganlah begitu" }, { ar: "سَوْفَ", id: "Kelak" }, { ar: "تَعْلَمُونَ", id: "Kamu akan mengetahui" }, 
-            { ar: "ثُمَّ", id: "Kemudian" }, { ar: "لَوْ", id: "Seandainya" }, { ar: "عِلْمَ", id: "Ilmu" }, { ar: "الْيَقِينِ", id: "Yang yakin" }, 
-            { ar: "لَتَرَوُنَّ", id: "Niscaya kamu akan melihat" }, { ar: "الْجَحِيمَ", id: "Neraka Jahim" }, { ar: "عَيْنَ", id: "Dengan mata" }, { ar: "لَتُسْأَلُنَّ", id: "Sungguh kamu akan ditanya" }, 
-            { ar: "يَوْمَئِذٍ", id: "Pada hari itu" }, { ar: "عَنِ النَّعِيمِ", id: "Tentang kenikmatan" }
-          ]},
-          { surah: "Al-'Ashr", words: [ 
-            { ar: "وَالْعَصْرِ", id: "Demi masa" }, { ar: "إِنَّ", id: "Sesungguhnya" }, { ar: "الْإِنْسَانَ", id: "Manusia" }, { ar: "لَفِي", id: "Benar-benar dalam" }, { ar: "خُسْرٍ", id: "Kerugian" }, 
-            { ar: "إِلَّا", id: "Kecuali" }, { ar: "الَّذِينَ", id: "Orang-orang yang" }, { ar: "آمَنُوا", id: "Beriman" }, 
-            { ar: "وَعَمِلُوا", id: "Dan mengerjakan" }, { ar: "الصَّالِحَاتِ", id: "Amal saleh" }, { ar: "وَتَوَاصَوْا", id: "Dan saling menasihati" }, { ar: "بِالْحَقِّ", id: "Untuk kebenaran" }, 
-            { ar: "بِالصَّبْرِ", id: "Untuk kesabaran" }
-          ]},
-          { surah: "Al-Humazah", words: [ 
-            { ar: "وَيْلٌ", id: "Celakalah" }, { ar: "لِكُلِّ", id: "Bagi setiap" }, { ar: "هُمَزَةٍ", id: "Pengumpat" }, { ar: "لُمَزَةٍ", id: "Pencela" }, 
-            { ar: "الَّذِي", id: "Yang" }, { ar: "جَمَعَ", id: "Mengumpulkan" }, { ar: "مَالًا", id: "Harta" }, { ar: "وَعَدَّدَهُ", id: "Dan menghitung-hitungnya (karena kikir)" }, 
-            { ar: "يَحْسَبُ", id: "Dia mengira" }, { ar: "أَنَّ", id: "Bahwa" }, { ar: "أَخْلَدَهُ", id: "Mengekalkannya" }, { ar: "كَلَّا", id: "Sekali-kali tidak" }, 
-            { ar: "لَيُنْبَذَنَّ", id: "Pasti dia akan dilemparkan" }, { ar: "فِي", id: "Ke dalam" }, { ar: "الْحُطَمَةِ", id: "Huthamah (neraka)" }, { ar: "وَمَا", id: "Dan tahukah" }, 
-            { ar: "نَارُ", id: "Api" }, { ar: "اللَّهِ", id: "Allah" }, { ar: "الْمُوقَدَةُ", id: "Yang dinyalakan" }
-          ]},
-
-          // --- LEVEL 1: PEMULA (Surah 105 - 114) ---
-          { surah: "Al-Fiil", words: [ 
-            { ar: "أَلَمْ", id: "Tidakkah" }, { ar: "تَرَ", id: "Kamu perhatikan" }, { ar: "كَيْفَ", id: "Bagaimana" }, { ar: "فَعَلَ", id: "Berbuat" }, 
-            { ar: "رَبُّكَ", id: "Tuhanmu" }, { ar: "بِأَصْحَابِ", id: "Terhadap pasukan / pemilik" }, { ar: "الْفِيلِ", id: "Gajah" }, { ar: "يَجْعَلْ", id: "Menjadikan" }, 
-            { ar: "كَيْدَهُمْ", id: "Tipu daya mereka" }, { ar: "فِي", id: "Di dalam" }, { ar: "تَضْلِيلٍ", id: "Kesesatan" }, { ar: "وَأَرْسَلَ", id: "Dan Dia mengirim" }, 
-            { ar: "عَلَيْهِمْ", id: "Atas mereka" }, { ar: "طَيْرًا", id: "Burung" }, { ar: "أَبَابِيلَ", id: "Berbondong-bondong" }, { ar: "تَرْمِيهِمْ", id: "Melempari mereka" }, 
-            { ar: "بِحِجَارَةٍ", id: "Dengan batu" }, { ar: "مِنْ", id: "Dari" }, { ar: "سِجِّيلٍ", id: "Tanah yang terbakar" }, { ar: "فَجَعَلَهُمْ", id: "Lalu Dia menjadikan mereka" }, 
-            { ar: "كَعَصْفٍ", id: "Seperti daun (yang dimakan ulat)" }, { ar: "مَأْكُولٍ", id: "Yang dimakan" }
-          ]},
-          { surah: "Quraisy", words: [ 
-            { ar: "لِإِيلَافِ", id: "Karena kebiasaan (tradisi)" }, { ar: "قُرَيْشٍ", id: "Suku Quraisy" }, { ar: "إِيلَافِهِمْ", id: "Yaitu kebiasaan mereka" }, { ar: "رِحْلَةَ", id: "Bepergian" }, 
-            { ar: "الشِّتَاءِ", id: "Musim dingin" }, { ar: "وَالصَّيْفِ", id: "Dan musim panas" }, { ar: "فَلْيَعْبُدُوا", id: "Maka hendaklah mereka menyembah" }, { ar: "رَبَّ", id: "Tuhan" }, 
-            { ar: "هَٰذَا", id: "Ini" }, { ar: "الْبَيْتِ", id: "Rumah (Ka'bah)" }, { ar: "الَّذِي", id: "Yang" }, { ar: "أَطْعَمَهُمْ", id: "Telah memberi mereka makanan" }, 
-            { ar: "مِنْ", id: "Dari" }, { ar: "جُوعٍ", id: "Rasa lapar" }, { ar: "وَآمَنَهُمْ", id: "Dan mengamankan mereka" }, { ar: "خَوْفٍ", id: "Ketakutan" }
-          ]},
-          { surah: "Al-Ma'un", words: [ 
-            { ar: "أَرَأَيْتَ", id: "Tahukah kamu" }, { ar: "الَّذِي", id: "Orang yang" }, { ar: "يُكَذِّبُ", id: "Mendustakan" }, { ar: "بِالدِّينِ", id: "Agama" }, 
-            { ar: "فَذَٰلِكَ", id: "Maka itulah" }, { ar: "يَدُعُّ", id: "Menghardik (menolak kasar)" }, { ar: "الْيَتِيمَ", id: "Anak yatim" }, { ar: "وَلَا يَحُضُّ", id: "Dan tidak mendorong" }, 
-            { ar: "عَلَىٰ", id: "Atas / Untuk" }, { ar: "طَعَامِ", id: "Makanan" }, { ar: "الْمِسْكِينِ", id: "Orang miskin" }, { ar: "فَوَيْلٌ", id: "Maka celakalah" }, 
-            { ar: "لِلْمُصَلِّينَ", id: "Orang-orang yang shalat" }, { ar: "الَّذِينَ هُمْ", id: "Yaitu orang-orang yang" }, { ar: "عَنْ", id: "Dari" }, { ar: "صَلَاتِهِمْ", id: "Shalat mereka" }, 
-            { ar: "سَاهُونَ", id: "Lalai" }, { ar: "يُرَاءُونَ", id: "Berbuat riya (pamer)" }, { ar: "وَيَمْنَعُونَ", id: "Dan enggan menolong" }, { ar: "الْمَاعُونَ", id: "Dengan barang berguna (bantuan)" }
-          ]},
-          { surah: "Al-Kautsar", words: [ 
-            { ar: "إِنَّا", id: "Sesungguhnya Kami" }, { ar: "أَعْطَيْنَاكَ", id: "Telah memberikan kepadamu" }, { ar: "الْكَوْثَرَ", id: "Nikmat yang banyak (telaga surga)" }, { ar: "فَصَلِّ", id: "Maka dirikanlah shalat" }, 
-            { ar: "لِرَبِّكَ", id: "Karena Tuhanmu" }, { ar: "وَانْحَرْ", id: "Dan berkurbanlah (menyembelih)" }, { ar: "إِنَّ", id: "Sesungguhnya" }, { ar: "شَانِئَكَ", id: "Orang yang membencimu" }, 
-            { ar: "هُوَ", id: "Dialah" }, { ar: "الْأَبْتَرُ", id: "Yang terputus (dari rahmat)" }
-          ]},
-          { surah: "Al-Kafirun", words: [ 
-            { ar: "قُلْ", id: "Katakanlah" }, { ar: "يَا أَيُّهَا", id: "Wahai" }, { ar: "الْكَافِرُونَ", id: "Orang-orang kafir" }, { ar: "لَا أَعْبُدُ", id: "Aku tidak menyembah" }, 
-            { ar: "مَا", id: "Apa yang" }, { ar: "تَعْبُدُونَ", id: "Kamu sembah" }, { ar: "وَلَا أَنْتُمْ", id: "Dan kamu bukan" }, { ar: "عَابِدُونَ", id: "Penyembah" }, 
-            { ar: "عَبَدْتُمْ", id: "Kamu sembah" }, { ar: "لَكُمْ", id: "Untukmu" }, { ar: "دِينُكُمْ", id: "Agamamu" }, 
-            { ar: "وَلِيَ", id: "Dan untukku" }, { ar: "دِينِ", id: "Agamaku" }
-          ]},
-          { surah: "An-Nasr", words: [ 
-            { ar: "إِذَا", id: "Apabila" }, { ar: "جَاءَ", id: "Telah datang" }, { ar: "نَصْرُ", id: "Pertolongan" }, { ar: "اللَّهِ", id: "Allah" }, 
-            { ar: "وَالْفَتْحُ", id: "Dan kemenangan" }, { ar: "وَرَأَيْتَ", id: "Dan kamu lihat" }, { ar: "النَّاسَ", id: "Manusia" }, { ar: "يَدْخُلُونَ", id: "Masuk" }, 
-            { ar: "فِي", id: "Di dalam" }, { ar: "دِينِ", id: "Agama" }, { ar: "اللَّهِ", id: "Allah" }, { ar: "أَفْوَاجًا", id: "Berbondong-bondong (berkelompok)" }, { ar: "فَسَبِّحْ", id: "Maka bertasbihlah" }, 
-            { ar: "بِحَمْدِ", id: "Dengan memuji" }, { ar: "رَبِّكَ", id: "Tuhanmu" }, { ar: "وَاسْتَغْفِرْهُ", id: "Dan mohon ampunlah kepada-Nya" }, { ar: "إِنَّهُ", id: "Sesungguhnya Dia" }, 
-            { ar: "كَانَ", id: "Adalah" }, { ar: "تَوَّابًا", id: "Maha Penerima taubat" }
-          ]},
-          { surah: "Al-Lahab", words: [ 
-            { ar: "تَبَّتْ", id: "Binasalah (merugi)" }, { ar: "يَدَا", id: "Kedua tangan" }, { ar: "أَبِي لَهَبٍ", id: "Abu Lahab" }, { ar: "وَتَبَّ", id: "Dan benar-benar binasa" }, 
-            { ar: "مَا", id: "Tidaklah" }, { ar: "أَغْنَىٰ", id: "Berguna" }, { ar: "عَنْهُ", id: "Darinya / Baginya" }, { ar: "مَالُهُ", id: "Hartanya" }, 
-            { ar: "وَمَا كَسَبَ", id: "Dan apa yang diusahakannya" }, { ar: "سَيَصْلَىٰ", id: "Kelak dia akan masuk" }, { ar: "نَارًا", id: "Ke dalam api" }, { ar: "ذَاتَ", id: "Yang mempunyai" }, 
-            { ar: "لَهَبٍ", id: "Gejolak" }, { ar: "وَامْرَأَتُهُ", id: "Dan (begitu pula) istrinya" }, { ar: "حَمَّالَةَ", id: "Pembawa" }, { ar: "الْحَطَبِ", id: "Kayu bakar" }, 
-            { ar: "فِي", id: "Di" }, { ar: "جِيدِهَا", id: "Lehernya" }, { ar: "حَبْلٌ", id: "Tali" }, { ar: "مِنْ", id: "Dari" }, { ar: "مَسَدٍ", id: "Sabut (tali anyaman)" }
-          ]},
-          { surah: "Al-Ikhlas", words: [ 
-            { ar: "قُلْ", id: "Katakanlah" }, { ar: "هُوَ", id: "Dialah" }, { ar: "اللَّهُ", id: "Allah" }, { ar: "أَحَدٌ", id: "Yang Maha Esa" }, 
-            { ar: "الصَّمَدُ", id: "Tempat meminta (bergantung)" }, { ar: "لَمْ", id: "Tidak" }, { ar: "يَلِدْ", id: "Beranak" }, 
-            { ar: "وَلَمْ", id: "Dan tidak" }, { ar: "يُولَدْ", id: "Diperanakkan" }, { ar: "لَمْ يَكُنْ", id: "Tidak ada" }, { ar: "لَهُ", id: "Bagi-Nya" }, { ar: "كُفُوًا", id: "Setara (serupa)" }
-          ]},
-          { surah: "Al-Falaq", words: [ 
-            { ar: "قُلْ", id: "Katakanlah" }, { ar: "أَعُوذُ", id: "Aku berlindung" }, { ar: "بِرَبِّ", id: "Kepada Tuhan" }, { ar: "الْفَلَقِ", id: "Yang menguasai subuh" }, 
-            { ar: "مِنْ", id: "Dari" }, { ar: "شَرِّ", id: "Kejahatan" }, { ar: "مَا", id: "Apa yang" }, { ar: "خَلَقَ", id: "Dia ciptakan" }, 
-            { ar: "غَاسِقٍ", id: "Malam yang gelap gulita" }, { ar: "إِذَا", id: "Apabila" }, { ar: "وَقَبَ", id: "Telah masuk (gelap)" }, { ar: "النَّفَّاثَاتِ", id: "Wanita-wanita penyihir" }, 
-            { ar: "فِي", id: "Pada / Di dalam" }, { ar: "الْعُقَدِ", id: "Buhul-buhul (ikatan tali)" }, { ar: "حَاسِدٍ", id: "Orang yang dengki" }, { ar: "حَسَدَ", id: "Dia dengki" }
-          ]},
-          { surah: "An-Nas", words: [ 
-            { ar: "قُلْ", id: "Katakanlah" }, { ar: "أَعُوذُ", id: "Aku berlindung" }, { ar: "بِرَبِّ", id: "Kepada Tuhan" }, { ar: "النَّاسِ", id: "Manusia" }, 
-            { ar: "مَلِكِ", id: "Raja" }, { ar: "إِلَٰهِ", id: "Sembahan" }, { ar: "مِنْ", id: "Dari" }, { ar: "شَرِّ", id: "Kejahatan" }, 
-            { ar: "الْوَسْوَاسِ", id: "Bisikan (setan)" }, { ar: "الْخَنَّاسِ", id: "Yang biasa bersembunyi (saat zikir)" }, { ar: "الَّذِي", id: "Yang" }, { ar: "يُوَسْوِسُ", id: "Membisikkan (keburukan)" }, 
-            { ar: "فِي", id: "Di / Ke dalam" }, { ar: "صُدُورِ", id: "Dada" }, { ar: "مِنَ", id: "Dari" }, { ar: "الْجِنَّةِ", id: "Golongan jin" }, 
-            { ar: "وَالنَّاسِ", id: "Dan manusia" }
-          ]}
-        ];
-
-        const levels = [
-          {
-            id: 1, name: "Level 1: Pemula",
-            containerStyle: "bg-emerald-50 border-emerald-200", titleStyle: "text-emerald-800", btnUnlockedStyle: "bg-white border-emerald-300 hover:bg-emerald-100 text-emerald-900",
-            subLevels: [
-              { id: "1-1", name: "Tahap 1", desc: "An-Nas & Al-Falaq", surahs: ["An-Nas", "Al-Falaq"] },
-              { id: "1-2", name: "Tahap 2", desc: "Al-Ikhlas & Al-Lahab", surahs: ["Al-Ikhlas", "Al-Lahab"] },
-              { id: "1-3", name: "Tahap 3", desc: "An-Nasr & Al-Kafirun", surahs: ["An-Nasr", "Al-Kafirun"] },
-              { id: "1-4", name: "Tahap 4", desc: "Al-Kautsar & Al-Ma'un", surahs: ["Al-Kautsar", "Al-Ma'un"] },
-              { id: "1-5", name: "Tahap 5", desc: "Quraisy & Al-Fiil", surahs: ["Quraisy", "Al-Fiil"] },
-              { id: "1-boss", name: "Ujian Pemula", desc: "Campuran Al-Fiil s.d An-Nas", surahs: ["Al-Fiil", "Quraisy", "Al-Ma'un", "Al-Kautsar", "Al-Kafirun", "An-Nasr", "Al-Lahab", "Al-Ikhlas", "Al-Falaq", "An-Nas"], isBoss: true }
-            ]
-          },
-          {
-            id: 2, name: "Level 2: Dasar",
-            containerStyle: "bg-blue-50 border-blue-200", titleStyle: "text-blue-800", btnUnlockedStyle: "bg-white border-blue-300 hover:bg-blue-100 text-blue-900",
-            subLevels: [
-              { id: "2-1", name: "Tahap 1", desc: "Al-Humazah & Al-'Ashr", surahs: ["Al-Humazah", "Al-'Ashr"] },
-              { id: "2-2", name: "Tahap 2", desc: "At-Takatsur & Al-Qari'ah", surahs: ["At-Takatsur", "Al-Qari'ah"] },
-              { id: "2-3", name: "Tahap 3", desc: "Al-'Adiyat & Az-Zalzalah", surahs: ["Al-'Adiyat", "Az-Zalzalah"] },
-              { id: "2-4", name: "Tahap 4", desc: "Al-Bayyinah & Al-Qadr", surahs: ["Al-Bayyinah", "Al-Qadr"] },
-              { id: "2-5", name: "Tahap 5", desc: "Al-'Alaq & At-Tin", surahs: ["Al-'Alaq", "At-Tin"] },
-              { id: "2-6", name: "Tahap 6", desc: "Al-Insyirah & Ad-Duha", surahs: ["Al-Insyirah", "Ad-Duha"] },
-              { id: "2-boss", name: "Ujian Dasar", desc: "Campuran Ad-Duha s.d Al-Humazah", surahs: ["Ad-Duha", "Al-Insyirah", "At-Tin", "Al-'Alaq", "Al-Qadr", "Al-Bayyinah", "Az-Zalzalah", "Al-'Adiyat", "Al-Qari'ah", "At-Takatsur", "Al-'Ashr", "Al-Humazah"], isBoss: true }
-            ]
-          },
-          {
-            id: 3, name: "Level 3: Menengah",
-            containerStyle: "bg-purple-50 border-purple-200", titleStyle: "text-purple-800", btnUnlockedStyle: "bg-white border-purple-300 hover:bg-purple-100 text-purple-900",
-            subLevels: [
-              { id: "3-1", name: "Tahap 1", desc: "Al-Lail & Asy-Syams", surahs: ["Al-Lail", "Asy-Syams"] },
-              { id: "3-2", name: "Tahap 2", desc: "Surah Al-Balad", surahs: ["Al-Balad"] },
-              { id: "3-3", name: "Tahap 3", desc: "Surah Al-Fajr", surahs: ["Al-Fajr"] },
-              { id: "3-4", name: "Tahap 4", desc: "Al-Ghasyiyah & Al-A'la", surahs: ["Al-Ghasyiyah", "Al-A'la"] },
-              { id: "3-5", name: "Tahap 5", desc: "At-Tariq & Al-Buruj", surahs: ["At-Tariq", "Al-Buruj"] },
-              { id: "3-boss", name: "Ujian Menengah", desc: "Campuran Al-Buruj s.d Al-Lail", surahs: ["At-Tariq", "Al-A'la", "Al-Ghasyiyah", "Al-Fajr", "Al-Balad", "Asy-Syams", "Al-Lail", "Al-Buruj"], isBoss: true }
-            ]
-          },
-          {
-            id: 4, name: "Level 4: Lanjut",
-            containerStyle: "bg-orange-50 border-orange-200", titleStyle: "text-orange-800", btnUnlockedStyle: "bg-white border-orange-300 hover:bg-orange-100 text-orange-900",
-            subLevels: [
-              { id: "4-1", name: "Tahap 1", desc: "Surah Al-Insyiqaq", surahs: ["Al-Insyiqaq"] },
-              { id: "4-2", name: "Tahap 2", desc: "Surah Al-Mutaffifin", surahs: ["Al-Mutaffifin"] },
-              { id: "4-3", name: "Tahap 3", desc: "Surah Al-Infitar", surahs: ["Al-Infitar"] },
-              { id: "4-4", name: "Tahap 4", desc: "Surah At-Takwir", surahs: ["At-Takwir"] },
-              { id: "4-5", name: "Tahap 5", desc: "Surah 'Abasa", surahs: ["'Abasa"] },
-              { id: "4-6", name: "Tahap 6", desc: "Surah An-Nazi'at", surahs: ["An-Nazi'at"] },
-              { id: "4-7", name: "Tahap 7", desc: "Surah An-Naba", surahs: ["An-Naba"] },
-              { id: "4-boss", name: "Ujian Lanjut", desc: "Campuran An-Naba s.d Al-Insyiqaq", surahs: ["An-Naba", "An-Nazi'at", "'Abasa", "At-Takwir", "Al-Infitar", "Al-Mutaffifin", "Al-Insyiqaq"], isBoss: true }
-            ]
-          },
-          {
-            id: 5, name: "Level 5: Master Juz Amma",
-            containerStyle: "bg-red-50 border-red-200", titleStyle: "text-red-800", btnUnlockedStyle: "bg-white border-red-300 hover:bg-red-100 text-red-900",
-            subLevels: [
-              { id: "5-boss", name: "Ujian Akhir Mahir", desc: "Acak Semua 37 Surah Juz 30", surahs: "Semua", isBoss: true }
-            ]
-          }
-        ];
-
-        const progressionOrder = [
-          "1-1", "1-2", "1-3", "1-4", "1-5", "1-boss",
-          "2-1", "2-2", "2-3", "2-4", "2-5", "2-6", "2-boss",
-          "3-1", "3-2", "3-3", "3-4", "3-5", "3-boss",
-          "4-1", "4-2", "4-3", "4-4", "4-5", "4-6", "4-7", "4-boss",
-          "5-boss"
-        ];
-
-        // --- STATE & SISTEM AKUN (BARU) ---
-        let gameState = 'login'; 
-        let questions = [];
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let selectedAnswer = null;
-        let isCorrect = null;
-        let currentLevelInfo = '';
-        let currentPlayingId = null;
-        let justUnlocked = false;
-
-        let certPhotoDataUrl = null;
-        let certLevelName = "";
-
-        // State Akun Pengguna
-        let currentUser = null; // { email, name, unlockedLevelId, masterPassed }
-        let unlockedLevelId = "1-1";
-        let masterPassed = false;
-
-        // Cek jika ada user yang aktif sebelumnya saat web dibuka
-        const lastActiveEmail = localStorage.getItem('quranGame_lastActiveUser');
-        if (lastActiveEmail) {
-            let users = JSON.parse(localStorage.getItem('quranGame_users') || '{}');
-            if (users[lastActiveEmail]) {
-                currentUser = users[lastActiveEmail];
-                unlockedLevelId = currentUser.unlockedLevelId || "1-1";
-                masterPassed = currentUser.masterPassed || false;
-                gameState = 'menu';
-            }
-        }
-
-        const saveCurrentUser = () => {
-            if(!currentUser) return;
-            currentUser.unlockedLevelId = unlockedLevelId;
-            currentUser.masterPassed = masterPassed;
-            let users = JSON.parse(localStorage.getItem('quranGame_users') || '{}');
-            users[currentUser.email] = currentUser;
-            localStorage.setItem('quranGame_users', JSON.stringify(users));
-        };
-
-        window.handleLogin = (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value.trim().toLowerCase();
-            const name = document.getElementById('login-name').value.trim();
+        <!-- CONTENT AREA -->
+        <div class="flex-1 overflow-y-auto no-scrollbar bg-gray-50 relative" id="main-content">
             
-            if(email && name) {
-                let users = JSON.parse(localStorage.getItem('quranGame_users') || '{}');
-                if (users[email]) {
-                    currentUser = users[email];
-                    currentUser.name = name; // Update jika ada perubahan ejaan nama
-                } else {
-                    currentUser = { email, name, unlockedLevelId: "1-1", masterPassed: false };
-                }
-                
-                unlockedLevelId = currentUser.unlockedLevelId;
-                masterPassed = currentUser.masterPassed || false;
-                saveCurrentUser();
-                localStorage.setItem('quranGame_lastActiveUser', email);
-                changeGameState('menu');
-            }
-        };
-
-        window.handleLogout = () => {
-            currentUser = null;
-            localStorage.removeItem('quranGame_lastActiveUser');
-            changeGameState('login');
-        };
-
-        window.resetProgressAndState = () => {
-            if(window.confirm('Yakin ingin mereset progres belajar KEMBALI KE TAHAP 1 untuk akun ini?')) {
-                unlockedLevelId = "1-1";
-                masterPassed = false;
-                saveCurrentUser();
-                renderApp();
-            }
-        };
-
-        // --- FUNGSI BANTUAN ---
-        const getLevelDataById = (id) => {
-            for (const mainLevel of levels) {
-                for (const sub of mainLevel.subLevels) {
-                    if (sub.id === id) {
-                        return { mode: sub.surahs === 'Semua' ? 'all' : 'level', data: sub.surahs, title: `${mainLevel.name} - ${sub.name}`, id: sub.id, mainLevelName: mainLevel.name };
-                    }
-                }
-            }
-            return null;
-        };
-
-        const shuffleArray = (array) => {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
-        };
-
-        const playSound = (type) => {
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                const ctx = new AudioContext();
-
-                const osc = ctx.createOscillator();
-                const gainNode = ctx.createGain();
-
-                if (type === 'correct') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(880, ctx.currentTime);
-                    gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-                } else if (type === 'wrong') {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(150, ctx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.3); 
-                    gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-                } else if (type === 'win') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(440, ctx.currentTime);
-                    osc.frequency.setValueAtTime(660, ctx.currentTime + 0.2);
-                    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.4);
-                    gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
-                }
-
-                osc.connect(gainNode);
-                gainNode.connect(ctx.destination);
-                
-                osc.start();
-                osc.stop(ctx.currentTime + 1);
-            } catch (error) {}
-        };
-
-        // --- FUNGSI UTAMA GAME ---
-        window.changeGameState = (newState) => {
-            gameState = newState;
-            renderApp();
-        };
-
-        window.startLevelById = (id) => {
-            const data = getLevelDataById(id);
-            if(data) window.startGame(data.mode, data.data, data.title, data.id);
-        };
-
-        window.startGame = (mode, data, title, playingLevelId = null) => {
-            let pool = [];
-            currentLevelInfo = title;
-            currentPlayingId = playingLevelId;
-            
-            if (mode === 'level') {
-                data.forEach(surahName => {
-                    const s = quranData.find(x => x.surah === surahName);
-                    if(s) pool.push(...s.words.map(w => ({ ...w, surah: s.surah })));
-                });
-            } else if (mode === 'all') {
-                quranData.forEach(s => pool.push(...s.words.map(w => ({ ...w, surah: s.surah }))));
-            } else if (mode === 'single') {
-                const s = quranData.find(x => x.surah === data);
-                if(s) pool = s.words.map(w => ({ ...w, surah: s.surah }));
-            }
-
-            let maxQuestions = pool.length; 
-            
-            if (playingLevelId && String(playingLevelId).includes('boss')) {
-                maxQuestions = playingLevelId === '5-boss' ? 50 : 30;
-            } else if (mode === 'all' && !playingLevelId) {
-                maxQuestions = 50; 
-            }
-
-            const shuffledPool = shuffleArray(pool).slice(0, maxQuestions);
-            const allMeanings = [];
-            quranData.forEach(s => s.words.forEach(w => allMeanings.push(w.id)));
-
-            questions = shuffledPool.map(q => {
-                let wrongAnswers = allMeanings.filter(m => m !== q.id);
-                wrongAnswers = shuffleArray(wrongAnswers).slice(0, 3);
-                const options = shuffleArray([q.id, ...wrongAnswers]);
-                return { ...q, options };
-            });
-
-            currentQuestionIndex = 0;
-            score = 0;
-            selectedAnswer = null;
-            isCorrect = null;
-            justUnlocked = false;
-            gameState = 'playing';
-            renderApp();
-        };
-
-        window.handleAnswerClick = (optionIndex) => {
-            if (selectedAnswer !== null) return;
-
-            const currentQ = questions[currentQuestionIndex];
-            const answer = currentQ.options[optionIndex];
-            
-            const correct = answer === currentQ.id;
-            selectedAnswer = answer;
-            isCorrect = correct;
-            
-            if (correct) {
-                playSound('correct');
-                score += 10;
-            } else {
-                playSound('wrong');
-            }
-
-            renderApp();
-
-            setTimeout(() => {
-                nextQuestion();
-            }, 1200);
-        };
-
-        const nextQuestion = () => {
-            if (currentQuestionIndex < questions.length - 1) {
-                currentQuestionIndex++;
-                selectedAnswer = null;
-                isCorrect = null;
-            } else {
-                const finalPercentage = (score / (questions.length * 10)) * 100;
-                let newUnlock = false;
-
-                if (finalPercentage >= 70 && currentPlayingId) {
-                    playSound('win');
-                    if (currentPlayingId === '5-boss') {
-                        masterPassed = true;
-                    }
-                    
-                    const currentIndex = progressionOrder.indexOf(currentPlayingId);
-                    if (currentIndex >= 0 && currentIndex < progressionOrder.length - 1) {
-                        const nextId = progressionOrder[currentIndex + 1];
-                        const unlockedIndex = progressionOrder.indexOf(unlockedLevelId);
-
-                        if (progressionOrder.indexOf(nextId) > unlockedIndex) {
-                            unlockedLevelId = nextId;
-                            newUnlock = true;
-                        }
-                    }
-                    saveCurrentUser();
-                }
-
-                justUnlocked = newUnlock;
-                gameState = 'result';
-            }
-            renderApp();
-        };
-
-        window.restartCurrentLevel = () => {
-            if (currentPlayingId) {
-                window.startLevelById(currentPlayingId);
-            } else {
-                const mode = currentLevelInfo.includes('Surah ') ? 'single' : 'all';
-                const data = currentLevelInfo.replace('Surah ', '');
-                window.startGame(mode, data, currentLevelInfo);
-            }
-        };
-
-        // --- FUNGSI PIAGAM ---
-        window.openCertificate = (levelName) => {
-            certLevelName = levelName;
-            certPhotoDataUrl = null; 
-            changeGameState('certificate');
-        };
-
-        window.handlePhotoUpload = (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    certPhotoDataUrl = event.target.result;
-                    const imgEl = document.getElementById('cert-photo-display');
-                    const placeholderEl = document.getElementById('cert-photo-placeholder');
-                    if(imgEl && placeholderEl) {
-                        imgEl.src = certPhotoDataUrl;
-                        imgEl.style.display = 'block';
-                        placeholderEl.style.display = 'none';
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        };
-
-        window.downloadImage = () => {
-            const btn = document.getElementById('btn-download');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i data-lucide="loader" class="w-6 h-6 animate-spin"></i> MEMPROSES...';
-            lucide.createIcons();
-
-            const certElement = document.getElementById('printable-certificate');
-            
-            html2canvas(certElement, {
-                scale: 2, 
-                useCORS: true,
-                backgroundColor: "#ffffff"
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `Piagam_${currentUser.name || 'Penghargaan'}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                btn.innerHTML = originalText;
-                lucide.createIcons();
-            }).catch(err => {
-                alert("Gagal mengunduh gambar. Silakan gunakan tombol Cetak.");
-                btn.innerHTML = originalText;
-                lucide.createIcons();
-            });
-        };
-
-        window.printCertificate = () => {
-            window.print();
-        };
-
-        // --- RENDER HTML LOGIC ---
-        function renderLogin() {
-            return `
-                <div class="min-h-screen bg-gray-100 flex items-center justify-center p-4 font-sans text-gray-900">
-                    <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
-                        <div class="bg-emerald-600 p-8 text-center text-white relative shadow-inner">
-                            <div class="absolute opacity-10 -right-8 -top-8"><i data-lucide="star" class="w-48 h-48 fill-current"></i></div>
-                            <i data-lucide="book-open" class="w-16 h-16 mx-auto mb-4 relative z-10"></i>
-                            <h1 class="text-2xl font-black tracking-wide mb-1 relative z-10 drop-shadow-md">Game Quran</h1>
-                            <p class="text-emerald-100 relative z-10 font-bold tracking-wider text-sm uppercase">Tebak Perkata Juz 30</p>
+            <!-- 1. TAB: HOME -->
+            <div id="tab-home" class="tab-content p-6 pb-24 space-y-6 animate-fade-in">
+                <!-- Saldo Card -->
+                <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm relative">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 text-xs font-bold uppercase tracking-tight">Total Saldo Aktif</p>
+                            <h2 id="total-balance" class="text-3xl font-bold text-gray-800 tracking-tight mt-1">Rp ••••••••</h2>
                         </div>
-                        
-                        <div class="p-8">
-                            <div class="bg-amber-50 text-amber-800 border-l-4 border-amber-500 p-4 rounded-r-xl mb-6 text-sm font-medium">
-                                Masukkan akun pemain. Data progres (level) akan tersimpan otomatis di perangkat ini berdasarkan email.
-                            </div>
-                            
-                            <form onsubmit="handleLogin(event)">
-                                <div class="mb-5">
-                                    <label class="block text-sm font-black tracking-wide text-gray-700 mb-2 uppercase">Email Akun</label>
-                                    <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                            <i data-lucide="mail" class="w-5 h-5 text-gray-400"></i>
-                                        </div>
-                                        <input type="email" id="login-email" required placeholder="nama@email.com" class="w-full pl-12 p-4 border-2 border-gray-300 rounded-2xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition-all font-bold text-lg">
-                                    </div>
-                                </div>
-                                <div class="mb-8">
-                                    <label class="block text-sm font-black tracking-wide text-gray-700 mb-2 uppercase">Nama Anak <span class="text-gray-400 font-medium normal-case">(Untuk dicetak di Piagam)</span></label>
-                                    <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                            <i data-lucide="user" class="w-5 h-5 text-gray-400"></i>
-                                        </div>
-                                        <input type="text" id="login-name" required placeholder="Tulis nama lengkap..." class="w-full pl-12 p-4 border-2 border-gray-300 rounded-2xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition-all font-bold text-lg">
-                                    </div>
-                                </div>
-                                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white p-5 rounded-2xl font-black tracking-widest flex items-center justify-center gap-3 transition-all shadow-lg text-lg transform hover:-translate-y-1">
-                                    MULAI BELAJAR <i data-lucide="arrow-right" class="w-6 h-6"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderMenu() {
-            let levelsHtml = levels.map(level => {
-                let subLevelsHtml = level.subLevels.map(sub => {
-                    // Logic Cek Kelulusan dan Buka Kunci
-                    const isPassed = progressionOrder.indexOf(unlockedLevelId) > progressionOrder.indexOf(sub.id) || (sub.id === '5-boss' && masterPassed);
-                    const isUnlocked = progressionOrder.indexOf(sub.id) <= progressionOrder.indexOf(unlockedLevelId);
-                    
-                    let btnClass = "";
-                    let iconHtml = "";
-                    let titleTextClass = "";
-                    let descTextClass = "";
-
-                    if (isPassed) {
-                        btnClass = "bg-green-50 border-green-300 text-green-900 shadow-sm hover:shadow-md transform hover:-translate-y-1 transition-all cursor-pointer";
-                        iconHtml = `<i data-lucide="check-circle" class="w-6 h-6 ml-2 flex-shrink-0 text-green-600"></i>`;
-                        titleTextClass = "text-green-800";
-                        descTextClass = "text-green-700 font-medium";
-                    } else if (isUnlocked) {
-                        if (sub.isBoss) {
-                            btnClass = "bg-gradient-to-r from-amber-400 to-orange-500 text-white border-transparent hover:from-amber-500 hover:to-orange-600 shadow-lg transform hover:-translate-y-1 transition-all cursor-pointer";
-                            iconHtml = `<i data-lucide="star" class="w-6 h-6 ml-2 flex-shrink-0 text-white animate-pulse fill-current"></i>`;
-                            titleTextClass = "text-white";
-                            descTextClass = "text-orange-100 font-medium";
-                        } else {
-                            btnClass = level.btnUnlockedStyle + " shadow-sm hover:shadow-md transform hover:-translate-y-1 transition-all cursor-pointer";
-                            iconHtml = `<i data-lucide="play" class="w-5 h-5 ml-2 flex-shrink-0"></i>`;
-                            titleTextClass = "";
-                            descTextClass = "opacity-80";
-                        }
-                    } else {
-                        btnClass = "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-80";
-                        iconHtml = `<i data-lucide="lock" class="w-5 h-5 opacity-50 ml-2 flex-shrink-0"></i>`;
-                        titleTextClass = "";
-                        descTextClass = "opacity-80";
-                    }
-                    
-                    const clickAction = isUnlocked ? `onclick="startLevelById('${sub.id}')"` : '';
-
-                    let certBtn = "";
-                    if (sub.isBoss && isPassed) {
-                        certBtn = `<button onclick="event.stopPropagation(); openCertificate('${level.name}')" class="text-xs bg-yellow-100 border border-yellow-300 hover:bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full font-black ml-3 shadow-sm transition-all flex items-center gap-1"><i data-lucide="award" class="w-3 h-3"></i> Piagam</button>`;
-                    }
-
-                    return `
-                        <button ${clickAction} class="flex items-center justify-between p-4 rounded-2xl border-2 w-full text-left ${btnClass}">
-                            <div class="flex-1 text-left">
-                                <div class="font-bold text-md flex items-center ${titleTextClass}">
-                                    ${sub.isBoss && isUnlocked && !isPassed ? '<i data-lucide="award" class="w-5 h-5 text-yellow-100 mr-2"></i>' : ''}
-                                    ${sub.name}
-                                    ${certBtn}
-                                </div>
-                                <div class="text-xs mt-1 ${descTextClass}">
-                                    ${sub.desc}
-                                </div>
-                            </div>
-                            ${iconHtml}
+                        <button id="toggle-balance-home" class="p-2 bg-gray-50 text-gray-400 hover:text-gray-600 rounded-full active:scale-95 transition border border-gray-100">
+                            <i data-lucide="eye" id="eye-icon-home" class="w-5 h-5"></i>
                         </button>
-                    `;
-                }).join('');
+                    </div>
+                </div>
 
-                return `
-                    <div class="p-4 rounded-3xl border-2 shadow-sm mb-5 ${level.containerStyle}">
-                        <h3 class="font-black text-xl mb-4 text-center ${level.titleStyle}">${level.name}</h3>
-                        <div class="flex flex-col gap-3">
-                            ${subLevelsHtml}
+                <!-- Form Transaksi -->
+                <form id="tx-form" class="flex flex-col gap-4 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                    <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider">Catat Keuangan</h3>
+                    
+                    <div class="bg-gray-100 p-1 rounded-xl flex" id="tx-type-selector">
+                        <label class="flex-1 text-center cursor-pointer">
+                            <input type="radio" name="txType" value="expense" class="peer hidden" checked>
+                            <div class="py-2 rounded-lg text-xs font-bold transition capitalize peer-checked:bg-white peer-checked:shadow-sm text-gray-400 peer-checked:text-gray-800">Keluar</div>
+                        </label>
+                        <label class="flex-1 text-center cursor-pointer">
+                            <input type="radio" name="txType" value="income" class="peer hidden">
+                            <div class="py-2 rounded-lg text-xs font-bold transition capitalize peer-checked:bg-white peer-checked:shadow-sm text-gray-400 peer-checked:text-gray-800">Masuk</div>
+                        </label>
+                        <label class="flex-1 text-center cursor-pointer">
+                            <input type="radio" name="txType" value="transfer" class="peer hidden">
+                            <div class="py-2 rounded-lg text-xs font-bold transition capitalize peer-checked:bg-white peer-checked:shadow-sm text-gray-400 peer-checked:text-gray-800">Pindah</div>
+                        </label>
+                    </div>
+                    
+                    <input type="date" id="tx-date" required class="w-full p-2.5 text-xs font-medium border rounded-lg outline-none focus:border-indigo-500" />
+                    
+                    <div id="form-dynamic-fields" class="grid grid-cols-2 gap-3"></div>
+
+                    <div id="debt-toggles" class="hidden p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 animate-fade-in">
+                        <div class="flex gap-2 mb-2">
+                            <button type="button" id="btn-debt-me" class="flex-1 py-1 text-[10px] rounded border bg-orange-500 border-orange-600 text-white font-bold transition">Hutang Saya</button>
+                            <button type="button" id="btn-receivable-me" class="flex-1 py-1 text-[10px] rounded border bg-white text-gray-400 transition">Piutang Saya</button>
                         </div>
+                        <div class="flex gap-2">
+                            <button type="button" id="btn-debt-new" class="flex-1 py-1.5 text-[10px] font-bold rounded bg-gray-800 text-white transition">Baru / Nambah</button>
+                            <button type="button" id="btn-debt-pay" class="flex-1 py-1.5 text-[10px] font-bold rounded bg-white text-gray-400 border transition">Bayar / Kurang</button>
+                        </div>
+                    </div>
+
+                    <input type="text" inputmode="numeric" id="tx-nominal" required class="w-full p-3 text-lg font-bold border rounded-lg outline-none focus:border-indigo-500" placeholder="0" />
+                    
+                    <div class="flex gap-2">
+                        <input type="text" id="tx-proof" class="flex-1 p-2 text-xs border rounded-lg outline-none focus:border-indigo-500" placeholder="Catatan opsional..." />
+                        <label class="w-10 flex items-center justify-center border rounded-lg bg-gray-50 cursor-pointer hover:bg-gray-100 transition">
+                            <i data-lucide="camera" class="w-4 h-4"></i>
+                            <input type="file" id="tx-image" accept="image/*" class="hidden"/>
+                        </label>
+                    </div>
+                    <img id="tx-image-preview" class="hidden w-16 h-16 rounded-lg object-cover border" />
+                    
+                    <button type="submit" id="btn-submit-tx" class="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl active:scale-95 transition shadow-lg shadow-indigo-100 uppercase tracking-wider">Simpan Transaksi</button>
+                    
+                    <p id="toggle-debt-mode" class="text-center text-[10px] text-gray-400 underline cursor-pointer mt-1 font-bold">Catat Hutang / Piutang</p>
+                </form>
+
+                <div id="active-debts-container" class="space-y-4"></div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Riwayat</h3>
+                        <div class="flex items-center gap-2">
+                            <select id="history-bank-filter" class="text-[10px] border rounded p-1 font-bold outline-none">
+                                <option value="All">Semua Dompet</option>
+                            </select>
+                            <button id="btn-toggle-history" class="text-[10px] text-indigo-600 font-bold active:scale-95 flex items-center">
+                                <i data-lucide="list" class="w-3 h-3 mr-1"></i> <span id="text-toggle-history">Semua</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="history-list" class="space-y-2"></div>
+                </div>
+            </div>
+
+            <!-- 2. TAB: WALLET -->
+            <div id="tab-wallet" class="tab-content hidden p-6 pb-24 space-y-5 animate-fade-in">
+                <!-- Saldo Dompet -->
+                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-400 text-xs font-bold mb-1 uppercase tracking-wider">Aset Bersih</p>
+                        <h1 id="wallet-total-balance" class="text-3xl font-bold text-gray-800 tracking-tight">Rp ••••••</h1>
+                    </div>
+                    <button id="toggle-balance-wallet" class="p-2 bg-gray-50 text-gray-400 hover:text-gray-600 rounded-full active:scale-95 transition border border-gray-100">
+                        <i data-lucide="eye" id="eye-icon-wallet" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div class="grid gap-3">
+                    <h3 class="text-sm font-bold text-gray-600 uppercase flex items-center gap-2 tracking-wider">
+                        <i data-lucide="wallet" class="w-4 h-4 text-indigo-600"></i> Rincian Dompet
+                    </h3>
+                    <div id="wallet-list" class="grid gap-3"></div>
+                    <p class="text-center text-[10px] text-gray-400 mt-4 italic font-medium">Ketuk 2x pada dompet untuk mengatur saldo manual.</p>
+                </div>
+            </div>
+
+            <!-- 3. TAB: RECAP -->
+            <div id="tab-recap" class="tab-content hidden p-6 pb-24 space-y-6 animate-fade-in">
+                <div class="flex bg-white p-1 rounded-xl shadow-sm border border-gray-100" id="recap-filters">
+                    <button data-filter="daily" class="recap-filter-btn flex-1 py-2 text-xs font-bold rounded-lg capitalize transition bg-indigo-100 text-indigo-700">Harian</button>
+                    <button data-filter="monthly" class="recap-filter-btn flex-1 py-2 text-xs font-bold rounded-lg capitalize transition text-gray-400">Bulanan</button>
+                    <button data-filter="yearly" class="recap-filter-btn flex-1 py-2 text-xs font-bold rounded-lg capitalize transition text-gray-400">Tahunan</button>
+                </div>
+                <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                    <button id="recap-prev" class="p-1"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                    <span id="recap-date-label" class="text-sm font-bold text-gray-700"></span>
+                    <button id="recap-next" class="p-1"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-green-50 p-4 rounded-xl border border-green-100 shadow-sm">
+                        <p class="text-xs text-green-600 font-bold uppercase">Masuk</p>
+                        <p id="recap-total-in" class="text-lg font-bold text-green-700">Rp 0</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-xl border border-red-100 shadow-sm">
+                        <p class="text-xs text-red-600 font-bold uppercase">Keluar</p>
+                        <p id="recap-total-out" class="text-lg font-bold text-red-700">Rp 0</p>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 flex justify-between items-center shadow-sm">
+                    <p class="text-xs text-blue-600 font-bold uppercase">Selisih</p>
+                    <p id="recap-net" class="text-lg font-bold text-blue-700">Rp 0</p>
+                </div>
+                <div id="chart-container" class="bg-white p-6 rounded-2xl border border-gray-100 flex flex-col items-center shadow-sm"></div>
+            </div>
+
+            <!-- 4. TAB: PROFILE -->
+            <div id="tab-profile" class="tab-content hidden p-6 pb-24 space-y-6 animate-fade-in">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2"><i data-lucide="settings" class="w-5 h-5 text-indigo-600"></i> Pengaturan</h2>
+                    <div id="sync-badge" class="text-[10px] bg-gray-50 text-gray-500 px-2.5 py-1 rounded-full flex items-center gap-1 font-bold border border-gray-200 transition-colors">
+                        <i data-lucide="cloud-off" id="sync-icon" class="w-3 h-3"></i>
+                        <span id="sync-status">Lokal Saja</span>
+                    </div>
+                </div>
+                
+                <!-- LOGIN SECTION -->
+                <div id="profile-login-section" class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                    <div class="text-center mb-4">
+                        <div class="inline-flex bg-indigo-50 p-3 rounded-full mb-2"><i data-lucide="cloud" class="w-6 h-6 text-indigo-600"></i></div>
+                        <h3 class="font-bold text-gray-800 text-sm uppercase tracking-wider">Sinkronisasi</h3>
+                        <p class="text-[10px] text-gray-400 mt-1 font-medium">Masuk untuk mengamankan data Anda antar perangkat.</p>
+                    </div>
+                    <form id="settings-login-form" class="space-y-3">
+                        <div class="relative">
+                            <i data-lucide="mail" class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"></i>
+                            <input type="email" id="settings-login-email" placeholder="Alamat Email" required class="w-full pl-9 p-2.5 border border-gray-200 rounded-xl outline-none focus:border-indigo-500 text-xs font-medium" />
+                        </div>
+                        <div class="relative">
+                            <i data-lucide="key" class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"></i>
+                            <input type="password" id="settings-login-password" placeholder="Kata Sandi" required class="w-full pl-9 p-2.5 border border-gray-200 rounded-xl outline-none focus:border-indigo-500 text-xs font-medium" />
+                        </div>
+                        <button type="submit" id="btn-login-submit" class="w-full bg-indigo-600 text-white font-bold py-2.5 rounded-xl hover:bg-indigo-700 transition active:scale-95 text-xs tracking-wider uppercase">Masuk Akun</button>
+                    </form>
+                </div>
+
+                <!-- PROFILE AUTH SECTION -->
+                <div id="profile-auth-section" class="hidden bg-white p-5 rounded-2xl border border-gray-100 flex-col gap-4 shadow-sm">
+                    <div class="flex gap-4 items-center">
+                        <div class="w-14 h-14 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-500 shrink-0"><i data-lucide="user" class="w-7 h-7"></i></div>
+                        <div class="flex-1 space-y-3">
+                            <div class="flex items-center gap-3 border-b border-gray-50 pb-2"><i data-lucide="user" class="w-4 h-4 text-gray-400"></i><input type="text" id="prof-name" class="flex-1 text-sm font-bold outline-none" placeholder="Nama Lengkap"/></div>
+                            <div class="flex items-center gap-3 border-b border-gray-50 pb-2"><i data-lucide="mail" class="w-4 h-4 text-gray-400"></i><input type="email" id="prof-email" class="flex-1 text-sm outline-none bg-white text-gray-500" placeholder="Alamat Email" readonly title="Email tidak dapat diubah"/></div>
+                            <div class="flex items-center gap-3 border-b border-gray-50 pb-2"><i data-lucide="phone" class="w-4 h-4 text-gray-400"></i><input type="tel" id="prof-phone" class="flex-1 text-sm outline-none" placeholder="Nomor Handphone"/></div>
+                        </div>
+                    </div>
+                    <button id="btn-save-profile" class="w-full py-2.5 mt-4 bg-indigo-600 text-white font-bold rounded-xl shadow-md active:scale-95 transition text-sm">Simpan Profil</button>
+                    
+                    <!-- LOGOUT BUTTON -->
+                    <div class="w-full hidden" id="logout-container">
+                        <button id="btn-logout" class="w-full flex items-center justify-center gap-2 border border-red-100 text-red-600 bg-red-50 py-2.5 rounded-xl font-bold text-sm active:scale-95 transition hover:bg-red-100"><i data-lucide="log-out" class="w-4 h-4"></i> Keluar Akun</button>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 space-y-3 shadow-sm">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Kustomisasi</h3>
+                    <button onclick="openModalGeneral('category_expense')" class="w-full flex items-center justify-between bg-red-50 p-3 rounded-xl border border-red-100 transition active:scale-95"><div class="flex items-center gap-3"><i data-lucide="trending-down" class="w-4 h-4 text-red-500"></i><span class="text-sm font-bold text-gray-700">Kategori Pengeluaran</span></div><i data-lucide="chevron-right" class="w-4 h-4 text-red-300"></i></button>
+                    <button onclick="openModalGeneral('category_income')" class="w-full flex items-center justify-between bg-green-50 p-3 rounded-xl border border-green-100 transition active:scale-95"><div class="flex items-center gap-3"><i data-lucide="trending-up" class="w-4 h-4 text-green-600"></i><span class="text-sm font-bold text-gray-700">Kategori Pemasukan</span></div><i data-lucide="chevron-right" class="w-4 h-4 text-green-300"></i></button>
+                    <button onclick="openModalGeneral('bank')" class="w-full flex items-center justify-between bg-blue-50 p-3 rounded-xl border border-blue-100 transition active:scale-95"><div class="flex items-center gap-3"><i data-lucide="building-2" class="w-4 h-4 text-indigo-600"></i><span class="text-sm font-bold text-gray-700">Kelola Dompet</span></div><i data-lucide="chevron-right" class="w-4 h-4 text-blue-300"></i></button>
+                </div>
+
+                <!-- Backup / Restore -->
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 space-y-3 shadow-sm">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Penyimpanan Data</h3>
+                    <button id="btn-backup" class="w-full flex items-center justify-center gap-2 border border-indigo-100 text-indigo-600 py-3 rounded-xl font-bold text-sm active:bg-indigo-50 transition"><i data-lucide="download" class="w-4 h-4"></i> Backup JSON</button>
+                    <label class="w-full flex items-center justify-center gap-2 text-gray-500 py-2 text-xs cursor-pointer hover:underline"><i data-lucide="upload" class="w-3 h-3"></i> Restore Data <input type="file" id="file-restore" accept=".json" class="hidden" /></label>
+                    <div class="pt-2 border-t border-gray-100 mt-2" id="reset-container">
+                        <button id="btn-reset-req" class="w-full flex items-center justify-center gap-2 border border-red-100 text-red-600 py-3 rounded-xl font-bold text-sm active:bg-red-50 transition mt-2"><i data-lucide="trash-2" class="w-4 h-4"></i> Reset Semua Data</button>
+                        <div id="reset-confirm-btns" class="hidden flex gap-2 mt-2">
+                            <button id="btn-reset-cancel" class="flex-1 py-3 bg-gray-100 text-gray-600 rounded-xl text-sm font-bold transition active:scale-95">Batal</button>
+                            <button id="btn-reset-do" class="flex-1 py-3 bg-red-600 text-white rounded-xl text-sm font-bold transition active:scale-95 shadow-md">Yakin Reset?</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WATERMARK SUBHAN -->
+                <div class="text-center mt-8 pb-4 text-xs text-gray-400 font-medium">
+                    Dipersembahkan dengan <span class="text-red-500 animate-pulse inline-block">❤️</span> oleh <span class="font-bold text-gray-600 text-[13px] tracking-wide">Subhan</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- BOTTOM NAVIGATION -->
+        <div class="bg-white border-t p-2 flex justify-around shrink-0 z-40 pb-5 sm:pb-2 shadow-[0_-4px_10px_rgba(0,0,0,0.02)]">
+            <button onclick="switchTab('home')" id="nav-home" class="tab-btn active flex flex-col items-center p-2 rounded-xl w-16"><i data-lucide="home" class="w-5 h-5"></i><span class="text-[10px] mt-1">Home</span></button>
+            <button onclick="switchTab('wallet')" id="nav-wallet" class="tab-btn flex flex-col items-center p-2 rounded-xl w-16"><i data-lucide="wallet" class="w-5 h-5"></i><span class="text-[10px] mt-1">Dompet</span></button>
+            <button onclick="switchTab('recap')" id="nav-recap" class="tab-btn flex flex-col items-center p-2 rounded-xl w-16"><i data-lucide="pie-chart" class="w-5 h-5"></i><span class="text-[10px] mt-1">Rekap</span></button>
+            <button onclick="switchTab('profile')" id="nav-profile" class="tab-btn flex flex-col items-center p-2 rounded-xl w-16"><i data-lucide="settings" class="w-5 h-5"></i><span class="text-[10px] mt-1">Setting</span></button>
+        </div>
+
+        <!-- ================= MODALS ================= -->
+        <!-- General Category/Bank Modal -->
+        <div id="modal-general" class="modal absolute inset-0 bg-black/60 z-50 items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl animate-fade-in-up" onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="modal-gen-title" class="font-bold text-gray-800 uppercase tracking-tight">Kategori</h3>
+                    <button onclick="closeModal('modal-general')" class="p-1 hover:bg-gray-100 rounded-full transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                <div id="modal-bank-icons" class="hidden mb-4 flex gap-2 overflow-x-auto no-scrollbar pb-2"></div>
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="modal-gen-input" placeholder="Masukkan Nama..." class="flex-1 p-2.5 border rounded-lg text-sm outline-none focus:border-indigo-500" />
+                    <button id="btn-add-item" class="bg-indigo-600 text-white px-3 rounded-lg active:scale-95 transition"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                </div>
+                <div id="modal-gen-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
+            </div>
+        </div>
+
+        <!-- Adjust Balance Modal -->
+        <div id="modal-adjust" class="modal absolute inset-0 bg-black/60 z-50 items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl animate-fade-in-up" onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="modal-adjust-title" class="font-bold text-gray-800 uppercase text-center tracking-tight">Set Saldo</h3>
+                    <button onclick="closeModal('modal-adjust')" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                <input type="text" inputmode="numeric" id="input-adjust" class="w-full p-3 border rounded-xl text-lg font-bold mb-4 outline-none text-center focus:border-indigo-500" placeholder="0" />
+                <button id="btn-save-adjust" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold shadow-md transition active:scale-95 uppercase tracking-widest">Update Saldo</button>
+            </div>
+        </div>
+
+        <!-- Repay Modal -->
+        <div id="modal-repay" class="modal absolute inset-0 bg-black/60 z-50 items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl animate-fade-in-up" onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 id="modal-repay-title" class="font-bold text-gray-800 uppercase tracking-tight">Pelunasan</h3>
+                    <button onclick="closeModal('modal-repay')" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                <p id="modal-repay-desc" class="text-xs text-gray-500 mb-4 font-medium"></p>
+                <div class="space-y-4">
+                    <div><label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nominal (Rp)</label><input type="text" inputmode="numeric" id="input-repay-nom" class="w-full p-2.5 border rounded-lg text-sm font-bold outline-none focus:border-indigo-500"/></div>
+                    <div><label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Gunakan Dompet</label><select id="select-repay-bank" class="w-full p-2.5 border rounded-lg text-sm font-bold uppercase outline-none focus:border-indigo-500"></select></div>
+                    <button id="btn-submit-repay" class="w-full text-white py-3 rounded-xl font-bold shadow-lg transition active:scale-95 uppercase tracking-widest">Konfirmasi</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit/Delete Modal -->
+        <div id="modal-edit" class="modal absolute inset-0 bg-black/60 z-50 items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl animate-fade-in-up" onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-100 uppercase font-bold text-sm tracking-tight"><span class="flex items-center gap-2"><i data-lucide="edit-2" class="w-4 h-4 text-indigo-600"></i> Edit Transaksi</span><button onclick="closeModal('modal-edit')" class="p-1 hover:bg-gray-100 rounded-full transition"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+                <div class="space-y-4" id="edit-form-content"></div>
+                <div class="flex gap-2 pt-4">
+                    <button id="btn-del-tx" class="flex-1 py-2.5 bg-red-50 text-red-600 rounded-lg text-xs font-bold uppercase transition active:scale-95 border border-red-100">Hapus</button>
+                    <button id="btn-del-tx-confirm" class="hidden flex-1 py-2.5 bg-red-600 text-white rounded-lg text-xs font-bold uppercase transition active:scale-95 shadow-md">Yakin?</button>
+                    <button id="btn-save-tx" class="flex-[2] py-2.5 bg-indigo-600 text-white rounded-lg text-xs font-bold shadow-md uppercase transition active:scale-95 tracking-wider hover:bg-indigo-700">Simpan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Viewer Modal -->
+        <div id="modal-image" class="modal absolute inset-0 bg-black/90 z-[60] items-center justify-center p-4 backdrop-blur-sm" onclick="closeModal('modal-image')">
+            <div class="relative" onclick="event.stopPropagation()">
+                <button onclick="closeModal('modal-image')" class="absolute -top-12 right-0 text-white hover:text-red-400 transition bg-white/10 p-2 rounded-full"><i data-lucide="x" class="w-6 h-6"></i></button>
+                <img id="viewer-img" class="max-w-full max-h-[80vh] rounded-xl shadow-2xl border border-white/10"/>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CORE JAVASCRIPT LOGIC -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getFirestore, onSnapshot, doc, setDoc, getDoc, collection, deleteDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+
+        // =====================================================================
+        // ⚠️ KONFIGURASI HOSTING SENDIRI (FIREBASE CLOUD)
+        // Jika Anda menggunakan hosting sendiri (cPanel, Vercel, dll), 
+        // ganti kata 'null' di bawah ini dengan kode konfigurasi Firebase Anda!
+        // =====================================================================
+        const myOwnFirebaseConfig = // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyB1O89ELmb0auSawUxiTLxFX-iK1iS3ApU",
+  authDomain: "kasqu-2d875.firebaseapp.com",
+  projectId: "kasqu-2d875",
+  storageBucket: "kasqu-2d875.firebasestorage.app",
+  messagingSenderId: "463701168605",
+  appId: "1:463701168605:web:3133a5c8d9e8384a092634",
+  measurementId: "G-189L974C1L"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+        // --- CONSTANTS ---
+        const CHART_COLORS = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ef4444', '#14b8a6'];
+        const AVAILABLE_ICONS = [
+            { id: 'banknote', label: 'Tunai' }, { id: 'landmark', label: 'Bank' }, 
+            { id: 'smartphone', label: 'E-Wallet' }, { id: 'credit-card', label: 'Kartu' }, 
+            { id: 'piggy-bank', label: 'Tabungan' }, { id: 'briefcase', label: 'Bisnis' }, 
+            { id: 'box', label: 'Lainnya' }, { id: 'wallet', label: 'Dompet' }
+        ];
+
+        // --- GLOBAL STATE ---
+        let state = {
+            currentUserEmail: localStorage.getItem('active_user_email') || null, 
+            
+            transactions: [],
+            categoriesExpense: [],
+            categoriesIncome: [],
+            banks: [],
+            userProfile: { name: 'Pengguna', email: '', phone: '' },
+            
+            activeTab: 'home',
+            showBalance: true,
+            showAllHistory: false,
+            historyBankFilter: 'All',
+            
+            recapFilter: 'monthly',
+            currentRecapDate: new Date(),
+            
+            formData: { type: 'expense', debtType: 'in', isReceivable: false, image: '' },
+            
+            modalConfigType: '', newBankIcon: 'banknote',
+            adjustBank: '', adjustCurrentBal: 0,
+            repayTx: null, editTxId: null,
+            
+            firebaseUser: null, db: null,
+            appId: typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'
+        };
+
+        // --- UTILITIES ---
+        const formatThousand = (val) => !val && val !== 0 ? '' : val.toString().replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        const parseThousand = (val) => !val ? 0 : Number(val.toString().replace(/\./g, ''));
+        const formatRupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
+        
+        const showToast = (msg) => {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 3500); 
+        };
+
+        const getBankIcon = (iconId) => AVAILABLE_ICONS.find(i => i.id === iconId)?.id || 'wallet';
+        
+        const getTxAmount = (tx) => {
+            const n = Number(tx.nominal);
+            if (tx.type === 'debt' && tx.bank === 'Tanpa Dompet') return 0;
+            if (tx.type === 'income') return n;
+            if (tx.type === 'expense') return -n;
+            if (tx.type === 'debt') return tx.debtType === 'in' ? n : -n;
+            return 0; 
+        };
+
+        const getTotalBalance = () => state.transactions.reduce((acc, curr) => acc + getTxAmount(curr), 0);
+        
+        const getBankBalance = (bankName) => state.transactions.reduce((acc, curr) => {
+            const n = Number(curr.nominal);
+            if (curr.type === 'transfer') {
+                if (curr.bank === bankName) return acc - n;
+                if (curr.toBank === bankName) return acc + n;
+                return acc;
+            }
+            if ((curr.bank || 'Tunai') === bankName) return acc + getTxAmount(curr);
+            return acc;
+        }, 0);
+
+        // --- STORAGE LOGIC ---
+        const getKey = (baseKey) => state.currentUserEmail ? `${baseKey}_${state.currentUserEmail}` : `${baseKey}_local`;
+        const saveLocal = (key, val) => localStorage.setItem(getKey(key), JSON.stringify(val));
+        
+        const loadLocalData = () => {
+            const tx = localStorage.getItem(getKey('local_transactions'));
+            state.transactions = tx ? JSON.parse(tx) : [];
+
+            const exp = localStorage.getItem(getKey('local_categories_expense'));
+            state.categoriesExpense = exp ? JSON.parse(exp) : ['Makanan', 'Transportasi', 'Belanja', 'Tagihan', 'Hiburan', 'Kesehatan', 'Lainnya'];
+
+            const inc = localStorage.getItem(getKey('local_categories_income'));
+            state.categoriesIncome = inc ? JSON.parse(inc) : ['Gaji', 'Bonus', 'Investasi', 'Pemberian', 'Penjualan', 'Lainnya'];
+
+            const b = localStorage.getItem(getKey('local_banks'));
+            state.banks = b ? JSON.parse(b) : [{ name: 'Tunai', icon: 'banknote' }, { name: 'BCA', icon: 'landmark' }, { name: 'E-Wallet', icon: 'smartphone' }];
+
+            const prof = localStorage.getItem(getKey('local_user_profile'));
+            state.userProfile = prof ? JSON.parse(prof) : { name: '', email: state.currentUserEmail || '', phone: '' };
+        };
+
+        // --- FIREBASE INIT & CROSS-DEVICE SYNC ---
+        const initFirebase = async () => {
+            const configStr = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
+            
+            // DETEKSI FILE LOKAL / HOSTING TANPA CONFIG
+            if (!configStr && !myOwnFirebaseConfig) {
+                const syncStatusEl = document.getElementById('sync-status');
+                const syncBadge = document.getElementById('sync-badge');
+                const syncIcon = document.getElementById('sync-icon');
+                if (syncStatusEl) syncStatusEl.textContent = 'Mode File Lokal';
+                if (syncBadge) syncBadge.className = 'text-[10px] bg-red-50 text-red-600 px-2.5 py-1 rounded-full flex items-center gap-1 font-bold border border-red-200 transition-colors';
+                if (syncIcon) syncIcon.setAttribute('data-lucide', 'alert-circle');
+                return;
+            }
+            
+            try {
+                const config = myOwnFirebaseConfig ? myOwnFirebaseConfig : JSON.parse(configStr);
+                const app = initializeApp(config);
+                const auth = getAuth(app);
+                state.db = getFirestore(app);
+
+                // ATURAN AUTENTIKASI:
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token && !myOwnFirebaseConfig) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    // Gunakan mode Anonim untuk hosting Anda sendiri
+                    await signInAnonymously(auth);
+                }
+                
+                state.firebaseUser = auth.currentUser;
+
+                // Jika saat awal buka aplikasi user sudah terlogin (via localStorage) jalankan tarik data
+                if (state.currentUserEmail && state.firebaseUser) {
+                    attachCloudListeners();
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    state.firebaseUser = user;
+                    if (user && state.currentUserEmail && !unsubTxs) {
+                        attachCloudListeners();
+                    }
+                });
+            } catch (e) { 
+                console.error("Firebase error", e); 
+                showToast("Gagal menyambung ke server Cloud");
+            }
+        };
+
+        let unsubSettings = null, unsubTxs = null;
+        
+        const attachCloudListeners = () => {
+            if (!state.firebaseUser || !state.db || !state.currentUserEmail) return;
+            const emailId = state.currentUserEmail.replace(/[^a-zA-Z0-9]/g, '_');
+
+            // 1. Sinkronisasi Pengaturan (Profil, Bank, Kategori)
+            const settingsRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'settings', emailId);
+            if (unsubSettings) unsubSettings();
+            
+            unsubSettings = onSnapshot(settingsRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if(data.categoriesExpense) state.categoriesExpense = data.categoriesExpense;
+                    if(data.categoriesIncome) state.categoriesIncome = data.categoriesIncome;
+                    if(data.banks) state.banks = data.banks;
+                    if(data.userProfile) state.userProfile = data.userProfile;
+                    
+                    saveLocal('local_categories_expense', state.categoriesExpense);
+                    saveLocal('local_categories_income', state.categoriesIncome);
+                    saveLocal('local_banks', state.banks);
+                    saveLocal('local_user_profile', state.userProfile);
+                    renderAll();
+                }
+            }, (err) => showToast("Error Tarik Setting: " + err.message));
+
+            // 2. Sinkronisasi Seluruh Transaksi
+            const txsRef = collection(state.db, 'artifacts', state.appId, 'public', 'data', 'transactions');
+            if (unsubTxs) unsubTxs();
+            
+            unsubTxs = onSnapshot(txsRef, (snap) => {
+                let allTxs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                
+                // Saring transaksi hanya milik Email yang sedang login
+                let myTxs = allTxs.filter(t => t.accountEmail === state.currentUserEmail);
+                myTxs.sort((a, b) => b.createdAt - a.createdAt);
+                
+                state.transactions = myTxs;
+                saveLocal('local_transactions', myTxs);
+                renderAll();
+            }, (err) => showToast("Error Tarik Transaksi: " + err.message));
+        };
+
+        // --- PENYIMPANAN KE CLOUD MENGGUNAKAN JALUR STANDAR (ANTI-BLOKIR) ---
+        const saveSettingsToCloud = async () => {
+            saveLocal('local_categories_expense', state.categoriesExpense);
+            saveLocal('local_categories_income', state.categoriesIncome);
+            saveLocal('local_banks', state.banks);
+            saveLocal('local_user_profile', state.userProfile);
+
+            if (state.firebaseUser && state.db && state.currentUserEmail) {
+                const emailId = state.currentUserEmail.replace(/[^a-zA-Z0-9]/g, '_');
+                const docRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'settings', emailId);
+                
+                const payload = {
+                    categoriesExpense: state.categoriesExpense,
+                    categoriesIncome: state.categoriesIncome,
+                    banks: state.banks,
+                    userProfile: state.userProfile
+                };
+                
+                let users = JSON.parse(localStorage.getItem('app_auth_users') || '{}');
+                if (users[state.currentUserEmail]) payload.password = users[state.currentUserEmail];
+
+                try { 
+                    await setDoc(docRef, payload, { merge: true }); 
+                } catch(e) { showToast("Gagal simpan setting ke Cloud!"); }
+            }
+            renderAll();
+        };
+
+        const saveTxToCloud = async (txData) => {
+            txData.accountEmail = state.currentUserEmail || 'local'; // Cap Kepemilikan Email!
+
+            // Simpan ke lokal dulu supaya tampilan user langsung berubah
+            const idx = state.transactions.findIndex(t => t.id === txData.id);
+            if(idx >= 0) state.transactions[idx] = txData; else state.transactions.unshift(txData);
+            saveLocal('local_transactions', state.transactions);
+            renderAll();
+
+            // Pengecekan Jaringan & Detail Toast:
+            if (!state.db) {
+                showToast('Tersimpan Lokal (Buka via Web untuk Sinkron Cloud)');
+                return;
+            }
+            if (!state.currentUserEmail) {
+                showToast('Tersimpan Lokal (Silakan Masuk Akun dulu)');
+                return;
+            }
+            if (!state.firebaseUser) {
+                showToast('Tersimpan Lokal (Menunggu koneksi server...)');
+                return;
+            }
+
+            // PUSH KE CLOUD!
+            const txRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'transactions', txData.id);
+            try { 
+                await setDoc(txRef, txData); 
+                showToast('Berhasil Tersimpan di Cloud!'); // INDIKATOR SUKSES
+            } catch(e) { 
+                console.error(e);
+                showToast('Gagal simpan ke Cloud: Server menolak (Silakan muat ulang)'); // INDIKATOR ERROR
+            }
+        };
+
+        const deleteTxFromCloud = async (txId) => {
+            state.transactions = state.transactions.filter(t => t.id !== txId);
+            saveLocal('local_transactions', state.transactions);
+            renderAll();
+
+            if (state.firebaseUser && state.db && state.currentUserEmail) {
+                const txRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'transactions', txId);
+                try { 
+                    await deleteDoc(txRef); 
+                    showToast('Terhapus dari Cloud!'); 
+                } catch(e) { 
+                    showToast('Gagal menghapus di Cloud: Server Menolak'); 
+                }
+            }
+        };
+
+        // --- RENDER ROUTER ---
+        window.switchTab = (tabId) => {
+            state.activeTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active', 'text-indigo-600', 'bg-indigo-50'));
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if(activeBtn) activeBtn.classList.add('active', 'text-indigo-600', 'bg-indigo-50');
+            
+            renderAll();
+        };
+
+        const renderAll = () => {
+            updateGlobalBalanceUI();
+            if (state.activeTab === 'home') renderHome();
+            else if (state.activeTab === 'wallet') renderWallet();
+            else if (state.activeTab === 'recap') renderRecap();
+            else if (state.activeTab === 'profile') renderProfile();
+            if(window.lucide) lucide.createIcons();
+        };
+
+        const updateGlobalBalanceUI = () => {
+            const tb = formatRupiah(getTotalBalance());
+            document.getElementById('total-balance').textContent = state.showBalance ? tb : 'Rp ••••••••';
+            document.getElementById('wallet-total-balance').textContent = state.showBalance ? tb : 'Rp ••••••';
+            
+            const iconHome = document.getElementById('eye-icon-home');
+            const iconWallet = document.getElementById('eye-icon-wallet');
+            if(iconHome) iconHome.setAttribute('data-lucide', state.showBalance ? 'eye' : 'eye-off');
+            if(iconWallet) iconWallet.setAttribute('data-lucide', state.showBalance ? 'eye' : 'eye-off');
+        };
+
+        // --- RENDER SECTIONS ---
+        const renderHome = () => {
+            renderTxFormFields();
+            renderActiveDebts();
+            renderHistory();
+        };
+
+        const renderTxFormFields = () => {
+            const container = document.getElementById('form-dynamic-fields');
+            let html = '';
+            const t = state.formData.type;
+            const bankOptions = state.banks.map(b => `<option value="${b.name}">${b.name}</option>`).join('');
+
+            if (t === 'transfer') {
+                html = `
+                    <div class="animate-fade-in">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase flex justify-between mb-1">
+                            <span>Dari</span><span class="text-indigo-500 tracking-tighter" id="form-bal-from"></span>
+                        </label>
+                        <select id="tx-bank" class="w-full p-2.5 text-xs border rounded-lg outline-none focus:border-indigo-500">${bankOptions}</select>
+                    </div>
+                    <div class="animate-fade-in">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase flex justify-between mb-1">
+                            <span>Ke</span><span class="text-green-500 tracking-tighter" id="form-bal-to"></span>
+                        </label>
+                        <select id="tx-toBank" class="w-full p-2.5 text-xs border rounded-lg outline-none focus:border-indigo-500">${bankOptions}</select>
                     </div>
                 `;
-            }).join('');
-
-            return `
-                <div class="min-h-screen bg-gray-100 flex items-center justify-center p-4 font-sans text-gray-900">
-                    <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl border border-gray-100 flex flex-col max-h-[90vh]">
-                        
-                        <div class="bg-emerald-600 p-6 text-center text-white relative flex-shrink-0 rounded-t-3xl overflow-hidden shadow-inner">
-                            <div class="absolute opacity-10 -right-8 -top-8"><i data-lucide="star" class="w-48 h-48 fill-current"></i></div>
-                            <h1 class="text-xl font-black tracking-wide mb-1 relative z-10 drop-shadow-md">Game Quran</h1>
-                            <p class="text-emerald-100 relative z-10 font-bold tracking-wider text-xs uppercase mb-4">Tebak Perkata Juz 30</p>
-                            
-                            <!-- Profil Bar -->
-                            <div class="bg-emerald-800/50 p-3 rounded-xl border border-emerald-500/30 flex items-center justify-between relative z-10">
-                                <div class="text-left flex items-center gap-3">
-                                    <div class="bg-emerald-100 text-emerald-800 w-10 h-10 rounded-full flex items-center justify-center font-black text-lg border-2 border-white shadow-sm">
-                                        ${currentUser.name.charAt(0).toUpperCase()}
-                                    </div>
-                                    <div>
-                                        <p class="text-[10px] text-emerald-200 uppercase tracking-wider font-bold">Pemain Saat Ini</p>
-                                        <p class="font-black text-sm truncate max-w-[120px]">${currentUser.name}</p>
-                                    </div>
-                                </div>
-                                <button onclick="handleLogout()" class="text-xs bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg font-bold transition-colors shadow-sm">
-                                    Ganti Akun
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="p-4 sm:p-6 overflow-y-auto flex-1 bg-gray-50 relative">
-                            <h2 class="text-lg font-black mb-4 text-center text-gray-800 uppercase tracking-widest flex items-center justify-center gap-2">
-                                <i data-lucide="map" class="w-5 h-5 text-amber-500"></i> Peta Belajar
-                            </h2>
-                            ${levelsHtml}
-                            <div class="border-t-2 border-dashed border-gray-300 pt-5 pb-5 mt-2">
-                                <button onclick="changeGameState('surahList')" class="w-full flex items-center justify-center gap-2 p-4 rounded-2xl border-2 border-gray-300 bg-white hover:bg-gray-100 hover:border-gray-400 transition-all font-bold text-gray-600 shadow-sm">
-                                    <i data-lucide="list" class="w-5 h-5"></i>
-                                    <span>Latihan Surah Bebas</span>
-                                </button>
-                                <button onclick="resetProgressAndState()" class="text-xs text-gray-400 hover:text-red-500 mt-5 underline text-center block w-full transition-colors font-bold">
-                                    <i data-lucide="rotate-ccw" class="w-3 h-3 inline-block mr-1"></i> Reset Progres Belajar Akun Ini
-                                </button>
-                            </div>
-                            <div class="text-center text-[10px] text-gray-400/80 font-bold tracking-widest pb-2 uppercase">
-                                Dibuat oleh Subhan
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderSurahList() {
-            let surahsHtml = quranData.map(surah => `
-                <button onclick="startGame('single', '${surah.surah}', 'Surah ${surah.surah}')" class="p-3 rounded-xl border-2 border-emerald-100 hover:border-emerald-500 hover:bg-emerald-50 bg-white transition-all font-bold text-xs text-center text-emerald-800 shadow-sm">
-                    ${surah.surah}
-                </button>
-            `).join('');
-
-            return `
-                <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 font-sans">
-                    <div class="max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
-                        <div class="bg-emerald-600 p-4 flex items-center justify-between text-white shadow-md z-10">
-                            <button onclick="changeGameState('menu')" class="p-2 bg-emerald-700 rounded-lg hover:bg-emerald-800 transition-colors">
-                                <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                            </button>
-                            <h2 class="font-bold uppercase tracking-widest text-sm">Latihan Bebas</h2>
-                            <div class="w-9"></div>
-                        </div>
-                        <div class="p-4 overflow-y-auto flex-1 bg-gray-50">
-                            <div class="bg-blue-50 border border-blue-200 text-blue-800 text-xs p-3 rounded-xl mb-4 text-center font-medium">
-                                Bermain di mode ini tidak akan mempengaruhi progres Peta Belajar akun Anda.
-                            </div>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                ${surahsHtml}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderPlaying() {
-            const currentQ = questions[currentQuestionIndex];
-            const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
-
-            let optionsHtml = currentQ.options.map((option, idx) => {
-                let btnClass = "p-5 rounded-2xl border-2 text-left font-bold transition-all transform active:scale-95 text-md shadow-sm w-full h-full flex justify-between items-center ";
-                let rightIcon = "";
+                document.getElementById('debt-toggles').classList.add('hidden');
+                document.getElementById('toggle-debt-mode').classList.remove('hidden');
+            } else {
+                const isDebt = t === 'debt';
+                const cats = t === 'income' ? state.categoriesIncome : state.categoriesExpense;
+                const catOptions = cats.map(c => `<option value="${c}">${c}</option>`).join('');
                 
-                if (selectedAnswer === null) {
-                    btnClass += "border-gray-200 bg-white hover:border-emerald-500 hover:bg-emerald-50 text-gray-700 hover:shadow-md cursor-pointer";
-                } else {
-                    if (option === currentQ.id) {
-                        btnClass += "border-green-500 bg-green-100 text-green-800 ring-4 ring-green-300 shadow-lg z-10 scale-[1.02]"; 
-                        if (selectedAnswer !== null) rightIcon = `<i data-lucide="check-circle" class="w-6 h-6 text-green-600 drop-shadow-md"></i>`;
-                    } else if (option === selectedAnswer) {
-                        btnClass += "border-red-400 bg-red-50 text-red-700 opacity-90";
-                        if (!isCorrect) rightIcon = `<i data-lucide="x-circle" class="w-6 h-6 text-red-500"></i>`;
-                    } else {
-                        btnClass += "border-gray-100 bg-gray-50 text-gray-400 opacity-50";
+                html = `
+                    <div class="animate-fade-in">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase mb-1 block">${isDebt ? 'Nama Orang' : 'Kategori'}</label>
+                        ${isDebt ? `<input type="text" id="tx-category" class="w-full p-2.5 text-xs border rounded-lg outline-none focus:border-indigo-500" placeholder="Nama..." />` : `<select id="tx-category" class="w-full p-2.5 text-xs border rounded-lg outline-none focus:border-indigo-500">${catOptions}</select>`}
+                    </div>
+                    <div class="animate-fade-in">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase flex justify-between mb-1">
+                            <span>Dompet</span><span class="text-indigo-500 tracking-tighter" id="form-bal-bank"></span>
+                        </label>
+                        <select id="tx-bank" class="w-full p-2.5 text-xs border rounded-lg outline-none focus:border-indigo-500">
+                            ${isDebt ? `<option value="Tanpa Dompet" class="font-bold text-gray-400">-- Tanpa Dompet --</option>` : ''}
+                            ${bankOptions}
+                        </select>
+                    </div>
+                `;
+                
+                if(isDebt) { document.getElementById('debt-toggles').classList.remove('hidden'); document.getElementById('toggle-debt-mode').classList.add('hidden'); updateDebtToggleUI(); } 
+                else { document.getElementById('debt-toggles').classList.add('hidden'); document.getElementById('toggle-debt-mode').classList.remove('hidden'); }
+            }
+            container.innerHTML = html;
+            
+            const b1 = document.getElementById('tx-bank');
+            const b2 = document.getElementById('tx-toBank');
+            const updateBals = () => {
+                const elFrom = document.getElementById('form-bal-from');
+                const elTo = document.getElementById('form-bal-to');
+                const elBank = document.getElementById('form-bal-bank');
+                if(elFrom && b1) elFrom.textContent = formatRupiah(getBankBalance(b1.value));
+                if(elTo && b2) elTo.textContent = formatRupiah(getBankBalance(b2.value));
+                if(elBank && b1 && b1.value !== 'Tanpa Dompet') elBank.textContent = formatRupiah(getBankBalance(b1.value));
+                else if(elBank) elBank.textContent = '';
+            };
+            if(b1) b1.addEventListener('change', updateBals);
+            if(b2) b2.addEventListener('change', updateBals);
+            updateBals();
+        };
+
+        const updateDebtToggleUI = () => {
+            const fd = state.formData;
+            const btnMe = document.getElementById('btn-debt-me'); const btnRec = document.getElementById('btn-receivable-me');
+            const btnNew = document.getElementById('btn-debt-new'); const btnPay = document.getElementById('btn-debt-pay');
+
+            if (!fd.isReceivable) { btnMe.className = "flex-1 py-1 text-[10px] rounded border bg-orange-500 border-orange-600 text-white font-bold transition"; btnRec.className = "flex-1 py-1 text-[10px] rounded border bg-white text-gray-400 transition"; } 
+            else { btnRec.className = "flex-1 py-1 text-[10px] rounded border bg-purple-600 border-purple-700 text-white font-bold transition"; btnMe.className = "flex-1 py-1 text-[10px] rounded border bg-white text-gray-400 transition"; }
+
+            const isNew = fd.debtType === (fd.isReceivable ? 'out' : 'in');
+            if (isNew) { btnNew.className = "flex-1 py-1.5 text-[10px] font-bold rounded bg-gray-800 text-white transition"; btnPay.className = "flex-1 py-1.5 text-[10px] font-bold rounded bg-white text-gray-400 border transition"; } 
+            else { btnPay.className = "flex-1 py-1.5 text-[10px] font-bold rounded bg-gray-800 text-white transition"; btnNew.className = "flex-1 py-1.5 text-[10px] font-bold rounded bg-white text-gray-400 border transition"; }
+        };
+
+        const renderActiveDebts = () => {
+            const container = document.getElementById('active-debts-container');
+            let html = '';
+            
+            const debts = {};
+            state.transactions.filter(t => t.type === 'debt' && !t.isReceivable).forEach(t => { debts[t.category] = (debts[t.category] || 0) + (t.debtType === 'in' ? Number(t.nominal) : -Number(t.nominal)); });
+            const debtsList = Object.entries(debts).filter(([,v]) => v > 0);
+
+            const recs = {};
+            state.transactions.filter(t => t.type === 'debt' && t.isReceivable).forEach(t => { recs[t.category] = (recs[t.category] || 0) + (t.debtType === 'out' ? Number(t.nominal) : -Number(t.nominal)); });
+            const recsList = Object.entries(recs).filter(([,v]) => v > 0);
+
+            if(debtsList.length > 0) {
+                html += `<div class="bg-orange-50 p-4 rounded-xl border border-orange-200 shadow-sm animate-fade-in"><h3 class="text-xs font-bold text-orange-800 mb-2 uppercase">Hutang Belum Lunas</h3>`;
+                debtsList.forEach(([n,v]) => { html += `<div class="flex justify-between items-center mb-1 text-xs"><span>${n}</span><div class="flex items-center gap-2"><span class="font-bold text-orange-600">${formatRupiah(v)}</span><button onclick="openRepayModal('${n}', ${v}, false)" class="px-2 py-1 bg-orange-500 text-white rounded font-bold transition active:scale-95">Bayar</button></div></div>`; });
+                html += `</div>`;
+            }
+
+            if(recsList.length > 0) {
+                html += `<div class="bg-purple-50 p-4 rounded-xl border border-purple-200 shadow-sm animate-fade-in"><h3 class="text-xs font-bold text-purple-800 mb-2 uppercase">Piutang (Uang di Luar)</h3>`;
+                recsList.forEach(([n,v]) => { html += `<div class="flex justify-between items-center mb-1 text-xs"><span>${n}</span><div class="flex items-center gap-2"><span class="font-bold text-purple-600">${formatRupiah(v)}</span><button onclick="openRepayModal('${n}', ${v}, true)" class="px-2 py-1 bg-purple-500 text-white rounded font-bold transition active:scale-95">Terima</button></div></div>`; });
+                html += `</div>`;
+            }
+            container.innerHTML = html;
+        };
+
+        const renderHistory = () => {
+            const hFilter = document.getElementById('history-bank-filter');
+            if(hFilter.children.length <= 1) {
+                hFilter.innerHTML = `<option value="All">Semua Dompet</option><option value="Tanpa Dompet">Tanpa Dompet</option>` + state.banks.map(b => `<option value="${b.name}">${b.name}</option>`).join('');
+                hFilter.value = state.historyBankFilter;
+            }
+
+            let filtered = state.transactions;
+            if (state.historyBankFilter !== 'All') { filtered = filtered.filter(tx => tx.bank === state.historyBankFilter || (tx.type === 'transfer' && tx.toBank === state.historyBankFilter)); }
+            const displayTx = state.showAllHistory ? filtered : filtered.slice(0, 5);
+
+            document.getElementById('text-toggle-history').textContent = state.showAllHistory ? 'Tutup' : 'Semua';
+
+            const getIcon = (t) => {
+                if(t.type === 'income') return `<i data-lucide="trending-up" class="w-5 h-5 text-green-600"></i>`;
+                if(t.type === 'expense') return `<i data-lucide="trending-down" class="w-5 h-5 text-red-500"></i>`;
+                if(t.type === 'transfer') return `<i data-lucide="arrow-right-left" class="w-5 h-5 text-blue-600"></i>`;
+                if(t.type === 'debt') {
+                    if(t.isReceivable) return t.debtType==='out' ? `<i data-lucide="arrow-up-right" class="w-5 h-5 text-purple-600"></i>` : `<i data-lucide="arrow-down-left" class="w-5 h-5 text-purple-600"></i>`;
+                    return t.debtType==='in' ? `<i data-lucide="credit-card" class="w-5 h-5 text-orange-600"></i>` : `<i data-lucide="check-circle" class="w-5 h-5 text-orange-600"></i>`;
+                }
+                return `<i data-lucide="credit-card" class="w-5 h-5 text-gray-500"></i>`;
+            };
+            const getBg = (t) => {
+                if(t.type === 'income') return 'bg-green-100'; if(t.type === 'expense') return 'bg-red-100'; if(t.type === 'transfer') return 'bg-blue-100';
+                if(t.type === 'debt') return t.isReceivable ? 'bg-purple-100' : 'bg-orange-100'; return 'bg-gray-100';
+            };
+
+            document.getElementById('history-list').innerHTML = displayTx.map(tx => `
+                <div class="flex justify-between items-center p-3 bg-white border rounded-xl shadow-sm">
+                    <div class="flex gap-3 items-center">
+                        <div class="p-2 rounded-full ${getBg(tx)}">${getIcon(tx)}</div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-800">${tx.type==='transfer'?`${tx.bank} ➔ ${tx.toBank}`:tx.category}</p>
+                            <div class="flex gap-1 text-[10px] text-gray-400 items-center">
+                                <span>${tx.date}</span> ${tx.proof ? `<span>• ${tx.proof}</span>` : ''}
+                                ${tx.image ? `<i data-lucide="image" class="w-3 h-3 text-indigo-500 cursor-pointer ml-1" onclick="openImageViewer('${tx.image}')"></i>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold ${getTxAmount(tx)>=0?'text-green-600':'text-gray-800'}">${getTxAmount(tx)>=0?'+':'-'} ${formatRupiah(tx.nominal)}</span>
+                        <button onclick="openEditModal('${tx.id}')" class="text-gray-400 hover:text-indigo-600 p-1"><i data-lucide="edit-2" class="w-3 h-3"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        const renderWallet = () => {
+            const list = document.getElementById('wallet-list');
+            list.innerHTML = state.banks.map(b => `
+                <div ondblclick="openAdjustModal('${b.name}', ${getBankBalance(b.name)})" class="flex justify-between items-center p-4 bg-white border rounded-xl shadow-sm cursor-pointer hover:bg-gray-50 transition active:scale-98 select-none">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-blue-50 text-blue-600 rounded-full"><i data-lucide="${getBankIcon(b.icon)}" class="w-5 h-5"></i></div>
+                        <span class="font-bold text-gray-700 text-sm">${b.name}</span>
+                    </div>
+                    <span class="font-bold text-sm text-gray-800">${state.showBalance ? formatRupiah(getBankBalance(b.name)) : '••••••'}</span>
+                </div>
+            `).join('');
+        };
+
+        const renderRecap = () => {
+            document.querySelectorAll('.recap-filter-btn').forEach(b => {
+                if(b.dataset.filter === state.recapFilter) b.className = "recap-filter-btn flex-1 py-2 text-xs font-bold rounded-lg capitalize transition bg-indigo-100 text-indigo-700";
+                else b.className = "recap-filter-btn flex-1 py-2 text-xs font-bold rounded-lg capitalize transition text-gray-400";
+            });
+
+            const d = state.currentRecapDate; let label = '';
+            if(state.recapFilter === 'daily') label = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            else if(state.recapFilter === 'monthly') label = d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+            else label = d.getFullYear().toString();
+            document.getElementById('recap-date-label').textContent = label;
+
+            const fRecap = state.transactions.filter(tx => { 
+                const td = new Date(tx.date); 
+                if(state.recapFilter === 'daily') return td.toDateString() === d.toDateString(); 
+                if(state.recapFilter === 'monthly') return td.getMonth() === d.getMonth() && td.getFullYear() === d.getFullYear(); 
+                return td.getFullYear() === d.getFullYear(); 
+            });
+
+            const totalIn = fRecap.reduce((a,c) => getTxAmount(c)>0 ? a+Number(c.nominal) : a, 0);
+            const totalOut = fRecap.reduce((a,c) => { const v=getTxAmount(c); return v<0 ? a+Math.abs(v) : a}, 0);
+            const net = totalIn - totalOut;
+
+            document.getElementById('recap-total-in').textContent = formatRupiah(totalIn);
+            document.getElementById('recap-total-out').textContent = formatRupiah(totalOut);
+            const elNet = document.getElementById('recap-net');
+            elNet.textContent = formatRupiah(net); elNet.className = `text-lg font-bold ${net >= 0 ? 'text-blue-700' : 'text-red-600'}`;
+
+            const expByCat = fRecap.filter(t => getTxAmount(t)<0).reduce((a,c) => { a[c.category] = (a[c.category]||0) + Number(c.nominal); return a; }, {});
+            const sortedExp = Object.entries(expByCat).sort(([,a],[,b]) => b-a).slice(0,8);
+            const totalChart = sortedExp.reduce((a,[,v]) => a+v, 0);
+            
+            const cCont = document.getElementById('chart-container');
+            if(totalChart > 0) {
+                let currentOffset = 0; let circles = ''; let legend = '';
+                sortedExp.forEach(([cat, amount], i) => {
+                    const strokeVal = (amount/totalChart) * 251.2; const color = CHART_COLORS[i % CHART_COLORS.length];
+                    circles += `<circle cx="50" cy="50" r="40" fill="transparent" stroke="${color}" stroke-width="18" stroke-dasharray="${strokeVal} 251.2" stroke-dashoffset="-${currentOffset}" />`;
+                    currentOffset += strokeVal;
+
+                    legend += `<div><div class="flex justify-between text-[10px] mb-1"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full" style="background-color: ${color}"></div><span class="font-bold text-gray-700 uppercase tracking-tight">${cat}</span></div><span class="font-bold text-gray-800">${formatRupiah(amount)} (${Math.round(amount/totalOut*100)}%)</span></div><div class="w-full bg-gray-100 h-1.5 rounded-full"><div class="h-1.5 rounded-full transition-all duration-700" style="width: ${(amount/totalOut)*100}%; background-color: ${color}"></div></div></div>`;
+                });
+
+                cCont.innerHTML = `<div class="relative w-40 h-40 mb-8"><svg viewBox="0 0 100 100" class="w-full h-full transform -rotate-90">${circles}</svg><div class="absolute inset-0 flex items-center justify-center flex-col"><span class="text-[10px] text-gray-400 font-bold uppercase">Total Keluar</span><span class="text-xs font-bold text-gray-800">${formatRupiah(totalOut)}</span></div></div><div class="w-full space-y-4">${legend}</div>`;
+            } else { cCont.innerHTML = `<div class="text-center text-xs text-gray-400 py-10 uppercase font-bold tracking-wider">Belum ada data pengeluaran.</div>`; }
+        };
+
+        const renderProfile = () => {
+            const syncStatusEl = document.getElementById('sync-status');
+            const syncBadge = document.getElementById('sync-badge');
+            const syncIcon = document.getElementById('sync-icon');
+
+            if (typeof __firebase_config === 'undefined') {
+                // Tampilan JIKA DI BUKA SEBAGAI FILE LOKAL (BUKAN DARI CANVAS)
+                if (syncStatusEl) syncStatusEl.textContent = 'Mode File Lokal';
+                if (syncBadge) syncBadge.className = 'text-[10px] bg-red-50 text-red-600 px-2.5 py-1 rounded-full flex items-center gap-1 font-bold border border-red-200 transition-colors';
+                if (syncIcon) syncIcon.setAttribute('data-lucide', 'alert-circle');
+            } else if (state.currentUserEmail) {
+                // Tampilan saat Login
+                document.getElementById('profile-login-section').classList.add('hidden');
+                document.getElementById('profile-auth-section').classList.remove('hidden');
+                document.getElementById('profile-auth-section').classList.add('flex');
+                document.getElementById('logout-container').classList.remove('hidden');
+                
+                document.getElementById('prof-name').value = state.userProfile.name || '';
+                document.getElementById('prof-email').value = state.userProfile.email || state.currentUserEmail;
+                document.getElementById('prof-phone').value = state.userProfile.phone || '';
+
+                if (syncStatusEl) syncStatusEl.textContent = 'Aktif Tersimpan';
+                if (syncBadge) syncBadge.className = 'text-[10px] bg-green-50 text-green-600 px-2.5 py-1 rounded-full flex items-center gap-1 font-bold border border-green-200 transition-colors';
+                if (syncIcon) syncIcon.setAttribute('data-lucide', 'cloud-check');
+            } else {
+                // Tampilan saat Logout
+                document.getElementById('profile-login-section').classList.remove('hidden');
+                document.getElementById('profile-auth-section').classList.add('hidden');
+                document.getElementById('profile-auth-section').classList.remove('flex');
+                document.getElementById('logout-container').classList.add('hidden');
+
+                if (syncStatusEl) syncStatusEl.textContent = 'Lokal Saja';
+                if (syncBadge) syncBadge.className = 'text-[10px] bg-gray-50 text-gray-500 px-2.5 py-1 rounded-full flex items-center gap-1 font-bold border border-gray-200 transition-colors';
+                if (syncIcon) syncIcon.setAttribute('data-lucide', 'cloud-off');
+            }
+            if(window.lucide) lucide.createIcons();
+        };
+
+        // --- EVENT LISTENERS ---
+        const initEventListeners = () => {
+            
+            // Login Handler (Cross-Device verification)
+            document.getElementById('settings-login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('settings-login-email').value.trim().toLowerCase();
+                const pass = document.getElementById('settings-login-password').value;
+                if(!email || !pass) return;
+
+                const btnSubmit = document.getElementById('btn-login-submit');
+                const prevText = btnSubmit.textContent;
+                btnSubmit.textContent = 'Memeriksa...';
+                btnSubmit.disabled = true;
+
+                // Verifikasi Cloud terlebih dahulu jika pengguna mencoba masuk dari PC/HP lain
+                let isCloudVerified = false;
+                if (state.firebaseUser && state.db) {
+                    const emailId = email.replace(/[^a-zA-Z0-9]/g, '_');
+                    const docRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'settings', emailId);
+                    try {
+                        const snap = await getDoc(docRef);
+                        if (snap.exists()) {
+                            const data = snap.data();
+                            if (data.password && data.password !== pass) {
+                                showToast('Kata sandi untuk email ini salah!');
+                                btnSubmit.textContent = prevText;
+                                btnSubmit.disabled = false;
+                                return;
+                            }
+                            isCloudVerified = true;
+                        }
+                    } catch(err) { console.error(err); }
+                }
+
+                // Cek atau Simpan Lokal
+                let users = JSON.parse(localStorage.getItem('app_auth_users') || '{}');
+                if (!isCloudVerified && users[email] && users[email] !== pass) {
+                    showToast('Kata sandi lokal salah!');
+                    btnSubmit.textContent = prevText;
+                    btnSubmit.disabled = false;
+                    return;
+                }
+
+                users[email] = pass;
+                localStorage.setItem('app_auth_users', JSON.stringify(users));
+                
+                state.currentUserEmail = email;
+                localStorage.setItem('active_user_email', email);
+                
+                document.getElementById('settings-login-password').value = '';
+
+                // Membawa data lokal (jika ada) yang belum tersinkron ke email Anda
+                if (state.transactions.length > 0) {
+                    showToast("Sinkronisasi data ke Cloud berjalan...");
+                    for(let tx of state.transactions) {
+                        if(!tx.accountEmail || tx.accountEmail === 'local') {
+                            await saveTxToCloud(tx);
+                        }
                     }
                 }
 
-                const disableAttr = selectedAnswer !== null ? "disabled" : "";
-                return `
-                    <button onclick="handleAnswerClick(${idx})" ${disableAttr} class="${btnClass}">
-                        <span>${option}</span>
-                        ${rightIcon}
-                    </button>
-                `;
-            }).join('');
-
-            let loadingIndicator = "";
-            if (selectedAnswer !== null) {
-                loadingIndicator = `
-                    <div class="flex justify-center animate-pulse">
-                        <span class="text-gray-400 font-bold text-xs md:text-sm tracking-widest bg-white px-6 py-2.5 rounded-full shadow-sm border border-gray-100">
-                            ${currentQuestionIndex < questions.length - 1 ? 'LANJUT OTOMATIS...' : 'MEMPROSES HASIL...'}
-                        </span>
-                    </div>
-                `;
-            }
-
-            return `
-                <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 font-sans text-gray-900 w-full">
-                    <div class="max-w-lg w-full">
-                        <div class="flex justify-between items-center mb-6 px-2">
-                            <button onclick="changeGameState('menu')" class="text-gray-600 hover:text-red-500 flex items-center gap-1 font-bold bg-white px-4 py-2 rounded-full shadow-sm border-2 border-gray-200 transition-colors">
-                                <i data-lucide="x" class="w-4 h-4"></i> Keluar
-                            </button>
-                            <div class="bg-emerald-600 px-5 py-2 rounded-full shadow-md font-black text-white border-2 border-emerald-700 flex items-center gap-2">
-                                <i data-lucide="star" class="w-4 h-4 text-amber-300 fill-current"></i>
-                                Skor: ${score}
-                            </div>
-                        </div>
-
-                        <div class="w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner">
-                            <div class="bg-gradient-to-r from-emerald-400 to-emerald-600 h-3 rounded-full transition-all duration-500 shadow-md" style="width: ${progressPercent}%"></div>
-                        </div>
-
-                        <div class="text-center mb-6 text-sm font-semibold text-gray-500 flex flex-col">
-                            <span class="text-emerald-700 bg-emerald-100 border border-emerald-200 inline-block mx-auto px-4 py-1.5 rounded-full mb-1 shadow-sm font-bold">
-                                ${currentLevelInfo}
-                            </span>
-                            <span class="mt-1 uppercase tracking-widest text-xs">Soal ${currentQuestionIndex + 1} dari ${questions.length} • (Surah ${currentQ.surah})</span>
-                        </div>
-
-                        <div class="bg-white rounded-3xl shadow-xl p-8 mb-8 border-b-4 border-emerald-200 text-center min-h-[220px] flex flex-col items-center justify-center relative overflow-hidden">
-                            <p class="text-sm text-gray-400 mb-4 uppercase tracking-widest font-black">Apa arti kata ini?</p>
-                            <h1 class="text-6xl md:text-7xl font-serif text-emerald-900 mb-2 leading-normal drop-shadow-sm" dir="rtl">
-                                ${currentQ.ar}
-                            </h1>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                            ${optionsHtml}
-                        </div>
-
-                        ${loadingIndicator}
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderResult() {
-            const maxScore = questions.length * 10;
-            const percentage = (score / maxScore) * 100;
-            
-            const currentIndex = currentPlayingId ? progressionOrder.indexOf(currentPlayingId) : -1;
-            const hasNextLevel = currentIndex >= 0 && currentIndex < progressionOrder.length - 1;
-            const nextId = hasNextLevel ? progressionOrder[currentIndex + 1] : null;
-            const isNextUnlocked = nextId && progressionOrder.indexOf(nextId) <= progressionOrder.indexOf(unlockedLevelId);
-
-            let message = "";
-            if (percentage === 100) message = "SEMPURNA! Luar Biasa! 🎉";
-            else if (percentage >= 70) message = "LULUS! Kerja yang bagus! 🌟";
-            else message = "BELUM LULUS. Yuk, coba lagi! 💪";
-
-            const topBgClass = percentage >= 70 ? (currentLevelInfo.includes('Ujian') ? 'bg-amber-500' : 'bg-emerald-600') : 'bg-red-500';
-            const iconHtml = percentage >= 70 
-                ? `<i data-lucide="award" class="w-14 h-14 ${currentLevelInfo.includes('Ujian') ? 'text-amber-500' : 'text-emerald-500'}"></i>`
-                : `<i data-lucide="rotate-ccw" class="w-14 h-14 text-red-400"></i>`;
-            const textScoreClass = percentage >= 70 ? 'text-emerald-600' : 'text-red-500';
-
-            let justUnlockedHtml = "";
-            if (justUnlocked) {
-                justUnlockedHtml = `
-                    <div class="bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 p-4 rounded-2xl mb-6 font-black animate-pulse border-2 border-amber-300 shadow-sm flex items-center justify-center gap-2">
-                        <i data-lucide="star" class="w-5 h-5 fill-current"></i> TAHAP BARU TERBUKA! <i data-lucide="star" class="w-5 h-5 fill-current"></i>
-                    </div>
-                `;
-            }
-
-            let failedMessageHtml = "";
-            if (percentage < 70 && currentPlayingId) {
-                failedMessageHtml = `
-                    <div class="bg-red-50 text-red-700 p-4 rounded-2xl mb-6 text-sm font-bold border-2 border-red-200">
-                        ⚠️ Skor minimal 70 diperlukan untuk membuka tahap berikutnya.
-                    </div>
-                `;
-            }
-
-            // Tombol Cetak Piagam Jika Lulus Ujian Boss
-            let certificateBtnHtml = "";
-            if (percentage >= 70 && currentPlayingId && String(currentPlayingId).includes('boss')) {
-                const levelData = getLevelDataById(currentPlayingId);
-                const mainLevelName = levelData ? levelData.mainLevelName : "Tahap Akhir";
+                await saveSettingsToCloud(); // Otomatis membuat profile di cloud jika belum ada
                 
-                certificateBtnHtml = `
-                    <button onclick="openCertificate('${mainLevelName}')" class="w-full bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-yellow-900 p-5 rounded-2xl font-black tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg text-lg transform hover:-translate-y-1 mb-2 border-2 border-yellow-300">
-                        <i data-lucide="award" class="w-6 h-6"></i> KLAIM PIAGAM
-                    </button>
-                `;
-            }
+                loadLocalData();
+                attachCloudListeners(); // Ini akan otomatis menarik semua transaksi dari HP/PC lama Anda
+                
+                btnSubmit.textContent = prevText;
+                btnSubmit.disabled = false;
+                
+                renderAll();
+            });
 
-            let nextBtnHtml = "";
-            if (percentage >= 70 && isNextUnlocked && nextId) {
-                nextBtnHtml = `
-                    <button onclick="startLevelById('${nextId}')" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-5 rounded-2xl font-black tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg text-lg transform hover:-translate-y-1">
-                        TAHAP BERIKUTNYA <i data-lucide="arrow-right" class="w-6 h-6"></i>
-                    </button>
-                `;
-            }
+            document.getElementById('btn-logout').addEventListener('click', () => {
+                state.currentUserEmail = null;
+                localStorage.removeItem('active_user_email');
+                if(unsubSettings) unsubSettings();
+                if(unsubTxs) unsubTxs();
+                
+                loadLocalData();
+                renderAll();
+                showToast('Berhasil Keluar');
+            });
+            
+            document.getElementById('btn-save-profile').addEventListener('click', async () => {
+                const btn = document.getElementById('btn-save-profile');
+                btn.textContent = 'Menyimpan...';
+                state.userProfile.name = document.getElementById('prof-name').value;
+                state.userProfile.phone = document.getElementById('prof-phone').value;
+                await saveSettingsToCloud();
+                showToast('Profil Tersimpan!');
+                btn.textContent = 'Simpan Profil';
+            });
 
-            const restartBtnClass = (percentage >= 70 && isNextUnlocked && nextId) 
-                ? "bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-200" 
-                : "bg-emerald-600 hover:bg-emerald-700 text-white border-b-4 border-emerald-800";
+            // Form Handlers
+            document.getElementById('tx-date').value = state.formData.date || new Date().toISOString().split('T')[0];
+            
+            document.querySelectorAll('input[name="txType"]').forEach(r => {
+                r.addEventListener('change', e => { 
+                    state.formData.type = e.target.value; 
+                    state.formData.category = e.target.value==='income' ? state.categoriesIncome[0] : state.categoriesExpense[0];
+                    renderTxFormFields(); 
+                });
+            });
 
-            return `
-                <div class="min-h-screen bg-gray-100 flex items-center justify-center p-4 font-sans text-gray-900 w-full">
-                    <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 text-center p-8 relative">
+            document.getElementById('btn-debt-me').addEventListener('click', () => { state.formData.isReceivable=false; state.formData.debtType='in'; updateDebtToggleUI(); });
+            document.getElementById('btn-receivable-me').addEventListener('click', () => { state.formData.isReceivable=true; state.formData.debtType='out'; updateDebtToggleUI(); });
+            document.getElementById('btn-debt-new').addEventListener('click', () => { state.formData.debtType = state.formData.isReceivable?'out':'in'; updateDebtToggleUI(); });
+            document.getElementById('btn-debt-pay').addEventListener('click', () => { state.formData.debtType = state.formData.isReceivable?'in':'out'; updateDebtToggleUI(); });
+            
+            document.getElementById('toggle-debt-mode').addEventListener('click', () => {
+                state.formData.type = 'debt'; state.formData.debtType = 'in'; state.formData.isReceivable = false; state.formData.category = ''; state.formData.bank = 'Tanpa Dompet';
+                renderTxFormFields();
+            });
+
+            const txNom = document.getElementById('tx-nominal');
+            txNom.addEventListener('input', e => txNom.value = formatThousand(e.target.value));
+
+            document.getElementById('tx-image').addEventListener('change', e => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const r = new FileReader();
+                r.onload = ev => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                        let w = img.width, h = img.height; const MAX = 400;
+                        if(w>h){if(w>MAX){h*=MAX/w;w=MAX;}}else{if(h>MAX){w*=MAX/h;h=MAX;}}
+                        canvas.width=w; canvas.height=h; ctx.drawImage(img,0,0,w,h);
+                        state.formData.image = canvas.toDataURL('image/jpeg', 0.6);
+                        const prev = document.getElementById('tx-image-preview');
+                        prev.src = state.formData.image; prev.classList.remove('hidden');
+                    };
+                    img.src = ev.target.result;
+                };
+                r.readAsDataURL(file);
+            });
+
+            document.getElementById('tx-form').addEventListener('submit', async e => {
+                e.preventDefault();
+                const btn = document.getElementById('btn-submit-tx');
+                const cleanNom = parseThousand(txNom.value);
+                if (!cleanNom || cleanNom <= 0) return;
+
+                const tType = state.formData.type;
+                const dCat = tType === 'transfer' ? '' : document.getElementById('tx-category').value;
+                const dBank = document.getElementById('tx-bank').value;
+                const dToBank = tType === 'transfer' ? document.getElementById('tx-toBank').value : '';
+
+                if (tType === 'transfer' && dBank === dToBank) { showToast("Pilih dompet berbeda!"); return; }
+
+                btn.textContent = '...'; btn.disabled = true;
+                
+                // UNIK ID TRANSAKSI (Agar jika input bersamaan tidak tertimpa)
+                const txId = Date.now().toString() + "_" + Math.floor(Math.random() * 1000);
+                
+                const newTx = {
+                    id: txId, type: tType, date: document.getElementById('tx-date').value,
+                    category: dCat, bank: dBank, toBank: dToBank, nominal: cleanNom,
+                    proof: document.getElementById('tx-proof').value, image: state.formData.image,
+                    debtType: state.formData.debtType, isReceivable: state.formData.isReceivable, createdAt: Date.now()
+                };
+
+                await saveTxToCloud(newTx);
+                
+                txNom.value = ''; document.getElementById('tx-proof').value = ''; state.formData.image = '';
+                document.getElementById('tx-image-preview').classList.add('hidden');
+                btn.textContent = 'Simpan Transaksi'; btn.disabled = false;
+            });
+
+            document.getElementById('toggle-balance-home').addEventListener('click', () => { state.showBalance = !state.showBalance; renderAll(); });
+            document.getElementById('toggle-balance-wallet').addEventListener('click', () => { state.showBalance = !state.showBalance; renderAll(); });
+            
+            document.getElementById('history-bank-filter').addEventListener('change', e => { state.historyBankFilter = e.target.value; renderHistory(); });
+            document.getElementById('btn-toggle-history').addEventListener('click', () => { state.showAllHistory = !state.showAllHistory; renderHistory(); });
+
+            document.querySelectorAll('.recap-filter-btn').forEach(b => b.addEventListener('click', e => { state.recapFilter = e.target.dataset.filter; renderRecap(); }));
+            document.getElementById('recap-prev').addEventListener('click', () => changeRecapDate(-1));
+            document.getElementById('recap-next').addEventListener('click', () => changeRecapDate(1));
+
+            document.getElementById('btn-reset-req').addEventListener('click', () => {
+                document.getElementById('btn-reset-req').classList.add('hidden');
+                document.getElementById('reset-confirm-btns').classList.remove('hidden');
+            });
+            document.getElementById('btn-reset-cancel').addEventListener('click', () => {
+                document.getElementById('reset-confirm-btns').classList.add('hidden');
+                document.getElementById('btn-reset-req').classList.remove('hidden');
+            });
+            document.getElementById('btn-reset-do').addEventListener('click', async () => {
+                document.getElementById('btn-reset-do').textContent = "...";
+                
+                // Hapus satu per satu dari Cloud agar HP dan PC sama-sama bersih
+                if (state.firebaseUser && state.db && state.currentUserEmail) {
+                    for (let t of state.transactions) {
+                        const txRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'transactions', t.id);
+                        deleteDoc(txRef).catch(e => console.error(e));
+                    }
+                }
+
+                state.transactions = []; 
+                saveLocal('local_transactions', []);
+                renderAll();
+                
+                document.getElementById('reset-confirm-btns').classList.add('hidden');
+                document.getElementById('btn-reset-req').classList.remove('hidden');
+                document.getElementById('btn-reset-do').textContent = "Yakin Reset?";
+                showToast('Selesai Direset!');
+            });
+
+            document.getElementById('btn-backup').addEventListener('click', () => {
+                const data = { transactions: state.transactions, categoriesExpense: state.categoriesExpense, categoriesIncome: state.categoriesIncome, banks: state.banks };
+                const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `backup_${state.currentUserEmail || 'local'}.json`; a.click();
+            });
+            
+            document.getElementById('file-restore').addEventListener('change', e => {
+                const f = e.target.files[0]; if(!f) return;
+                const r = new FileReader();
+                r.onload = async ev => {
+                    try {
+                        const d = JSON.parse(ev.target.result);
+                        if(d.categoriesExpense) state.categoriesExpense = d.categoriesExpense;
+                        if(d.categoriesIncome) state.categoriesIncome = d.categoriesIncome;
+                        if(d.banks) state.banks = d.banks;
+                        await saveSettingsToCloud(); // Simpan pengaturan
+
+                        if(d.transactions) {
+                            // Upload masing-masing transaksi agar sinkron ke semua perangkat
+                            for(let tx of d.transactions) {
+                                await saveTxToCloud(tx);
+                            }
+                        }
                         
-                        <div class="absolute top-0 left-0 w-full h-32 rounded-b-[50%] -z-0 ${topBgClass}"></div>
+                        showToast("Data Dipulihkan!"); 
+                    } catch(e) { showToast("File Error!"); }
+                }; r.readAsText(f);
+            });
 
-                        <div class="relative z-10 bg-white w-28 h-28 mx-auto rounded-full flex items-center justify-center shadow-xl mb-4 border-8 border-white mt-4">
-                            ${iconHtml}
-                        </div>
+            // MODALS LISTENER
+            const btnAddItem = document.getElementById('btn-add-item');
+            if(btnAddItem) btnAddItem.addEventListener('click', async () => {
+                const v = document.getElementById('modal-gen-input').value.trim(); if(!v) return;
+                const t = state.modalConfigType;
+                if(t==='category_expense') state.categoriesExpense.push(v);
+                else if(t==='category_income') state.categoriesIncome.push(v);
+                else state.banks.push({name:v, icon:state.newBankIcon});
+                document.getElementById('modal-gen-input').value = '';
+                
+                await saveSettingsToCloud();
+                openModalGeneral(t);
+            });
 
-                        <h1 class="text-3xl font-black mb-1 mt-6 tracking-wide">Sesi Selesai!</h1>
-                        <p class="text-gray-500 text-sm mb-6 bg-gray-100 inline-block px-4 py-1.5 rounded-full font-bold border border-gray-200">${currentLevelInfo}</p>
-                        
-                        <p class="text-xl font-bold mb-6 ${textScoreClass}">
-                            ${message}
-                        </p>
+            const inpAdj = document.getElementById('input-adjust');
+            if(inpAdj) inpAdj.addEventListener('input', e => inpAdj.value = formatThousand(e.target.value));
+            
+            const btnSaveAdj = document.getElementById('btn-save-adjust');
+            if(btnSaveAdj) btnSaveAdj.addEventListener('click', async () => {
+                const actual = parseThousand(inpAdj.value);
+                const diff = actual - state.adjustCurrentBal;
+                if(diff === 0) { closeModal('modal-adjust'); return; }
+                const txId = Date.now().toString() + "_" + Math.floor(Math.random() * 1000);
+                const newTx = { id: txId, date: new Date().toISOString().split('T')[0], category: 'Penyesuaian Saldo', bank: state.adjustBank, nominal: Math.abs(diff), type: diff > 0 ? 'income' : 'expense', debtType: 'in', createdAt: Date.now() };
+                
+                await saveTxToCloud(newTx);
+                closeModal('modal-adjust');
+            });
 
-                        ${justUnlockedHtml}
-                        ${failedMessageHtml}
-                        
-                        <div class="bg-gray-50 rounded-3xl p-6 mb-8 border-2 border-gray-100 shadow-inner">
-                            <p class="text-gray-400 font-bold mb-2 uppercase tracking-widest text-xs">Total Skor</p>
-                            <div class="text-7xl font-black drop-shadow-sm ${textScoreClass}">
-                                ${score} <span class="text-2xl text-gray-400 font-bold">/ ${maxScore}</span>
-                            </div>
-                        </div>
+            const inpRep = document.getElementById('input-repay-nom');
+            if(inpRep) inpRep.addEventListener('input', e => inpRep.value = formatThousand(e.target.value));
+            
+            const btnSubRep = document.getElementById('btn-submit-repay');
+            if(btnSubRep) btnSubRep.addEventListener('click', async () => {
+                const n = parseThousand(inpRep.value); if(!n) return;
+                const txId = Date.now().toString() + "_" + Math.floor(Math.random() * 1000);
+                const newTx = { id: txId, date: new Date().toISOString().split('T')[0], category: state.repayTx.category, bank: document.getElementById('select-repay-bank').value, nominal: n, type: 'debt', isReceivable: state.repayTx.isReceivable, debtType: state.repayTx.isReceivable ? 'in' : 'out', createdAt: Date.now() };
+                
+                await saveTxToCloud(newTx);
+                closeModal('modal-repay');
+            });
 
-                        <div class="grid grid-cols-1 gap-4">
-                            ${certificateBtnHtml}
-                            ${nextBtnHtml}
+            const btnDelTx = document.getElementById('btn-del-tx');
+            if(btnDelTx) btnDelTx.addEventListener('click', () => {
+                document.getElementById('btn-del-tx').classList.add('hidden');
+                document.getElementById('btn-del-tx-confirm').classList.remove('hidden');
+            });
 
-                            <button onclick="restartCurrentLevel()" class="w-full p-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-md ${restartBtnClass}">
-                                <i data-lucide="rotate-ccw" class="w-5 h-5"></i> Ulangi Tahap Ini
-                            </button>
-                            <button onclick="changeGameState('menu')" class="w-full bg-white hover:bg-gray-50 text-gray-500 border-2 border-gray-200 p-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all">
-                                <i data-lucide="home" class="w-5 h-5"></i> Kembali ke Peta
-                            </button>
-                        </div>
-                    </div>
+            const btnDelTxConf = document.getElementById('btn-del-tx-confirm');
+            if(btnDelTxConf) btnDelTxConf.addEventListener('click', async () => {
+                await deleteTxFromCloud(state.editTxId);
+                closeModal('modal-edit');
+            });
+
+            const btnSaveTx = document.getElementById('btn-save-tx');
+            if(btnSaveTx) btnSaveTx.addEventListener('click', async () => {
+                const isTrans = state.transactions.find(t => t.id === state.editTxId)?.type === 'transfer';
+                const catVal = document.getElementById('ed-cat').value;
+                const updates = { date: document.getElementById('ed-date').value, nominal: parseThousand(document.getElementById('ed-nom').value) };
+                if(isTrans) updates.toBank = catVal; else { updates.category = catVal; updates.bank = document.getElementById('ed-bank').value; }
+                
+                const idx = state.transactions.findIndex(t => t.id === state.editTxId);
+                if(idx >= 0) {
+                    const updatedTx = { ...state.transactions[idx], ...updates };
+                    await saveTxToCloud(updatedTx);
+                }
+                
+                closeModal('modal-edit');
+            });
+
+            // Mulai Proses App
+            loadLocalData();
+            renderAll();
+            initFirebase();
+            setInterval(() => { if(window.lucide) lucide.createIcons(); }, 2000);
+        };
+
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initEventListeners);
+        else initEventListeners();
+
+        const changeRecapDate = (dir) => {
+            const d = new Date(state.currentRecapDate);
+            if (state.recapFilter === 'daily') d.setDate(d.getDate() + dir);
+            else if (state.recapFilter === 'monthly') d.setMonth(d.getMonth() + dir);
+            else d.setFullYear(d.getFullYear() + dir);
+            state.currentRecapDate = d;
+            renderRecap();
+        };
+
+        // --- FUNGSI MODAL ---
+        window.closeModal = (id) => document.getElementById(id).classList.remove('show');
+        
+        window.openModalGeneral = (type) => {
+            state.modalConfigType = type;
+            document.getElementById('modal-gen-title').textContent = type === 'bank' ? 'Kelola Dompet' : 'Kategori';
+            const icoList = document.getElementById('modal-bank-icons');
+            if(type === 'bank') {
+                icoList.classList.remove('hidden');
+                icoList.innerHTML = AVAILABLE_ICONS.map(ic => `<button onclick="state.newBankIcon='${ic.id}'; openModalGeneral('bank');" class="p-2 border rounded-lg flex flex-col items-center min-w-[60px] ${state.newBankIcon===ic.id?'bg-indigo-50 border-indigo-500 text-indigo-700 font-bold':'text-gray-500 hover:bg-gray-50'}"><i data-lucide="${ic.id}" class="w-5 h-5"></i><span class="text-[9px] mt-1">${ic.label}</span></button>`).join('');
+            } else { icoList.classList.add('hidden'); }
+            
+            const arr = type==='category_expense' ? state.categoriesExpense : type==='category_income' ? state.categoriesIncome : state.banks;
+            document.getElementById('modal-gen-list').innerHTML = arr.map((item, i) => `
+                <div class="flex justify-between items-center p-2.5 bg-gray-50 rounded-lg text-xs font-bold mb-1 border border-gray-100">
+                    <div class="flex items-center">${type==='bank'?`<i data-lucide="${getBankIcon(item.icon)}" class="w-3 h-3 mr-2 text-indigo-500"></i>`:''} <span>${type==='bank'?item.name:item}</span></div>
+                    <button onclick="removeGenItem(${i})" class="text-red-400 hover:text-red-600 p-1"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
                 </div>
+            `).join('');
+            
+            document.getElementById('modal-general').classList.add('show');
+            if(window.lucide) lucide.createIcons();
+        };
+
+        window.removeGenItem = async (idx) => {
+            const t = state.modalConfigType;
+            if(t==='category_expense' && state.categoriesExpense.length>1) state.categoriesExpense.splice(idx,1);
+            else if(t==='category_income' && state.categoriesIncome.length>1) state.categoriesIncome.splice(idx,1);
+            else if(t==='bank' && state.banks.length>1) state.banks.splice(idx,1);
+            
+            await saveSettingsToCloud();
+            openModalGeneral(t);
+        };
+
+        window.openAdjustModal = (bank, bal) => {
+            state.adjustBank = bank; state.adjustCurrentBal = bal;
+            document.getElementById('modal-adjust-title').textContent = `Set Saldo: ${bank}`;
+            document.getElementById('input-adjust').value = formatThousand(bal);
+            document.getElementById('modal-adjust').classList.add('show');
+        };
+
+        window.openRepayModal = (cat, remaining, isRec) => {
+            state.repayTx = { category: cat, remaining, isReceivable: isRec };
+            document.getElementById('modal-repay-title').textContent = isRec ? 'Terima Pelunasan' : 'Bayar Hutang';
+            document.getElementById('modal-repay-desc').textContent = `${cat} - Sisa: ${formatRupiah(remaining)}`;
+            document.getElementById('input-repay-nom').value = formatThousand(remaining);
+            document.getElementById('select-repay-bank').innerHTML = state.banks.map(b => `<option value="${b.name}">${b.name}</option>`).join('');
+            const btn = document.getElementById('btn-submit-repay');
+            btn.className = `w-full text-white py-3 rounded-xl font-bold shadow-lg transition active:scale-95 uppercase tracking-widest ${isRec ? 'bg-purple-600 hover:bg-purple-700' : 'bg-orange-600 hover:bg-orange-700'}`;
+            document.getElementById('modal-repay').classList.add('show');
+        };
+
+        window.openEditModal = (id) => {
+            const tx = state.transactions.find(t => t.id === id); if(!tx) return;
+            state.editTxId = id;
+            
+            const isTrans = tx.type === 'transfer';
+            const isDebt = tx.type === 'debt';
+            
+            document.getElementById('edit-form-content').innerHTML = `
+                <div><label class="text-[10px] font-bold text-gray-400 uppercase">Tanggal</label><input type="date" id="ed-date" value="${tx.date}" class="w-full p-2.5 border rounded-lg text-sm outline-none focus:border-indigo-500"/></div>
+                <div><label class="text-[10px] font-bold text-gray-400 uppercase">${isTrans ? 'Ke Bank' : (isDebt ? 'Nama Orang' : 'Keterangan')}</label><input type="text" id="ed-cat" value="${isTrans ? tx.toBank : tx.category}" class="w-full p-2.5 border rounded-lg text-sm outline-none focus:border-indigo-500"/></div>
+                ${!isTrans ? `<div><label class="text-[10px] font-bold text-gray-400 uppercase">Dompet</label><select id="ed-bank" class="w-full p-2.5 border rounded-lg text-sm outline-none focus:border-indigo-500">${isDebt ? `<option value="Tanpa Dompet">-- Tanpa Dompet --</option>`:''}${state.banks.map(b=>`<option value="${b.name}" ${b.name===tx.bank?'selected':''}>${b.name}</option>`).join('')}</select></div>` : ''}
+                <div><label class="text-[10px] font-bold text-gray-400 uppercase">Jumlah (Rp)</label><input type="text" inputmode="numeric" id="ed-nom" value="${formatThousand(tx.nominal)}" class="w-full p-2.5 border rounded-lg text-sm font-bold outline-none focus:border-indigo-500"/></div>
             `;
-        }
+            const edNom = document.getElementById('ed-nom');
+            if(edNom) edNom.addEventListener('input', e => edNom.value = formatThousand(e.target.value));
+            
+            document.getElementById('btn-del-tx').classList.remove('hidden');
+            document.getElementById('btn-del-tx-confirm').classList.add('hidden');
+            document.getElementById('modal-edit').classList.add('show');
+            if(window.lucide) lucide.createIcons();
+        };
 
-        function renderCertificate() {
-            return `
-                <div class="min-h-screen bg-gray-100 flex flex-col items-center p-4 md:p-8 font-sans text-gray-900 w-full overflow-y-auto">
-                    <!-- Controls (Sembunyi saat diprint) -->
-                    <div class="max-w-3xl w-full bg-white rounded-3xl shadow-xl p-6 mb-8 no-print border border-gray-200">
-                        <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-                            <button onclick="changeGameState('menu')" class="p-3 bg-gray-100 rounded-xl hover:bg-gray-200 text-gray-600 transition-colors flex items-center font-bold">
-                                <i data-lucide="arrow-left" class="w-5 h-5 mr-1"></i> Kembali
-                            </button>
-                            <h2 class="font-black uppercase tracking-widest text-lg text-emerald-800 flex items-center gap-2">
-                                <i data-lucide="award" class="w-6 h-6 text-amber-500"></i> Buat Piagam
-                            </h2>
-                        </div>
-
-                        <div class="grid grid-cols-1 gap-6 mb-6">
-                            <div>
-                                <label class="block text-sm font-black tracking-wide text-gray-700 mb-2 uppercase">Unggah Foto Anak <span class="text-gray-400 font-medium normal-case">(Opsional)</span></label>
-                                <input type="file" accept="image/*" onchange="handlePhotoUpload(event)" class="w-full border-2 border-gray-300 rounded-2xl file:mr-4 file:py-4 file:px-6 file:rounded-l-xl file:border-0 file:text-sm file:font-black file:bg-emerald-50 file:text-emerald-800 hover:file:bg-emerald-100 cursor-pointer">
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <button id="btn-download" onclick="downloadImage()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-2xl font-black tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg text-base transform hover:-translate-y-1">
-                                <i data-lucide="download" class="w-5 h-5"></i> SIMPAN GAMBAR (PNG)
-                            </button>
-                            <button onclick="printCertificate()" class="w-full bg-gray-800 hover:bg-gray-900 text-white p-4 rounded-2xl font-black tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg text-base transform hover:-translate-y-1">
-                                <i data-lucide="printer" class="w-5 h-5"></i> CETAK (PDF)
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Area Piagam (Tercetak) -->
-                    <div id="printable-certificate" class="w-full max-w-2xl aspect-[1/1.414] bg-white border-[16px] border-double border-emerald-800 p-4 md:p-8 flex flex-col items-center justify-center text-center relative overflow-hidden shadow-2xl mx-auto">
-                        
-                        <!-- Pattern Background Elegan -->
-                        <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #047857 25%, transparent 25%, transparent 75%, #047857 75%, #047857), repeating-linear-gradient(45deg, #047857 25%, #ffffff 25%, #ffffff 75%, #047857 75%, #047857); background-position: 0 0, 20px 20px; background-size: 40px 40px;"></div>
-
-                        <!-- Inner Border -->
-                        <div class="relative z-10 w-full h-full border-4 border-emerald-200 p-6 md:p-10 flex flex-col items-center bg-white/95">
-                            
-                            <div class="flex-grow flex flex-col items-center justify-center w-full">
-                                <i data-lucide="award" class="w-20 h-20 md:w-28 md:h-28 text-amber-500 mb-6 md:mb-8 fill-current drop-shadow-md"></i>
-                                
-                                <h1 class="text-4xl md:text-6xl font-black text-emerald-900 mb-4 md:mb-6 tracking-widest uppercase">Piagam<br/>Penghargaan</h1>
-                                
-                                <p class="text-base md:text-xl text-gray-600 font-bold mb-8 md:mb-10">Diberikan dengan penuh kebanggaan kepada:</p>
-
-                                <!-- Area Foto Anak -->
-                                <div class="w-32 h-44 md:w-44 md:h-56 border-4 border-dashed border-emerald-300 mb-6 md:mb-8 flex items-center justify-center bg-emerald-50 overflow-hidden relative shadow-inner">
-                                    <img id="cert-photo-display" src="${certPhotoDataUrl || ''}" class="w-full h-full object-cover" style="display: ${certPhotoDataUrl ? 'block' : 'none'};" />
-                                    <div id="cert-photo-placeholder" class="flex-col items-center text-emerald-400" style="display: ${certPhotoDataUrl ? 'none' : 'flex'};">
-                                        <i data-lucide="camera" class="w-10 h-10 md:w-14 md:h-14 mb-2"></i>
-                                        <span class="text-xs md:text-sm font-bold uppercase tracking-wider">Pas Foto</span>
-                                    </div>
-                                </div>
-
-                                <!-- Nama Anak -->
-                                <h2 id="cert-name-display" class="text-3xl md:text-5xl font-serif font-bold text-gray-900 mb-8 md:mb-12 border-b-2 border-emerald-800 px-8 pb-3 tracking-wide">${currentUser.name}</h2>
-
-                                <!-- Deskripsi Kelulusan -->
-                                <p class="text-sm md:text-xl text-gray-700 font-medium max-w-sm md:max-w-lg leading-relaxed mb-10 md:mb-16">
-                                    Atas keberhasilan, dedikasi, dan kerja kerasnya dalam menyelesaikan seluruh evaluasi akhir untuk tahap:<br/>
-                                    <strong class="text-emerald-800 text-xl md:text-3xl block mt-4 mb-2">${certLevelName}</strong>
-                                    Game Edukasi Tebak Kosakata Al-Quran Juz 30.
-                                </p>
-                            </div>
-
-                            <!-- Kolom Tanda Tangan & Nilai -->
-                            <div class="flex justify-between w-full max-w-sm md:max-w-lg mt-auto pt-8 border-t-2 border-emerald-100">
-                                <div class="text-center w-28 md:w-40">
-                                    <div class="h-16 md:h-20 flex items-end justify-center">
-                                        <div class="w-full border-b border-gray-800"></div>
-                                    </div>
-                                    <p class="text-xs md:text-sm font-bold text-gray-500 mt-3 uppercase tracking-widest">Orang Tua / Guru</p>
-                                </div>
-                                
-                                <div class="text-center w-28 md:w-40">
-                                    <div class="h-16 md:h-20 flex items-end justify-center">
-                                        <div class="font-black text-emerald-800 flex items-center gap-1 md:gap-2 text-xl md:text-3xl">
-                                            <i data-lucide="star" class="w-5 h-5 md:w-8 md:h-8 fill-current text-amber-400"></i>
-                                            LULUS
-                                            <i data-lucide="star" class="w-5 h-5 md:w-8 md:h-8 fill-current text-amber-400"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs md:text-sm font-bold text-gray-500 mt-3 uppercase tracking-widest">Predikat</p>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Fungsi render utama 
-        function renderApp() {
-            const app = document.getElementById('app');
-            if (gameState === 'login') app.innerHTML = renderLogin();
-            else if (gameState === 'menu') app.innerHTML = renderMenu();
-            else if (gameState === 'surahList') app.innerHTML = renderSurahList();
-            else if (gameState === 'playing') app.innerHTML = renderPlaying();
-            else if (gameState === 'result') app.innerHTML = renderResult();
-            else if (gameState === 'certificate') app.innerHTML = renderCertificate();
-
-            lucide.createIcons();
-        }
-
-        // Inisialisasi awal saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', () => {
-            renderApp();
-        });
+        window.openImageViewer = (src) => {
+            document.getElementById('viewer-img').src = src;
+            document.getElementById('modal-image').classList.add('show');
+            if(window.lucide) lucide.createIcons();
+        };
 
     </script>
 </body>
